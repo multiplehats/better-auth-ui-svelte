@@ -46,7 +46,7 @@
 	});
 
 	const schema = z.object({
-		code: z.string().min(1, { message: localization.BACKUP_CODE_REQUIRED })
+		code: z.string().min(1, { error: localization.BACKUP_CODE_REQUIRED })
 	});
 
 	const form = createForm({

@@ -9,12 +9,12 @@
 	const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/forget-password'];
 
 	interface Props {
-		captchaRef?: any;
+		ref?: any;
 		localization?: Partial<AuthLocalization>;
 		action?: string; // Optional action to check if it's in the endpoints list
 	}
 
-	let { captchaRef = $bindable(), localization, action }: Props = $props();
+	let { ref = $bindable(), localization, action }: Props = $props();
 
 	const config = getAuthUIConfig();
 	const { captcha } = config;
@@ -46,7 +46,7 @@
 
 {#if captcha && shouldShowCaptcha()}
 	{#if showRecaptchaV2}
-		<RecaptchaV2 bind:captchaRef />
+		<RecaptchaV2 bind:captchaRef={ref} />
 	{/if}
 
 	{#if showRecaptchaBadge}
@@ -71,7 +71,7 @@
 	{#if showHCaptcha}
 		{#await import('@hcaptcha/svelte-hcaptcha') then { HCaptcha }}
 			<div class="mx-auto">
-				<HCaptcha bind:captchaRef sitekey={captcha.siteKey} theme={theme.value} />
+				<HCaptcha bind:captchaRef={ref} sitekey={captcha.siteKey} {theme} />
 			</div>
 		{/await}
 	{/if}

@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { cn } from '$lib/utils/utils.js';
-	import type { InputEvents } from 'svelte/elements';
+	import type { ChangeEventHandler, FullAutoFill } from 'svelte/elements';
 
 	interface Props {
 		class?: string;
@@ -11,10 +11,10 @@
 		value?: string;
 		disabled?: boolean;
 		placeholder?: string;
-		autocomplete?: string;
+		autocomplete?: FullAutoFill | null | undefined;
 		id?: string;
 		name?: string;
-		onchange?: InputEvents['change'];
+		onchange?: ChangeEventHandler<HTMLInputElement> | null | undefined;
 	}
 
 	let {
@@ -62,7 +62,7 @@
 
 	{#if enableToggle}
 		<Button
-			class="absolute top-0 right-0 !bg-transparent"
+			class="absolute top-0 right-0 bg-transparent!"
 			disabled={isDisabled || disabled}
 			size="icon"
 			type="button"

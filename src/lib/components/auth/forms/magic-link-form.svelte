@@ -75,8 +75,8 @@
 	// Form schema
 	const formSchema = $derived(
 		z.object({
-			email: z.string().email({
-				message: `${localization.EMAIL} ${localization.IS_INVALID}`
+			email: z.email({
+				error: `${localization.EMAIL} ${localization.IS_INVALID}`
 			})
 		})
 	);
@@ -101,7 +101,7 @@
 
 		if (!result.success) {
 			errors = {};
-			result.error.errors.forEach((err) => {
+			result.error.issues.forEach((err) => {
 				if (err.path[0]) {
 					errors[err.path[0] as string] = err.message;
 				}

@@ -1,6 +1,10 @@
 <script lang="ts">
 	import Fingerprint from '@lucide/svelte/icons/fingerprint';
-	import { getAuthClient, getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import {
+		getAuthClient,
+		getAuthUIConfig,
+		getLocalization
+	} from '$lib/context/auth-ui-config.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils/ui.js';
@@ -68,5 +72,6 @@
 	onclick={signInPasskey}
 >
 	<Fingerprint class={classNames?.form?.icon} />
-	{loc.SIGN_IN_WITH} {loc.PASSKEY}
+	{loc.SIGN_IN_WITH}
+	{loc.PASSKEY}
 </Button>

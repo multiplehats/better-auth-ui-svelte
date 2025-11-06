@@ -51,8 +51,8 @@
 	// Reactive validation schemas
 	const emailFormSchema = $derived(
 		z.object({
-			email: z.string().email({
-				message: `${localization.EMAIL} ${localization.IS_INVALID}`
+			email: z.email({
+				error: `${localization.EMAIL} ${localization.IS_INVALID}`
 			})
 		})
 	);

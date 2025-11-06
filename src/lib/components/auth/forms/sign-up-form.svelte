@@ -109,21 +109,21 @@
 	}
 
 	// Build form schema
-	const defaultFields: Record<string, z.ZodTypeAny> = {
-		email: z.string().email({
-			message: `${localization.EMAIL} ${localization.IS_INVALID}`
+	const defaultFields = {
+		email: z.email({
+			error: `${localization.EMAIL} ${localization.IS_INVALID}`
 		}),
 		password: getPasswordSchema(passwordValidation, localization),
 		name:
 			signUpFields?.includes('name') && nameRequired
 				? z.string().min(1, {
-						message: `${localization.NAME} ${localization.IS_REQUIRED}`
+						error: `${localization.NAME} ${localization.IS_REQUIRED}`
 					})
 				: z.string().optional(),
 		image: z.string().optional(),
 		username: usernameEnabled
 			? z.string().min(1, {
-					message: `${localization.USERNAME} ${localization.IS_REQUIRED}`
+					error: `${localization.USERNAME} ${localization.IS_REQUIRED}`
 				})
 			: z.string().optional(),
 		confirmPassword: confirmPasswordEnabled
@@ -136,7 +136,7 @@
 			: z.string().optional()
 	};
 
-	const schemaFields: Record<string, z.ZodTypeAny> = {};
+	const schemaFields = {} as Record<string, z.ZodTypeAny>;
 
 	// Add additional fields from signUpFields
 	if (signUpFields) {
@@ -187,8 +187,10 @@
 	}
 
 	const formSchema = z
-		.object(defaultFields)
-		.extend(schemaFields)
+		.object({
+			...defaultFields,
+			...schemaFields
+		})
 		.refine(
 			(data) => {
 				// Skip validation if confirmPassword is not enabled
@@ -202,14 +204,14 @@
 		);
 
 	// Create default values for the form
-	const defaultValues: Record<string, unknown> = {
+	const defaultValues = {
 		email: '',
 		password: '',
 		...(confirmPasswordEnabled && { confirmPassword: '' }),
 		...(signUpFields?.includes('name') ? { name: '' } : {}),
 		...(usernameEnabled ? { username: '' } : {}),
 		...(signUpFields?.includes('image') && avatar ? { image: '' } : {})
-	};
+	} as Record<string, unknown>;
 
 	// Add default values for additional fields
 	if (signUpFields) {
@@ -283,9 +285,7 @@
 				if (!additionalField?.validate) continue;
 
 				if (typeof value === 'string' && !(await additionalField.validate(value))) {
-					form.setError(field, {
-						message: `${additionalField.label} ${localization.IS_INVALID}`
-					});
+					form.setError(field as any, `${additionalField.label} ${localization.IS_INVALID}`);
 					return;
 				}
 			}
@@ -347,7 +347,7 @@
 	// Create form
 	const form = createForm({
 		schema: formSchema,
-		initialValues: defaultValues,
+		initialValues: defaultValues as z.infer<typeof formSchema>,
 		onSubmit: signUp
 	});
 
@@ -454,6 +454,7 @@
 				id="name"
 				type="text"
 				placeholder={localization.NAME_PLACEHOLDER}
+				autocomplete="name"
 				bind:value={form.data.name}
 				disabled={isSubmitting}
 				class={classNames?.input}
@@ -471,6 +472,7 @@
 			<Input
 				id="username"
 				type="text"
+				autocomplete="username"
 				placeholder={localization.USERNAME_PLACEHOLDER}
 				bind:value={form.data.username}
 				disabled={isSubmitting}
@@ -488,6 +490,7 @@
 		<Input
 			id="email"
 			type="email"
+			autocomplete="email"
 			placeholder={localization.EMAIL_PLACEHOLDER}
 			bind:value={form.data.email}
 			disabled={isSubmitting}
@@ -546,9 +549,9 @@
 					<div class="flex items-start space-x-2">
 						<Checkbox
 							id={field}
-							checked={form.data[field]}
+							checked={(form.data as any)[field]}
 							onCheckedChange={(checked) => {
-								form.data[field] = checked;
+								(form.data as any)[field] = checked;
 							}}
 							disabled={isSubmitting}
 						/>
@@ -556,8 +559,8 @@
 							{additionalField.label}
 						</Label>
 					</div>
-					{#if form.errors[field]}
-						<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors[field][0]}</p>
+					{#if (form.errors as any)[field]}
+						<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
 					{/if}
 				{:else if additionalField.type === 'number'}
 					<!-- Number Field -->
@@ -570,12 +573,12 @@
 							type="number"
 							placeholder={additionalField.placeholder ||
 								(typeof additionalField.label === 'string' ? additionalField.label : '')}
-							bind:value={form.data[field]}
+							bind:value={(form.data as any)[field]}
 							disabled={isSubmitting}
 							class={classNames?.input}
 						/>
-						{#if form.errors[field]}
-							<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors[field][0]}</p>
+						{#if (form.errors as any)[field]}
+							<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
 						{/if}
 					</div>
 				{:else if additionalField.multiline}
@@ -588,12 +591,12 @@
 							id={field}
 							placeholder={additionalField.placeholder ||
 								(typeof additionalField.label === 'string' ? additionalField.label : '')}
-							bind:value={form.data[field]}
+							bind:value={(form.data as any)[field]}
 							disabled={isSubmitting}
 							class={classNames?.input}
 						/>
-						{#if form.errors[field]}
-							<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors[field][0]}</p>
+						{#if (form.errors as any)[field]}
+							<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
 						{/if}
 					</div>
 				{:else}
@@ -607,12 +610,12 @@
 							type="text"
 							placeholder={additionalField.placeholder ||
 								(typeof additionalField.label === 'string' ? additionalField.label : '')}
-							bind:value={form.data[field]}
+							bind:value={(form.data as any)[field]}
 							disabled={isSubmitting}
 							class={classNames?.input}
 						/>
-						{#if form.errors[field]}
-							<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors[field][0]}</p>
+						{#if (form.errors as any)[field]}
+							<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
 						{/if}
 					</div>
 				{/if}

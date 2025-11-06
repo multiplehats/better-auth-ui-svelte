@@ -15,10 +15,11 @@
 	import Captcha from '$lib/components/captcha/captcha.svelte';
 	import { createForm } from '$lib/utils/form.svelte.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
+	import type { AuthFormClassNames } from '../auth-form.svelte';
 
 	interface Props {
 		className?: string;
-		classNames?: Record<string, string>;
+		classNames?: AuthFormClassNames;
 		isSubmitting?: boolean;
 		localization?: Partial<AuthLocalization>;
 		setIsSubmitting?: (value: boolean) => void;
@@ -56,12 +57,11 @@
 	const mergedLocalization = { ...contextLocalization, ...propLocalization };
 	const formSchema = z.object({
 		email: z
-			.string()
 			.email({
-				message: `${mergedLocalization.EMAIL} ${mergedLocalization.IS_INVALID}`
+				error: `${mergedLocalization.EMAIL} ${mergedLocalization.IS_INVALID}`
 			})
 			.min(1, {
-				message: `${mergedLocalization.EMAIL} ${mergedLocalization.IS_REQUIRED}`
+				error: `${mergedLocalization.EMAIL} ${mergedLocalization.IS_REQUIRED}`
 			})
 	});
 

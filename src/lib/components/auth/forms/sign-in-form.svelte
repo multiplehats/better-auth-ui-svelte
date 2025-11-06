@@ -82,10 +82,10 @@
 		z.object({
 			email: usernameEnabled
 				? z.string().min(1, {
-						message: `${localization.USERNAME} ${localization.IS_REQUIRED}`
+						error: `${localization.USERNAME} ${localization.IS_REQUIRED}`
 					})
-				: z.string().email({
-						message: `${localization.EMAIL} ${localization.IS_INVALID}`
+				: z.email({
+						error: `${localization.EMAIL} ${localization.IS_INVALID}`
 					}),
 			password: getPasswordSchema(passwordValidation, localization),
 			rememberMe: z.boolean().optional()
@@ -114,7 +114,7 @@
 
 		if (!result.success) {
 			errors = {};
-			result.error.errors.forEach((err) => {
+			result.error.issues.forEach((err) => {
 				if (err.path[0]) {
 					errors[err.path[0] as string] = err.message;
 				}
@@ -210,13 +210,12 @@
 			</Label>
 
 			{#if credentials?.forgotPassword}
-				<svelte:component
-					this={Link}
+				<Link
 					class={cn('text-sm hover:underline', classNames?.forgotPasswordLink)}
 					href={`${basePath}/${viewPaths.FORGOT_PASSWORD}${isHydrated.value && typeof window !== 'undefined' ? window.location.search : ''}`}
 				>
 					{localization.FORGOT_PASSWORD_LINK}
-				</svelte:component>
+				</Link>
 			{/if}
 		</div>
 

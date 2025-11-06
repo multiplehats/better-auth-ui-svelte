@@ -1,37 +1,34 @@
-import type { ZodSchema, ZodError } from 'zod';
+import type { ZodSchema, ZodError, z } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- we need a generic record type here
-export interface CreateFormOptions<T extends Record<string, any>> {
-	schema: ZodSchema<T>;
-	initialValues: T;
-	onSubmit: (values: T) => Promise<void> | void;
+export interface CreateFormOptions<TSchema extends ZodSchema> {
+	schema: TSchema;
+	initialValues: z.infer<TSchema>;
+	onSubmit: (values: z.infer<TSchema>) => Promise<void> | void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- we need a generic record type here
-export interface FormReturn<T extends Record<string, any>> {
-	data: T;
-	errors: Partial<Record<keyof T, string[]>>;
+export interface FormReturn<TSchema extends ZodSchema> {
+	data: z.infer<TSchema>;
+	errors: Partial<Record<keyof z.infer<TSchema>, string[]>>;
 	isSubmitting: boolean;
 	submitError: string | null;
 	handleSubmit: (e?: SubmitEvent) => Promise<void>;
 	validate: () => boolean;
 	reset: () => void;
-	setError: (field: keyof T, message: string) => void;
+	setError: (field: keyof z.infer<TSchema>, message: string) => void;
 }
 
 /**
  * Create a form with validation and submission handling
  * This utility works in both Svelte SPAs and SvelteKit
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- we need a generic record type here
-export function createForm<T extends Record<string, any>>(
-	options: CreateFormOptions<T>
-): FormReturn<T> {
+export function createForm<TSchema extends ZodSchema>(
+	options: CreateFormOptions<TSchema>
+): FormReturn<TSchema> {
 	// Create a state object that holds all form state
 	// This ensures all properties are reactive and properly tracked
 	const state = $state({
-		data: structuredClone(options.initialValues) as T,
-		errors: {} as Partial<Record<keyof T, string[]>>,
+		data: structuredClone(options.initialValues) as z.infer<TSchema>,
+		errors: {} as Partial<Record<keyof z.infer<TSchema>, string[]>>,
 		isSubmitting: false,
 		submitError: null as string | null
 	});
@@ -42,9 +39,22 @@ export function createForm<T extends Record<string, any>>(
 			state.errors = {};
 			return true;
 		} catch (error) {
-			if (error && typeof error === 'object' && 'flatten' in error) {
+			if (error && typeof error === 'object' && 'issues' in error) {
 				const zodError = error as ZodError;
-				state.errors = zodError.flatten().fieldErrors as Partial<Record<keyof T, string[]>>;
+				const fieldErrors: Partial<Record<keyof z.infer<TSchema>, string[]>> = {};
+
+				// Build field errors from issues array
+				zodError.issues.forEach((issue) => {
+					const path = issue.path[0] as keyof z.infer<TSchema>;
+					if (path) {
+						if (!fieldErrors[path]) {
+							fieldErrors[path] = [];
+						}
+						fieldErrors[path]!.push(issue.message);
+					}
+				});
+
+				state.errors = fieldErrors;
 			}
 			return false;
 		}
@@ -69,13 +79,13 @@ export function createForm<T extends Record<string, any>>(
 	}
 
 	function reset() {
-		state.data = structuredClone(options.initialValues) as T;
+		state.data = structuredClone(options.initialValues) as z.infer<TSchema>;
 		state.errors = {};
 		state.isSubmitting = false;
 		state.submitError = null;
 	}
 
-	function setError(field: keyof T, message: string) {
+	function setError(field: keyof z.infer<TSchema>, message: string) {
 		if (!state.errors[field]) {
 			state.errors[field] = [];
 		}
@@ -88,7 +98,7 @@ export function createForm<T extends Record<string, any>>(
 		get data() {
 			return state.data;
 		},
-		set data(value: T) {
+		set data(value: z.infer<TSchema>) {
 			state.data = value;
 		},
 		get errors() {

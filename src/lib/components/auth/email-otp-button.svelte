@@ -4,8 +4,9 @@
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils/ui.js';
-	import type { AuthViewPath, AuthLocalization } from '$lib/types';
+	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { AuthViewClassNames } from './auth-view.svelte';
+	import type { AuthViewPath } from '$lib/utils/view-paths.js';
 
 	interface Props {
 		classNames?: AuthViewClassNames;

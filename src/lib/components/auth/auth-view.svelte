@@ -3,12 +3,12 @@
 	import type { Snippet } from 'svelte';
 	import { onMount } from 'svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { socialProviders } from '$lib/lib/social-providers';
+	import { socialProviders } from '$lib/lib/social-providers.js';
 	import { cn } from '$lib/utils/ui.js';
 	import { getViewByPath } from '$lib/utils/utils.js';
-	import * as Card from '$lib/components/ui/card';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Separator } from '$lib/components/ui/separator';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import AuthForm, { type AuthFormClassNames } from './auth-form.svelte';
 	import ProviderButton from './provider-button.svelte';
 	import MagicLinkButton from './magic-link-button.svelte';
@@ -75,15 +75,14 @@
 			'SIGN_IN'
 	);
 
-	const credentials = config.credentials !== false;
-	const magicLink = config.magicLink !== false;
-	const emailOTP = config.emailOTP !== false;
-	// signUp can be true, false, or an object - treat object as truthy
-	const signUp = config.signUp !== false;
-	const passkey = config.passkey !== false;
-	const oneTap = config.oneTap !== false;
-	const social = config.social;
-	const genericOAuth = config.genericOAuth;
+	const credentials = $derived(config.credentials);
+	const magicLink = $derived(config.magicLink);
+	const emailOTP = $derived(config.emailOTP);
+	const signUp = $derived(config.signUp);
+	const passkey = $derived(config.passkey);
+	const oneTap = $derived(config.oneTap);
+	const social = $derived(config.social);
+	const genericOAuth = $derived(config.genericOAuth);
 
 	// Determine social layout
 	let socialLayout = $derived(
@@ -178,11 +177,11 @@
 				<!-- Separator -->
 				{#if credentials || magicLink || emailOTP}
 					<div class={cn('flex items-center gap-2', classNames?.continueWith)}>
-						<Separator class={cn('!w-auto grow', classNames?.separator)} />
-						<span class="flex-shrink-0 text-sm text-muted-foreground">
+						<Separator class={cn('w-auto! grow', classNames?.separator)} />
+						<span class="shrink-0 text-sm text-muted-foreground">
 							{localization.OR_CONTINUE_WITH}
 						</span>
-						<Separator class={cn('!w-auto grow', classNames?.separator)} />
+						<Separator class={cn('w-auto! grow', classNames?.separator)} />
 					</div>
 				{/if}
 

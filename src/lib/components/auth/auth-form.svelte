@@ -52,7 +52,7 @@
 		className,
 		classNames,
 		callbackURL,
-		isSubmitting,
+		isSubmitting = $bindable(),
 		localization: localizationProp,
 		pathname,
 		redirectTo,
@@ -84,50 +84,6 @@
 	let view = $derived<AuthViewPath>(
 		viewProp || (getViewByPath(viewPaths, pathname) as AuthViewPath) || 'SIGN_IN'
 	);
-
-	$inspect(view);
-
-	// Validate pathname and redirect if invalid
-	$effect(() => {
-		if (pathname && !getViewByPath(viewPaths, pathname)) {
-			console.error(`Invalid auth view: ${pathname}`);
-			replace(`${basePath}/${viewPaths.SIGN_IN}${window.location.search}`);
-		}
-	});
-
-	// Redirect to appropriate view based on enabled features
-	$effect(() => {
-		let isInvalidView = false;
-
-		if (view === 'MAGIC_LINK' && (!magicLink || (!credentials && !emailOTP))) {
-			isInvalidView = true;
-		}
-
-		if (view === 'EMAIL_OTP' && (!emailOTP || (!credentials && !magicLink))) {
-			isInvalidView = true;
-		}
-
-		if (view === 'SIGN_UP' && !signUpEnabled) {
-			isInvalidView = true;
-		}
-
-		if (
-			!credentials &&
-			['SIGN_UP', 'FORGOT_PASSWORD', 'RESET_PASSWORD', 'TWO_FACTOR', 'RECOVER_ACCOUNT'].includes(
-				view
-			)
-		) {
-			isInvalidView = true;
-		}
-
-		if (['TWO_FACTOR', 'RECOVER_ACCOUNT'].includes(view) && !twoFactorEnabled) {
-			isInvalidView = true;
-		}
-
-		if (isInvalidView) {
-			replace(`${basePath}/${viewPaths.SIGN_IN}${window.location.search}`);
-		}
-	});
 </script>
 
 {#if view === 'SIGN_OUT'}
