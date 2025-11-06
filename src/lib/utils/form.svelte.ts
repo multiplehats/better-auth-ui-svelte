@@ -35,7 +35,9 @@ export function createForm<TSchema extends ZodSchema>(
 
 	function validate(): boolean {
 		try {
-			options.schema.parse(state.data);
+			// Access schema reactively to support $derived schemas
+			const schema = options.schema;
+			schema.parse(state.data);
 			state.errors = {};
 			return true;
 		} catch (error) {

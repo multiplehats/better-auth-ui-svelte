@@ -18,22 +18,26 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 	const data = $derived.by(() => {
 		if (pathMode === 'slug') {
 			const slug = slugProp || contextSlug;
-			return organizationsResult.data?.find((organization: Organization) => organization.slug === slug);
+			return 'data' in organizationsResult ? organizationsResult.data?.find((organization: Organization) => organization.slug === slug) : undefined;
 		} else {
-			return activeOrgResult.data;
+			return 'data' in activeOrgResult ? activeOrgResult.data : undefined;
 		}
 	});
 
 	const isPending = $derived(
-		pathMode === 'slug' ? organizationsResult.isPending : activeOrgResult.isPending
+		pathMode === 'slug'
+			? ('isPending' in organizationsResult ? organizationsResult.isPending : false)
+			: ('isPending' in activeOrgResult ? activeOrgResult.isPending : false)
 	);
 
 	const isRefetching = $derived(
-		pathMode === 'slug' ? organizationsResult.isRefetching : activeOrgResult.isRefetching
+		pathMode === 'slug'
+			? ('isRefetching' in organizationsResult ? organizationsResult.isRefetching : false)
+			: ('isRefetching' in activeOrgResult ? activeOrgResult.isRefetching : false)
 	);
 
 	const refetch = $derived(
-		pathMode === 'slug' ? undefined : activeOrgResult.refetch
+		pathMode === 'slug' ? undefined : ('refetch' in activeOrgResult ? activeOrgResult.refetch : undefined)
 	);
 
 	return {

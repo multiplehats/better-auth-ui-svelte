@@ -141,7 +141,7 @@
 		{/if}
 	</div>
 
-	<Captcha bind:captchaRef {localization} action="/forget-password" />
+	<Captcha {localization} action="/forget-password" />
 
 	<Button
 		type="submit"

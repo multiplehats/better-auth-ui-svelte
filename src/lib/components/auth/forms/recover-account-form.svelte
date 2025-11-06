@@ -8,7 +8,7 @@
 		getAuthUIConfig
 	} from '$lib/context/auth-ui-config.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
-	import { getLocalizedError } from '$lib/utils/utils';
+	import { getLocalizedError } from '$lib/utils/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';

@@ -390,27 +390,21 @@
 
 			<div class="flex items-center gap-4">
 				<DropdownMenu.Root>
-					<DropdownMenu.Trigger asChild let:builder>
-						<Button
-							builders={[builder]}
-							class="size-fit rounded-full"
-							size="icon"
-							variant="ghost"
-							type="button"
-						>
-							<UserAvatar
-								isPending={uploadingAvatar}
-								className="size-16"
-								user={avatarImage
-									? {
-											name: form.data.name as string,
-											email: form.data.email as string,
-											image: avatarImage
-										}
-									: null}
-								{localization}
-							/>
-						</Button>
+					<DropdownMenu.Trigger
+						class="size-fit rounded-full"
+					>
+						<UserAvatar
+							isPending={uploadingAvatar}
+							className="size-16"
+							user={avatarImage
+								? {
+										name: form.data.name as string,
+										email: form.data.email as string,
+										image: avatarImage
+									}
+								: null}
+							{localization}
+						/>
 					</DropdownMenu.Trigger>
 
 					<DropdownMenu.Content align="start">

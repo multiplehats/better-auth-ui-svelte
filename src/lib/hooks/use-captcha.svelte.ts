@@ -1,5 +1,5 @@
 import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
-import type { AuthLocalization } from '$lib/types';
+import type { AuthLocalization } from '$lib/types/index.js';
 
 // Default captcha endpoints
 const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/forget-password'];

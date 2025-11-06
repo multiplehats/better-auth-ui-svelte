@@ -57,7 +57,7 @@
 		{#await import('@marsidev/svelte-turnstile') then { Turnstile }}
 			<div class="mx-auto">
 				<Turnstile
-					bind:captchaRef
+					bind:ref
 					siteKey={captcha.siteKey}
 					options={{
 						theme: theme,

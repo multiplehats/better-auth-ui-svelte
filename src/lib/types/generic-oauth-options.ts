@@ -2,8 +2,9 @@ import type { AnyAuthClient } from './any-auth-client.js';
 
 // This will need to be defined or imported from a social-providers utility
 export type Provider = {
-	id: string;
+	provider: string;
 	name: string;
+	icon?: any;
 };
 
 export type GenericOAuthOptions = {

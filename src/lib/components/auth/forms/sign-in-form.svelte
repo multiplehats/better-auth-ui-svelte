@@ -8,14 +8,14 @@
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import { cn, getLocalizedError, getPasswordSchema, isValidEmail } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
-	import type { PasswordValidation } from '$lib/types/password-validation';
+	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
 	import PasswordInput from '$lib/components/password-input.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import type { AuthFormClassNames } from './auth-form.svelte';
+	import type { AuthFormClassNames } from '../auth-form.svelte';
 
 	interface Props {
 		className?: string;
@@ -251,7 +251,7 @@
 		</div>
 	{/if}
 
-	<Captcha bind:captchaRef {localization} action="/sign-in/email" />
+	<Captcha {localization} action="/sign-in/email" />
 
 	<Button
 		type="submit"

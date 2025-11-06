@@ -169,7 +169,7 @@
 		{/if}
 	</div>
 
-	<Captcha bind:captchaRef {localization} action="/sign-in/magic-link" />
+	<Captcha {localization} action="/sign-in/magic-link" />
 
 	<Button
 		type="submit"

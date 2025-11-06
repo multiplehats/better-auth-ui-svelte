@@ -51,8 +51,8 @@
 		<ReCAPTCHA
 			bind:this={captchaRef}
 			sitekey={captcha.siteKey}
-			theme={theme.value}
-			hl={lang.value}
+			theme={theme}
+			hl={lang}
 			size={captcha.provider === 'google-recaptcha-v2-invisible' ? 'invisible' : 'normal'}
 			class={cn(
 				captcha.provider === 'google-recaptcha-v2-invisible'

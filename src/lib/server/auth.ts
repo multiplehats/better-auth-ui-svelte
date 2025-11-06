@@ -16,6 +16,7 @@ import {
 	genericOAuth
 } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
+import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
 
 /**
  * This is NOT included in the libary files.
@@ -36,17 +37,13 @@ export const auth = betterAuth({
 		twoFactor(),
 		username(),
 		magicLink({
-			sendMagicLink(data) {
-				// Implement your email sending logic here
-				console.log('Send magic link to:', data);
+			async sendMagicLink(data) {
+				await sendMagicLinkEmail(data.email, data.url);
 			}
 		}),
 		emailOTP({
-			sendVerificationOTP(data) {
-				// Implement your email sending logic here
-				console.log('Send email OTP to:', data);
-
-				return Promise.resolve();
+			async sendVerificationOTP(data) {
+				await sendOTPEmail(data.email, data.otp);
 			}
 		}),
 		lastLoginMethod(),

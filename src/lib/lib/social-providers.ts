@@ -97,3 +97,6 @@ export type Provider = {
 	name: string;
 	icon?: any; // Component type - will be added later
 };
+
+// Alias for compatibility with generic-oauth-options
+export type SocialProviderConfig = Provider;

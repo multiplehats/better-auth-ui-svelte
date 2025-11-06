@@ -1,5 +1,5 @@
-import type { SocialProvider } from 'better-auth/svelte';
 import type { AnyAuthClient } from './any-auth-client.js';
+import type { SocialProvider } from 'better-auth/social-providers';
 
 export type SocialOptions = {
 	/**

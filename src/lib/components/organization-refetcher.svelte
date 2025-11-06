@@ -13,7 +13,7 @@
 	const { slug, pathMode, personalPath } = organizationOptions || {};
 
 	const sessionStore = useSession();
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 
 	const organizationResult = useCurrentOrganization();
 	const organization = $derived(organizationResult.data);
@@ -22,8 +22,8 @@
 	const refetchOrganization = $derived(organizationResult.refetch);
 
 	const listOrganizationsResult = useListOrganizations();
-	const organizations = $derived(listOrganizationsResult.data);
-	const refetchListOrganizations = $derived(listOrganizationsResult.refetch);
+	const organizations = $derived('data' in listOrganizationsResult ? listOrganizationsResult.data : undefined);
+	const refetchListOrganizations = $derived('refetch' in listOrganizationsResult ? listOrganizationsResult.refetch : undefined);
 
 	// Refetch organizations when user changes
 	$effect(() => {

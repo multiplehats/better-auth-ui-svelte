@@ -391,20 +391,61 @@ export type { AuthUIConfig, User, Session, AuthLocalization };
 
 ## Development
 
+### Prerequisites
+
+- Node.js 18+ and pnpm
+- Docker (for Mailpit and PostgreSQL)
+
+### Getting Started
+
+1. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+2. **Configure environment variables**
+
+   Copy `.env.example` to `.env` and update the values:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Start Mailpit for email testing**
+
+   Mailpit provides a local SMTP server and web UI for testing emails:
+   ```bash
+   docker compose up -d
+   ```
+
+   Access the Mailpit web UI at http://localhost:8025 to view emails sent during development (magic links, OTP codes, etc.)
+
+4. **Start development server**
+   ```bash
+   pnpm dev
+   ```
+
+### Development Commands
+
 ```bash
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-
 # Build library
 pnpm run build
 
 # Lint and format
 pnpm run lint
 pnpm run format
+
+# Stop Mailpit
+docker compose down
 ```
+
+### Email Testing
+
+All authentication emails (magic links, OTP codes) are sent through Mailpit in development:
+
+- **SMTP Server**: localhost:1025
+- **Web UI**: http://localhost:8025
+- Emails are captured locally and never sent to real addresses
+- Click on emails in the UI to view and test links
 
 ## Architecture
 

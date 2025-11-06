@@ -17,6 +17,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
+	import { QRCode } from '$lib/components/ui/qr-code/index.js';
 	import OTPInputGroup from '../otp-input-group.svelte';
 	import type { AuthFormClassNames } from '../auth-form.svelte';
 
@@ -64,13 +65,18 @@
 
 	// Get session data to check if 2FA is being enabled
 	const sessionQuery = hooks?.useSession?.();
-	const sessionData = $derived(sessionQuery?.data);
+	const sessionData = $derived(sessionQuery && 'data' in sessionQuery ? sessionQuery.data as { user?: User } | null : undefined);
 	const isTwoFactorEnabled = $derived((sessionData?.user as User | undefined)?.twoFactorEnabled);
 
 	const twoFactorMethods = $derived(twoFactor || ['totp']);
-	let method = $state<'totp' | 'otp' | null>(
-		twoFactorMethods.length === 1 ? twoFactorMethods[0] : null
-	);
+	let method = $state<'totp' | 'otp' | null>(null);
+
+	// Initialize method based on twoFactorMethods
+	$effect(() => {
+		if (twoFactorMethods.length === 1) {
+			method = twoFactorMethods[0] as 'totp' | 'otp';
+		}
+	});
 
 	let isSendingOtp = $state(false);
 	let cooldownSeconds = $state(0);
@@ -159,7 +165,7 @@
 		} catch (error) {
 			if (error instanceof z.ZodError) {
 				const fieldErrors: Record<string, string> = {};
-				error.errors.forEach((err) => {
+				error.issues.forEach((err: z.ZodIssue) => {
 					if (err.path.length > 0) {
 						fieldErrors[err.path[0] as string] = err.message;
 					}
@@ -223,16 +229,8 @@
 		<div class="space-y-3">
 			<Label class={classNames?.label}>{localization.TWO_FACTOR_TOTP_LABEL}</Label>
 
-			<!-- TODO: Replace with proper QR code component (react-qr-code equivalent) -->
-			<div class={cn('rounded-lg border bg-white p-4 text-center shadow-xs', classNames?.qrCode)}>
-				<p class="mb-2 text-xs text-muted-foreground">
-					Scan this QR code with your authenticator app
-				</p>
-				<!-- Placeholder for QR code - needs proper QR code library -->
-				<div class="mx-auto flex h-48 w-48 items-center justify-center rounded bg-gray-100">
-					<QrCodeIcon class="size-12 text-muted-foreground" />
-				</div>
-				<p class="mt-2 font-mono text-xs break-all">{totpURI}</p>
+			<div class={cn('border shadow-xs', classNames?.qrCode)}>
+				<QRCode content={totpURI} />
 			</div>
 		</div>
 	{/if}

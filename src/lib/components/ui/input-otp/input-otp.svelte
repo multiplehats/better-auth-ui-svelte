@@ -3,6 +3,18 @@
 	import { cn } from "$lib/utils/ui.js";
 	import type { Snippet } from "svelte";
 
+	interface PinInputCell {
+		char: string | null | undefined;
+		isActive: boolean;
+		hasFakeCaret: boolean;
+	}
+
+	interface PinInputRootSnippetProps {
+		cells: PinInputCell[];
+		isFocused: boolean;
+		isHovering: boolean;
+	}
+
 	let {
 		ref = $bindable(null),
 		class: className,
@@ -10,7 +22,7 @@
 		children,
 		...restProps
 	}: InputOTPPrimitive.RootProps & {
-		children?: Snippet<[InputOTPPrimitive.SnippetProps]>;
+		children?: Snippet<[PinInputRootSnippetProps]>;
 	} = $props();
 </script>
 

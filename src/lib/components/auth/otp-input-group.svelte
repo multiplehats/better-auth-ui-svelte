@@ -1,11 +1,16 @@
 <script lang="ts">
-	import type { PinInput } from 'bits-ui';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
+
+	interface PinInputCell {
+		char: string | null | undefined;
+		isActive: boolean;
+		hasFakeCaret: boolean;
+	}
 
 	interface Props {
 		otpSeparators?: 0 | 1 | 2;
 		class?: string;
-		cells: PinInput.CellsData;
+		cells: PinInputCell[];
 	}
 
 	let { otpSeparators = 0, class: className, cells }: Props = $props();
