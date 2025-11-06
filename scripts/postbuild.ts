@@ -1,0 +1,51 @@
+#!/usr/bin/env tsx
+
+import { readFileSync, writeFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename: string = fileURLToPath(import.meta.url);
+const __dirname: string = dirname(__filename);
+
+const typesFilePath: string = join(__dirname, '..', 'src', 'lib', 'types', 'any-auth-client.ts');
+
+console.log('🔄 Running postbuild script...');
+
+try {
+	let content: string = readFileSync(typesFilePath, 'utf-8');
+
+	// Restore the authClient import
+	const importPattern: RegExp = /\/\/ import type \{ authClient \} from '\$lib\/auth-client\.js';/;
+	const importReplacement: string = `import type { authClient } from '$lib/auth-client.js';`;
+
+	if (importPattern.test(content)) {
+		content = content.replace(importPattern, importReplacement);
+	}
+
+	// Revert back to development type
+	const buildPattern: RegExp =
+		/export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' \| 'getSession'>;\n\/\/ export type AnyAuthClient = Omit<typeof authClient, 'signUp' \| 'getSession'>;/;
+
+	const devReplacement: string = `/**
+ * Type swapping via prebuild/postbuild scripts:
+ * - DEV: Uses \`typeof authClient\` for accurate plugin types from our specific Better Auth config
+ * - BUILD: Uses \`ReturnType<typeof createAuthClient>\` for generic types, since consumers
+ *   may have different plugin configurations than our development instance
+ *
+ * This ensures proper type-checking during development while maintaining compatibility
+ * for library consumers with varying Better Auth plugin configurations.
+ */
+// export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;
+export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
+
+	if (buildPattern.test(content)) {
+		content = content.replace(buildPattern, devReplacement);
+		writeFileSync(typesFilePath, content, 'utf-8');
+		console.log('✅ Successfully reverted type definitions to development mode');
+	} else {
+		console.log('ℹ️  Type definitions already in development mode or pattern not found');
+	}
+} catch (error) {
+	console.error('❌ Error during postbuild:', error);
+	process.exit(1);
+}
