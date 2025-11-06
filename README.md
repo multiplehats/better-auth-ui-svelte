@@ -10,6 +10,10 @@ Pre-built, customizable authentication UI components for [Better Auth](https://w
 
 This is a Svelte 5 port of the [Better Auth UI React library](https://github.com/daveyplate/better-auth-ui). The API is nearly identical to the original React library, making it easy to follow the [official documentation](https://better-auth-ui.com). All credits for the original design and architecture go to [daveycodez](https://github.com/daveycodez).
 
+## Warning
+
+This library is currently in **active development** and not yet on NPM. Breaking changes may occur.
+
 ## Why Choose Better Auth UI?
 
 - **Easy** – Plug & play authentication components
@@ -73,7 +77,7 @@ Create your Better Auth client instance (e.g., in `src/lib/auth-client.ts`):
 import { createAuthClient } from 'better-auth/svelte';
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.VITE_AUTH_URL || 'http://localhost:3000',
+  baseURL: 'http://localhost:5173',
   // Add any plugins you need
   plugins: [
     // organizationClient(),
@@ -98,15 +102,8 @@ The `<AuthUIProvider />` wraps your application with authentication context. Set
 
 <Toaster />
 
-<AuthUIProvider
-	{authClient}
-	navigate={goto}
-	onSessionChange={async () => {
-		// Invalidate all server data when session changes
-		await invalidateAll();
-	}}
->
-	<slot />
+<AuthUIProvider {authClient}>
+	{@render children()}
 </AuthUIProvider>
 ```
 
@@ -136,33 +133,14 @@ Create a dynamic route to handle all authentication views. Create the file `src/
 ```svelte
 <script lang="ts">
 	import { AuthView, authViewPaths } from 'better-auth-ui-svelte';
-	import { page } from '$app/stores';
+	import type { PageProps } from './$types.js';
 
-	const path = $derived($page.params.path);
+	let { data, params }: PageProps = $props();
 </script>
 
 <main class="container flex grow items-center justify-center p-4">
-	<AuthView {path} />
+	<AuthView path={params.path} />
 </main>
-```
-
-For better type safety and pre-rendering support, also create `src/routes/auth/[path]/+page.ts`:
-
-```typescript
-import { authViewPaths } from 'better-auth-ui-svelte';
-import type { PageLoad } from './$types';
-
-export const prerender = true;
-
-export const entries = () => {
-	return Object.values(authViewPaths).map((path) => ({ path }));
-};
-
-export const load: PageLoad = async ({ params }) => {
-	return {
-		path: params.path
-	};
-};
 ```
 
 This single dynamic route handles all authentication views:
