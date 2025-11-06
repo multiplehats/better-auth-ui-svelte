@@ -2,13 +2,16 @@ import { createAuthClient } from 'better-auth/svelte';
 import {
 	organizationClient,
 	apiKeyClient,
-	oneTimeTokenClient,
 	twoFactorClient,
 	usernameClient,
 	magicLinkClient,
 	emailOTPClient,
 	lastLoginMethodClient,
-	multiSessionClient
+	oneTapClient,
+	genericOAuthClient,
+	anonymousClient,
+	multiSessionClient,
+	passkeyClient
 } from 'better-auth/client/plugins';
 
 /**
@@ -17,19 +20,20 @@ import {
  */
 export const authClient = createAuthClient({
 	plugins: [
-		organizationClient({
-			teams: {
-				enabled: true
-			}
-		}),
 		apiKeyClient(),
-		oneTimeTokenClient(),
-		twoFactorClient(),
+		multiSessionClient(),
+		passkeyClient(),
+		oneTapClient({
+			clientId: ''
+		}),
+		genericOAuthClient(),
+		anonymousClient(),
 		usernameClient(),
 		magicLinkClient(),
 		emailOTPClient(),
-		lastLoginMethodClient(),
-		multiSessionClient()
+		twoFactorClient(),
+		organizationClient(),
+		lastLoginMethodClient()
 	]
 });
 

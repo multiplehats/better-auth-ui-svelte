@@ -1,5 +1,5 @@
 import { getContext, setContext } from 'svelte';
-import type { AuthUIConfig } from '../types/index.js';
+import type { AnyAuthClient, AuthUIConfig } from '../types/index.js';
 import { authLocalization } from '../localization/auth-localization.js';
 
 const AUTH_UI_CONFIG_KEY = Symbol('auth-ui-config');
@@ -22,7 +22,9 @@ export function setAuthUIConfig(config: AuthUIConfig) {
 export function getAuthUIConfig(): AuthUIConfig {
 	const config = getContext<AuthUIConfig | undefined>(AUTH_UI_CONFIG_KEY);
 	if (!config) {
-		throw new Error('AuthUIProvider context not found. Make sure to wrap your app with <AuthUIProvider>');
+		throw new Error(
+			'AuthUIProvider context not found. Make sure to wrap your app with <AuthUIProvider>'
+		);
 	}
 	return config;
 }
@@ -39,7 +41,10 @@ export function getLocalization() {
  * Get the auth client from context
  * IMPORTANT: authClient must be passed to AuthUIProvider by the consuming app
  */
-export function getAuthClient() {
+export function getAuthClient<KeysToOmit extends keyof AnyAuthClient = never>(): Omit<
+	AnyAuthClient,
+	KeysToOmit
+> {
 	const config = getAuthUIConfig();
 	return config.authClient;
 }

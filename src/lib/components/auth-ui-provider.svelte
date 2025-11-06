@@ -6,7 +6,7 @@
 	import RecaptchaV3 from './captcha/recaptcha-v3.svelte';
 	import OrganizationRefetcher from './organization-refetcher.svelte';
 	import type {
-		AnyAuthClient,
+		AuthClient,
 		AuthHooks,
 		AuthMutators,
 		AccountOptions,
@@ -34,7 +34,7 @@
 		/**
 		 * Better Auth client returned from createAuthClient
 		 */
-		authClient: AnyAuthClient;
+		authClient: AuthClient;
 		/**
 		 * Enable account view & account configuration
 		 * @default { fields: ["image", "name"] }
@@ -467,10 +467,10 @@
 				useAuthData({
 					queryFn: authClient.listAccounts,
 					cacheKey: 'listAccounts'
-				}),
+				}) as any,
 			useAccountInfo: (params) =>
 				useAuthData({
-					queryFn: () => authClient.accountInfo(params),
+					queryFn: () => authClient.accountInfo({ accountId: params.providerId }),
 					cacheKey: `accountInfo:${JSON.stringify(params)}`
 				}),
 			useListDeviceSessions: () =>
@@ -502,7 +502,7 @@
 				}),
 			useInvitation: (params) =>
 				useAuthData({
-					queryFn: () => authClient.organization.getInvitation(params),
+					queryFn: () => authClient.organization.getInvitation({ query: params }),
 					cacheKey: `invitation:${JSON.stringify(params)}`
 				}),
 			useListInvitations: (params) =>
@@ -553,52 +553,130 @@
 
 	// Get session data
 	const sessionStore = authClient.useSession();
-	const sessionData = $derived(sessionStore.data);
+	const sessionData = $derived($sessionStore.data);
 
-	// Set the context for child components - wrapped in $effect to capture reactive values
-	$effect(() => {
-		setAuthUIConfig({
-			authClient,
-			additionalFields,
-			apiKey,
-			avatar,
-			basePath,
-			baseURL,
-			captcha,
-			redirectTo: redirectToProp,
-			changeEmail,
-			credentials,
-			deleteUser,
-			emailVerification,
-			emailOTP,
-			freshAge,
-			genericOAuth,
-			gravatar,
-			hooks,
-			magicLink,
-			multiSession,
-			mutators,
-			localization,
-			nameRequired,
-			oneTap,
-			optimistic,
-			organization,
-			passkey,
-			persistClient,
-			account,
-			signUp,
-			social,
-			toast: toastProp || defaultToast,
-			twoFactor,
-			navigate: navigateProp || defaultNavigate,
-			onSessionChange,
-			replace: replaceProp || navigateProp || defaultReplace,
-			viewPaths,
-			Link: LinkProp || DefaultLink,
-			theme,
-			...props
-		});
-	});
+	// Create a reactive context object using getters to preserve reactivity
+	// This ensures child components always access the current derived values
+	const config = {
+		get authClient() {
+			return authClient;
+		},
+		get additionalFields() {
+			return additionalFields;
+		},
+		get apiKey() {
+			return apiKey;
+		},
+		get avatar() {
+			return avatar;
+		},
+		get basePath() {
+			return basePath;
+		},
+		get baseURL() {
+			return baseURL;
+		},
+		get captcha() {
+			return captcha;
+		},
+		get redirectTo() {
+			return redirectToProp;
+		},
+		get changeEmail() {
+			return changeEmail;
+		},
+		get credentials() {
+			return credentials;
+		},
+		get deleteUser() {
+			return deleteUser;
+		},
+		get emailVerification() {
+			return emailVerification;
+		},
+		get emailOTP() {
+			return emailOTP;
+		},
+		get freshAge() {
+			return freshAge;
+		},
+		get genericOAuth() {
+			return genericOAuth;
+		},
+		get gravatar() {
+			return gravatar;
+		},
+		get hooks() {
+			return hooks;
+		},
+		get magicLink() {
+			return magicLink;
+		},
+		get multiSession() {
+			return multiSession;
+		},
+		get mutators() {
+			return mutators;
+		},
+		get localization() {
+			return localization;
+		},
+		get nameRequired() {
+			return nameRequired;
+		},
+		get oneTap() {
+			return oneTap;
+		},
+		get optimistic() {
+			return optimistic;
+		},
+		get organization() {
+			return organization;
+		},
+		get passkey() {
+			return passkey;
+		},
+		get persistClient() {
+			return persistClient;
+		},
+		get account() {
+			return account;
+		},
+		get signUp() {
+			return signUp;
+		},
+		get social() {
+			return social;
+		},
+		get toast() {
+			return toastProp || defaultToast;
+		},
+		get twoFactor() {
+			return twoFactor;
+		},
+		get navigate() {
+			return navigateProp || defaultNavigate;
+		},
+		get onSessionChange() {
+			return onSessionChange;
+		},
+		get replace() {
+			return replaceProp || navigateProp || defaultReplace;
+		},
+		get viewPaths() {
+			return viewPaths;
+		},
+		get Link() {
+			return LinkProp || DefaultLink;
+		},
+		get theme() {
+			return theme;
+		},
+		...props
+	};
+
+	// Set the context for child components synchronously
+	setAuthUIConfig(config);
 </script>
 
 {#if sessionData && organization}

@@ -1,4 +1,3 @@
-import type { createAuthClient } from 'better-auth/svelte';
 import type { authClient } from '$lib/auth-client.js';
 
 /**
@@ -12,3 +11,5 @@ import type { authClient } from '$lib/auth-client.js';
  */
 // export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;
 export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;
+
+export type AuthClient = typeof authClient;

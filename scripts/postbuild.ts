@@ -40,11 +40,23 @@ export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
 
 	if (buildPattern.test(content)) {
 		content = content.replace(buildPattern, devReplacement);
-		writeFileSync(typesFilePath, content, 'utf-8');
-		console.log('✅ Successfully reverted type definitions to development mode');
 	} else {
-		console.log('ℹ️  Type definitions already in development mode or pattern not found');
+		console.log('ℹ️  AnyAuthClient type already in development mode or pattern not found');
 	}
+
+	// Revert AuthClient type back to development mode (without Omit)
+	const authClientBuildPattern: RegExp =
+		/export type AuthClient = ReturnType<typeof createAuthClient>;\n\/\/ export type AuthClient = typeof authClient;/;
+	const authClientDevReplacement: string = `export type AuthClient = typeof authClient;`;
+
+	if (authClientBuildPattern.test(content)) {
+		content = content.replace(authClientBuildPattern, authClientDevReplacement);
+	} else {
+		console.log('ℹ️  AuthClient type already in development mode or pattern not found');
+	}
+
+	writeFileSync(typesFilePath, content, 'utf-8');
+	console.log('✅ Successfully reverted type definitions to development mode');
 } catch (error) {
 	console.error('❌ Error during postbuild:', error);
 	process.exit(1);

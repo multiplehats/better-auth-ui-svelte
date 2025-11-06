@@ -11,33 +11,30 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 
 	const { pathMode, slug: contextSlug } = organizationOptions || {};
 
-	let data: Organization | null | undefined;
-	let isPending: boolean | undefined;
-	let isRefetching: boolean | undefined;
-	let refetch: (() => void) | undefined;
-
 	const organizationsResult = useListOrganizations();
-	const { data: organizations, isPending: organizationsPending, isRefetching: organizationsRefetching } = $derived(organizationsResult);
+	const activeOrgResult = useActiveOrganization();
 
-	if (pathMode === 'slug') {
-		const slug = slugProp || contextSlug;
-		data = $derived(organizations?.find((organization: Organization) => organization.slug === slug));
-		isPending = organizationsPending;
-		isRefetching = organizationsRefetching;
-	} else {
-		const activeOrgResult = useActiveOrganization();
-		const {
-			data: activeOrganization,
-			isPending: organizationPending,
-			isRefetching: organizationRefetching,
-			refetch: refetchOrganization
-		} = $derived(activeOrgResult);
+	// Derive all reactive state based on pathMode
+	const data = $derived.by(() => {
+		if (pathMode === 'slug') {
+			const slug = slugProp || contextSlug;
+			return organizationsResult.data?.find((organization: Organization) => organization.slug === slug);
+		} else {
+			return activeOrgResult.data;
+		}
+	});
 
-		refetch = refetchOrganization;
-		data = activeOrganization;
-		isPending = organizationPending;
-		isRefetching = organizationRefetching;
-	}
+	const isPending = $derived(
+		pathMode === 'slug' ? organizationsResult.isPending : activeOrgResult.isPending
+	);
+
+	const isRefetching = $derived(
+		pathMode === 'slug' ? organizationsResult.isRefetching : activeOrgResult.isRefetching
+	);
+
+	const refetch = $derived(
+		pathMode === 'slug' ? undefined : activeOrgResult.refetch
+	);
 
 	return {
 		get data() {

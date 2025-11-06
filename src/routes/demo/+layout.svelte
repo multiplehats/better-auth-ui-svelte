@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AuthUIProvider } from '$lib/index.js';
+	import { AuthUIProvider, authViewPaths } from '$lib/index.js';
 	import type { LayoutProps } from './$types.js';
 	import { Toaster } from 'svelte-sonner';
 	import Header from './_components/header.svelte';
@@ -10,7 +10,7 @@
 
 <Toaster />
 
-<AuthUIProvider {authClient}>
+<AuthUIProvider {authClient} basePath="/demo/auth">
 	<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
 		<Header />
 

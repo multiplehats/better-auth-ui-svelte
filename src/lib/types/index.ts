@@ -1,4 +1,4 @@
-import type { authLocalization } from '../localization/auth-localization.js';
+import type { authLocalization } from '$lib/localization/auth-localization.js';
 import type { Snippet } from 'svelte';
 import type { AuthHooks } from './auth-hooks.js';
 import type { AuthMutators } from './auth-mutators.js';
@@ -16,7 +16,7 @@ import type { GravatarOptions } from './gravatar-options.js';
 import type { AdditionalFields } from './additional-fields.js';
 import type { Link } from './link.js';
 import type { RenderToast } from './render-toast.js';
-import type { AnyAuthClient } from './any-auth-client.js';
+import type { AuthClient } from './any-auth-client.js';
 
 /**
  * Auth localization type
@@ -42,6 +42,7 @@ export interface User {
 	image?: string;
 	createdAt: Date;
 	updatedAt: Date;
+	twoFactorEnabled?: boolean;
 }
 
 /**
@@ -60,7 +61,7 @@ export interface Session {
  * Auth UI configuration (context type)
  */
 export interface AuthUIConfig {
-	authClient: AnyAuthClient;
+	authClient: AuthClient;
 	/**
 	 * Additional fields for users
 	 */

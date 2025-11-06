@@ -13,7 +13,7 @@
 	const { slug, pathMode, personalPath } = organizationOptions || {};
 
 	const sessionStore = useSession();
-	const sessionData = $derived(sessionStore.data);
+	const sessionData = $derived($sessionStore.data);
 
 	const organizationResult = useCurrentOrganization();
 	const organization = $derived(organizationResult.data);

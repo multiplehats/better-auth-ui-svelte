@@ -30,11 +30,22 @@ try {
 
 	if (devPattern.test(content)) {
 		content = content.replace(devPattern, buildReplacement);
-		writeFileSync(typesFilePath, content, 'utf-8');
-		console.log('✅ Successfully updated type definitions for build');
 	} else {
-		console.log('ℹ️  Type definitions already in build mode or pattern not found');
+		console.log('ℹ️  AnyAuthClient type already in build mode or pattern not found');
 	}
+
+	// Replace the AuthClient type (without Omit)
+	const authClientDevPattern: RegExp = /export type AuthClient = typeof authClient;/;
+	const authClientBuildReplacement: string = `export type AuthClient = ReturnType<typeof createAuthClient>;\n// export type AuthClient = typeof authClient;`;
+
+	if (authClientDevPattern.test(content)) {
+		content = content.replace(authClientDevPattern, authClientBuildReplacement);
+	} else {
+		console.log('ℹ️  AuthClient type already in build mode or pattern not found');
+	}
+
+	writeFileSync(typesFilePath, content, 'utf-8');
+	console.log('✅ Successfully updated type definitions for build');
 } catch (error) {
 	console.error('❌ Error during prebuild:', error);
 	process.exit(1);
