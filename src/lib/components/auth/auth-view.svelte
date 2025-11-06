@@ -36,6 +36,11 @@
 	interface Props {
 		className?: string;
 		classNames?: AuthViewClassNames;
+		/**
+		 * A URL to redirect to after authentication actions.
+		 *
+		 * e.g. route the user to `/dashboard` after sign-in.
+		 */
 		callbackURL?: string;
 		cardHeader?: Snippet;
 		localization?: Partial<AuthLocalization>;

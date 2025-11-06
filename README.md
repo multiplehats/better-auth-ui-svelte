@@ -24,6 +24,7 @@ This library is currently in **active development** and not yet on NPM. Breaking
 
 - 🚀 **Svelte 5 Runes** - Built with the latest Svelte 5 reactive primitives
 - 🔐 **Better Auth Integration** - Native integration with Better Auth's Svelte client
+- 🛣️ **Path Helpers** - Server & client-side path utilities (unique to Svelte port)
 - 🎨 **Tailwind CSS** - Fully styled with Tailwind CSS v4
 - 📦 **shadcn-svelte Components** - Built on top of high-quality UI components
 - ✅ **Form Validation** - Zod 4 schema validation out of the box
@@ -337,32 +338,126 @@ interface AuthUIProviderProps {
 }
 ```
 
-## Form Utilities
+## Path Helpers (Svelte-Specific Feature)
 
-The library includes a lightweight form utility built with Svelte 5 runes:
+> **Note:** This feature is unique to the Svelte port and not available in the original React version of Better Auth UI. Added by [Chris Jayden](https://github.com/multiplehats) to ease server-side implementation in SvelteKit.
+
+Better Auth UI for Svelte includes utility functions to generate authentication paths that work both client-side and server-side. This makes it easy to maintain consistent paths across your application and handle redirects in hooks, load functions, and components.
+
+### Why Use Path Helpers?
+
+- **Server-Side Compatible** - Works in `hooks.server.ts`, `+page.server.ts`, and `+layout.server.ts`
+- **Type-Safe** - TypeScript ensures you use valid path names
+- **Single Source of Truth** - Change paths once, updates everywhere
+- **No Hardcoding** - Never hardcode `/auth/sign-in` paths again
+
+### Basic Usage
 
 ```typescript
-import { createForm } from 'better-auth-ui-svelte';
-import { z } from 'zod';
+import { getAuthPath, getAuthUrl } from 'better-auth-ui-svelte';
 
-const form = createForm({
-  schema: z.object({
-    email: z.string().email(),
-    password: z.string().min(8)
-  }),
-  initialValues: {
-    email: '',
-    password: ''
-  },
-  onSubmit: async (values) => {
-    // Handle form submission
-    console.log('Form values:', values);
+// Get auth paths (default: '/auth')
+getAuthPath('SIGN_IN');          // '/auth/sign-in'
+getAuthPath('SIGN_UP');          // '/auth/sign-up'
+getAuthPath('FORGOT_PASSWORD');  // '/auth/forgot-password'
+
+// Get full URLs (useful for emails, redirects)
+getAuthUrl('RESET_PASSWORD', {
+  baseURL: 'https://example.com'
+}); // 'https://example.com/auth/reset-password'
+
+// Account and organization paths
+getAccountPath('SETTINGS');      // '/account/settings'
+getOrganizationPath('MEMBERS');  // '/organization/members'
+```
+
+### Server-Side Redirects
+
+Use path helpers in your server hooks for authentication redirects:
+
+```typescript
+// src/hooks.server.ts
+import { redirect } from '@sveltejs/kit';
+import { getAuthPath } from 'better-auth-ui-svelte';
+
+export async function handle({ event, resolve }) {
+  const session = await getSession(event);
+
+  // Redirect unauthenticated users to sign-in
+  if (!session && event.url.pathname.startsWith('/app')) {
+    throw redirect(303, getAuthPath('SIGN_IN'));
   }
-});
 
-// Use in your component
-form.handleSubmit();
-form.setValue('email', 'test@example.com');
+  // Redirect authenticated users away from auth pages
+  if (session && event.url.pathname === getAuthPath('SIGN_IN')) {
+    throw redirect(303, '/app');
+  }
+
+  return resolve(event);
+}
+```
+
+### Shared Configuration
+
+Create a shared config file to keep paths consistent across your app:
+
+```typescript
+// src/lib/config/auth-config.ts
+import type { PathConfig } from 'better-auth-ui-svelte';
+
+export const authPathConfig: PathConfig = {
+  basePath: '/auth',
+  // Optionally customize individual paths
+  viewPaths: {
+    SIGN_IN: 'login',      // /auth/login instead of /auth/sign-in
+    SIGN_UP: 'register'    // /auth/register instead of /auth/sign-up
+  }
+};
+```
+
+Then use it everywhere:
+
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+  import { AuthUIProvider } from 'better-auth-ui-svelte';
+  import { authPathConfig } from '$lib/config/auth-config';
+
+  // Provider will use your custom paths
+  <AuthUIProvider
+    {authClient}
+    basePath={authPathConfig.basePath}
+    viewPaths={authPathConfig.viewPaths}
+  />
+</script>
+```
+
+```typescript
+// src/hooks.server.ts
+import { getAuthPath } from 'better-auth-ui-svelte';
+import { authPathConfig } from '$lib/config/auth-config';
+
+// Use same config for server-side redirects
+throw redirect(303, getAuthPath('SIGN_IN', authPathConfig));
+```
+
+### Available Functions
+
+```typescript
+// Auth paths
+getAuthPath(view, config?)     // Get auth path
+getAuthUrl(view, config?)      // Get full URL with baseURL
+getAllAuthPaths(config?)       // Get all auth paths as object
+
+// Account paths
+getAccountPath(view, config?)
+getAccountUrl(view, config?)
+getAllAccountPaths(config?)
+
+// Organization paths
+getOrganizationPath(view, config?)
+getOrganizationUrl(view, config?)
+getAllOrganizationPaths(config?)
 ```
 
 ## Exports
@@ -376,6 +471,19 @@ export { AuthView, AuthUIProvider, SignInForm, SignUpForm, UserButton, UserAvata
 // Path constants
 export { authViewPaths, accountViewPaths, organizationViewPaths };
 
+// Path helpers (unique to Svelte port)
+export {
+  getAuthPath,
+  getAuthUrl,
+  getAccountPath,
+  getAccountUrl,
+  getOrganizationPath,
+  getOrganizationUrl,
+  getAllAuthPaths,
+  getAllAccountPaths,
+  getAllOrganizationPaths
+};
+
 // Utilities
 export { createForm, getViewByPath };
 
@@ -386,7 +494,15 @@ export { getAuthUIConfig, getAuthClient, getLocalization };
 export { authLocalization };
 
 // Types
-export type { AuthUIConfig, User, Session, AuthLocalization };
+export type {
+  AuthUIConfig,
+  User,
+  Session,
+  AuthLocalization,
+  PathConfig,
+  AccountPathConfig,
+  OrganizationPathConfig
+};
 ```
 
 ## Development
@@ -399,6 +515,7 @@ export type { AuthUIConfig, User, Session, AuthLocalization };
 ### Getting Started
 
 1. **Install dependencies**
+
    ```bash
    pnpm install
    ```
@@ -406,6 +523,7 @@ export type { AuthUIConfig, User, Session, AuthLocalization };
 2. **Configure environment variables**
 
    Copy `.env.example` to `.env` and update the values:
+
    ```bash
    cp .env.example .env
    ```
@@ -413,6 +531,7 @@ export type { AuthUIConfig, User, Session, AuthLocalization };
 3. **Start Mailpit for email testing**
 
    Mailpit provides a local SMTP server and web UI for testing emails:
+
    ```bash
    docker compose up -d
    ```
@@ -462,11 +581,12 @@ Better Auth UI for Svelte is built with:
 
 While the API is nearly identical, there are some Svelte-specific differences:
 
-1. **Navigation**: Instead of Next.js router, use SvelteKit's `goto` function
-2. **Session Management**: Use `invalidateAll()` instead of `router.refresh()`
-3. **Dynamic Routes**: Use SvelteKit's `[path]` syntax instead of Next.js `[path]`
-4. **Reactivity**: Built with Svelte 5 runes instead of React hooks
-5. **Link Component**: SvelteKit doesn't need a custom Link component
+1. **Path Helpers**: Unique to this Svelte port - utility functions for generating auth paths that work client and server-side (see [Path Helpers](#path-helpers-svelte-specific-feature))
+2. **Navigation**: Instead of Next.js router, use SvelteKit's `goto` function
+3. **Session Management**: Use `invalidateAll()` instead of `router.refresh()`
+4. **Dynamic Routes**: Use SvelteKit's `[path]` syntax instead of Next.js `[path]`
+5. **Reactivity**: Built with Svelte 5 runes instead of React hooks
+6. **Link Component**: SvelteKit doesn't need a custom Link component
 
 ## Contributing
 

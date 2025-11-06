@@ -2,10 +2,11 @@
 	import type { BetterFetchOption } from '@better-fetch/fetch';
 	import { Loader2 } from '@lucide/svelte';
 	import { z } from 'zod';
+	import { createForm } from '@tanstack/svelte-form';
 	import { useCaptcha } from '$lib/hooks/use-captcha.svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError, getSearchParam } from '$lib/utils/utils.js';
+	import { cn, getLocalizedError, getSearchParam, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -75,99 +76,88 @@
 	// Form schema
 	const formSchema = $derived(
 		z.object({
-			email: z.email({
-				error: `${localization.EMAIL} ${localization.IS_INVALID}`
+			email: z.string().min(1, {
+				message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
+			}).email({
+				message: `${localization.EMAIL} ${localization.IS_INVALID}`
 			})
 		})
 	);
 
-	// Form state
-	let email = $state('');
-	let formSubmitting = $state(false);
-	let errors = $state<Record<string, string | undefined>>({});
+	// Create form
+	const form = createForm(() => ({
+		defaultValues: {
+			email: ''
+		},
+		onSubmit: async ({ value }) => {
+			try {
+				const fetchOptions: BetterFetchOption = {
+					throw: true,
+					headers: await getCaptchaHeaders('/sign-in/magic-link')
+				};
 
-	const isSubmitting = $derived(isSubmittingProp || formSubmitting);
+				await authClient.signIn.magicLink({
+					email: value.email,
+					callbackURL: getCallbackURL(),
+					fetchOptions
+				});
+
+				toast.success(localization.MAGIC_LINK_EMAIL || 'Magic link sent to your email');
+
+				// Reset form
+				form.reset();
+			} catch (error) {
+				toast.error(getLocalizedError({ error, localization }));
+				resetCaptcha();
+				throw error;
+			}
+		}
+	}));
+
+	const isSubmitting = $derived(isSubmittingProp || form.state.isSubmitting);
 
 	// Update parent isSubmitting state
 	$effect(() => {
-		setIsSubmitting?.(formSubmitting);
+		setIsSubmitting?.(form.state.isSubmitting);
 	});
-
-	async function sendMagicLink(event: Event) {
-		event.preventDefault();
-
-		// Validate form
-		const result = formSchema.safeParse({ email });
-
-		if (!result.success) {
-			errors = {};
-			result.error.issues.forEach((err) => {
-				if (err.path[0]) {
-					errors[err.path[0] as string] = err.message;
-				}
-			});
-			return;
-		}
-
-		formSubmitting = true;
-		errors = {};
-
-		try {
-			const fetchOptions: BetterFetchOption = {
-				throw: true,
-				headers: await getCaptchaHeaders('/sign-in/magic-link')
-			};
-
-			await authClient.signIn.magicLink({
-				email,
-				callbackURL: getCallbackURL(),
-				fetchOptions
-			});
-
-			toast({
-				variant: 'success',
-				message: localization.MAGIC_LINK_EMAIL || 'Magic link sent to your email'
-			});
-
-			// Reset form
-			email = '';
-		} catch (error) {
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
-			resetCaptcha();
-		} finally {
-			formSubmitting = false;
-		}
-	}
 </script>
 
 <form
-	onsubmit={sendMagicLink}
+	onsubmit={(e) => {
+		e.preventDefault();
+		form.handleSubmit();
+	}}
 	novalidate={isHydrated.value}
 	class={cn('grid w-full gap-6', className, classNames?.base)}
 >
-	<div class="space-y-2">
-		<Label for="email" class={classNames?.label}>
-			{localization.EMAIL}
-		</Label>
+	<form.Field name="email" validators={{ onChange: formSchema.shape.email }}>
+		{#snippet children(field)}
+			<div class="space-y-2">
+				<Label for="email" class={classNames?.label}>
+					{localization.EMAIL}
+				</Label>
 
-		<Input
-			id="email"
-			name="email"
-			autocomplete="email"
-			class={classNames?.input}
-			type="email"
-			placeholder={localization.EMAIL_PLACEHOLDER}
-			disabled={isSubmitting}
-			bind:value={email}
-		/>
+				<Input
+					id="email"
+					name="email"
+					autocomplete="email"
+					class={classNames?.input}
+					type="email"
+					placeholder={localization.EMAIL_PLACEHOLDER}
+					disabled={isSubmitting}
+					value={field.state.value}
+					oninput={(e) => field.handleChange(e.currentTarget.value)}
+					onblur={field.handleBlur}
+				/>
 
-		{#if errors.email}
-			<p class={cn('text-sm text-destructive', classNames?.error)}>{errors.email}</p>
-		{/if}
-	</div>
+				{#if field.state.meta.errors.length > 0}
+					<p class={cn('text-sm text-destructive', classNames?.error)}>
+						{getFieldError(field.state.meta.errors[0])}
+					</p>
+				{/if}
+			</div>
+		{/snippet}
+	</form.Field>
 
 	<Captcha {localization} action="/sign-in/magic-link" />
 

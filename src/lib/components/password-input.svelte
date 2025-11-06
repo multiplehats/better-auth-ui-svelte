@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { cn } from '$lib/utils/utils.js';
-	import type { ChangeEventHandler, FullAutoFill } from 'svelte/elements';
+	import type { ChangeEventHandler, FocusEventHandler, FormEventHandler, FullAutoFill } from 'svelte/elements';
 
 	interface Props {
 		class?: string;
@@ -15,6 +15,8 @@
 		id?: string;
 		name?: string;
 		onchange?: ChangeEventHandler<HTMLInputElement> | null | undefined;
+		oninput?: FormEventHandler<HTMLInputElement> | null | undefined;
+		onblur?: FocusEventHandler<HTMLInputElement> | null | undefined;
 	}
 
 	let {
@@ -27,6 +29,8 @@
 		id,
 		name,
 		onchange,
+		oninput,
+		onblur,
 		...restProps
 	}: Props = $props();
 
@@ -41,6 +45,20 @@
 		}
 	}
 
+	function handleInput(event: Event & { currentTarget: HTMLInputElement }) {
+		const target = event.currentTarget;
+		isDisabled = !target.value;
+		if (oninput) {
+			oninput(event);
+		}
+	}
+
+	function handleBlur(event: FocusEvent & { currentTarget: HTMLInputElement }) {
+		if (onblur) {
+			onblur(event);
+		}
+	}
+
 	function toggleVisibility() {
 		isVisible = !isVisible;
 	}
@@ -52,11 +70,13 @@
 		{name}
 		type={isVisible && enableToggle ? 'text' : 'password'}
 		class={cn(enableToggle && 'pr-10', 'hide-password-toggle', className)}
-		bind:value
+		{value}
 		{disabled}
 		{placeholder}
 		{autocomplete}
 		onchange={handleChange}
+		oninput={handleInput}
+		onblur={handleBlur}
 		{...restProps}
 	/>
 

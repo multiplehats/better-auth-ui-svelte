@@ -269,10 +269,26 @@
 		window.location.replace(href);
 	};
 
-	// Default toast implementation
-	const defaultToast: RenderToast = ({ variant = 'default', message }) => {
-		console.log(`[${variant}]`, message);
-	};
+	// Default toast implementation matching svelte-sonner's API
+	const defaultToast: RenderToast = Object.assign(
+		(message: string) => {
+			console.log('[default]', message);
+		},
+		{
+			success: (message: string) => {
+				console.log('[success]', message);
+			},
+			error: (message: string) => {
+				console.log('[error]', message);
+			},
+			warning: (message: string) => {
+				console.log('[warning]', message);
+			},
+			info: (message: string) => {
+				console.log('[info]', message);
+			}
+		}
+	);
 
 	// Process avatar prop
 	const avatar = $derived.by(() => {

@@ -1,14 +1,14 @@
 import { authDataCache } from '../utils/auth-data-cache.js';
 import { getAuthUIConfig } from '../context/auth-ui-config.svelte.js';
-import type { FetchError } from '$lib/types/fetch-error.js';
 import { get } from 'svelte/store';
+import type { BetterFetchError } from '@better-fetch/fetch';
 
 export function useAuthData<T>({
 	queryFn,
 	cacheKey,
 	staleTime = 10000 // Default 10 seconds
 }: {
-	queryFn: () => Promise<{ data: T | null; error?: FetchError | null }>;
+	queryFn: () => Promise<{ data: T | null; error?: BetterFetchError | null }>;
 	cacheKey?: string;
 	staleTime?: number;
 }) {
@@ -22,7 +22,7 @@ export function useAuthData<T>({
 	let data = $state<T | null>(null);
 	let isPending = $state(true);
 	let isRefetching = $state(false);
-	let error = $state<FetchError | null>(null);
+	let error = $state<BetterFetchError | null>(null);
 	let initialized = $state(false);
 	let previousUserId = $state<string | undefined>(undefined);
 
@@ -45,7 +45,7 @@ export function useAuthData<T>({
 		// Check if there's already an in-flight request for this key
 		const existingRequest = authDataCache.getInFlightRequest<{
 			data: T | null;
-			error?: FetchError | null;
+			error?: BetterFetchError | null;
 		}>(stableCacheKey);
 		if (existingRequest) {
 			try {
@@ -56,7 +56,7 @@ export function useAuthData<T>({
 					error = null;
 				}
 			} catch (err) {
-				error = err as FetchError;
+				error = err as BetterFetchError;
 			}
 			return;
 		}
@@ -78,10 +78,7 @@ export function useAuthData<T>({
 
 			if (fetchError) {
 				error = fetchError;
-				toast({
-					variant: 'error',
-					message: getLocalizedError({ error: fetchError, localization })
-				});
+				toast.error(getLocalizedError({ error: fetchError, localization }));
 			} else {
 				error = null;
 			}
@@ -89,12 +86,9 @@ export function useAuthData<T>({
 			// Update cache with new data
 			authDataCache.set(stableCacheKey, fetchedData);
 		} catch (err) {
-			const fetchError = err as FetchError;
+			const fetchError = err as BetterFetchError;
 			error = fetchError;
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error: fetchError, localization })
-			});
+			toast.error(getLocalizedError({ error: fetchError, localization }));
 		} finally {
 			authDataCache.setRefetching(stableCacheKey, false);
 			authDataCache.removeInFlightRequest(stableCacheKey);
@@ -172,7 +166,13 @@ export function useAuthData<T>({
 }
 
 // Utility function to get localized error messages
-function getLocalizedError({ error, localization }: { error: FetchError; localization: any }) {
+function getLocalizedError({
+	error,
+	localization
+}: {
+	error: BetterFetchError;
+	localization: any;
+}) {
 	// This should match the logic from the React version
 	// For now, return a simple message
 	return error.message || localization.ERROR_UNKNOWN || 'An error occurred';

@@ -12,11 +12,11 @@ services:
       - pgdata:/var/lib/postgresql
   mailpit:
     image: axllent/mailpit
-    container_name: mailpit
+    container_name: better-auth-ui-svelte-mailpit
     restart: unless-stopped
     ports:
-      - "1025:1025" # SMTP server
-      - "8025:8025" # Web UI
+      - '1025:1025' # SMTP server
+      - '8025:8025' # Web UI
     environment:
       MP_MAX_MESSAGES: 5000
       MP_SMTP_AUTH_ACCEPT_ANY: 1

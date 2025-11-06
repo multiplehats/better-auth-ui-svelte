@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { z } from 'zod';
+	import { createForm } from '@tanstack/svelte-form';
 	import Loader2 from '@lucide/svelte/icons/loader';
-	import { createForm } from '$lib/utils/form.svelte';
 	import {
 		getAuthClient,
 		getLocalization,
 		getAuthUIConfig
 	} from '$lib/context/auth-ui-config.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
-	import { getLocalizedError } from '$lib/utils/utils.js';
+	import { getLocalizedError, getFieldError } from '$lib/utils/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -46,67 +46,75 @@
 	});
 
 	const schema = z.object({
-		code: z.string().min(1, { error: localization.BACKUP_CODE_REQUIRED })
+		code: z.string().min(1, { message: localization.BACKUP_CODE_REQUIRED })
 	});
 
-	const form = createForm({
-		schema,
-		initialValues: {
+	const form = createForm(() => ({
+		defaultValues: {
 			code: ''
 		},
-		onSubmit: async (values) => {
+		onSubmit: async ({ value }) => {
 			try {
 				await authClient.twoFactor.verifyBackupCode({
-					code: values.code,
+					code: value.code,
 					fetchOptions: { throw: true }
 				});
 
 				await onSuccess();
 			} catch (error) {
-				config.toast({
-					variant: 'error',
-					message: getLocalizedError({ error, localization })
-				});
+				config.toast.error(getLocalizedError({ error, localization }));
 
 				form.reset();
 				throw error;
 			}
 		}
-	});
+	}));
 
 	// Compute final isSubmitting state
 	const isSubmitting = $derived(
-		isSubmittingProp ?? (form.isSubmitting || transitionPending)
+		isSubmittingProp ?? (form.state.isSubmitting || transitionPending)
 	);
 
 	// Sync isSubmitting state
 	$effect(() => {
-		setIsSubmitting?.(form.isSubmitting || transitionPending);
+		setIsSubmitting?.(form.state.isSubmitting || transitionPending);
 	});
 </script>
 
-<form onsubmit={form.handleSubmit} class={cn('grid gap-6', className, classNames?.base)}>
-	<div>
-		<Label for="code" class={classNames?.label}>
-			{localization.BACKUP_CODE}
-		</Label>
+<form
+	onsubmit={(e) => {
+		e.preventDefault();
+		form.handleSubmit();
+	}}
+	class={cn('grid gap-6', className, classNames?.base)}
+>
+	<form.Field name="code" validators={{ onChange: schema.shape.code }}>
+		{#snippet children(field)}
+			<div>
+				<Label for="code" class={classNames?.label}>
+					{localization.BACKUP_CODE}
+				</Label>
 
-		<Input
-			id="code"
-			type="text"
-			autocomplete="off"
-			placeholder={localization.BACKUP_CODE_PLACEHOLDER}
-			bind:value={form.data.code}
-			disabled={isSubmitting}
-			class={classNames?.input}
-		/>
+				<Input
+					id="code"
+					type="text"
+					autocomplete="off"
+					placeholder={localization.BACKUP_CODE_PLACEHOLDER}
+					value={field.state.value}
+					oninput={(e) => field.handleChange(e.currentTarget.value)}
+					onblur={field.handleBlur}
+					disabled={isSubmitting}
+					class={classNames?.input}
+				/>
 
-		{#if form.errors.code}
-			<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-				{form.errors.code[0]}
-			</p>
-		{/if}
-	</div>
+				{#if field.state.meta.errors.length > 0}
+					<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
+						{getFieldError(field.state.meta.errors[0])}
+					</p>
+				{/if}
+			</div>
+		{/snippet}
+	</form.Field>
 
 	<Button
 		type="submit"

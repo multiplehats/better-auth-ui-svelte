@@ -17,15 +17,21 @@ import {
 } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
 import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 
-/**
- * This is NOT included in the libary files.
- * This is merely a full example, used in the `routes/demo`.
- */
 export const auth = betterAuth({
+	emailAndPassword: {
+		enabled: true
+	},
 	database: drizzleAdapter(db, {
 		provider: 'pg'
 	}),
+	socialProviders: {
+		google: {
+			clientId: GOOGLE_CLIENT_ID,
+			clientSecret: GOOGLE_CLIENT_SECRET
+		}
+	},
 	plugins: [
 		organization({
 			teams: {

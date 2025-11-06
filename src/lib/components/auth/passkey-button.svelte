@@ -40,23 +40,17 @@
 			});
 
 			if (response?.error) {
-				config.toast({
-					variant: 'error',
-					message: getLocalizedError({
-						error: response.error,
-						localization: loc
-					})
-				});
+				config.toast.error(getLocalizedError({
+					error: response.error,
+					localization: loc
+				}));
 
 				setIsSubmitting?.(false);
 			} else {
 				await onSuccess();
 			}
 		} catch (error) {
-			config.toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization: loc })
-			});
+			config.toast.error(getLocalizedError({ error, localization: loc }));
 
 			setIsSubmitting?.(false);
 		}

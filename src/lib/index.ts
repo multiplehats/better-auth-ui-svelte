@@ -92,8 +92,8 @@ export { getViewByPath } from './utils/utils.js';
 export * from './utils/view-paths.js';
 
 // Utilities
-export { createForm } from './utils/form.svelte.js';
 export { cn } from './utils/ui.js';
+export * from './utils/get-paths.js';
 
 // Context
 export {

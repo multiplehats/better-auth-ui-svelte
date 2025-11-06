@@ -32,32 +32,6 @@ export interface BaseComponentProps {
 }
 
 /**
- * User type (from Better Auth)
- */
-export interface User {
-	id: string;
-	email: string;
-	emailVerified: boolean;
-	name?: string;
-	image?: string;
-	createdAt: Date;
-	updatedAt: Date;
-	twoFactorEnabled?: boolean;
-}
-
-/**
- * Session type (from Better Auth)
- */
-export interface Session {
-	id: string;
-	userId: string;
-	expiresAt: Date;
-	token: string;
-	ipAddress?: string;
-	userAgent?: string;
-}
-
-/**
  * Auth UI configuration (context type)
  */
 export interface AuthUIConfig {

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { z } from 'zod';
+	import { createForm } from '@tanstack/svelte-form';
 	import { Loader2 } from '@lucide/svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError } from '$lib/utils/utils.js';
-	import { createForm } from '$lib/utils/form.svelte.js';
+	import { cn, getLocalizedError, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -51,9 +51,14 @@
 	// Reactive validation schemas
 	const emailFormSchema = $derived(
 		z.object({
-			email: z.email({
-				error: `${localization.EMAIL} ${localization.IS_INVALID}`
-			})
+			email: z
+				.string()
+				.min(1, {
+					message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
+				})
+				.email({
+					message: `${localization.EMAIL} ${localization.IS_INVALID}`
+				})
 		})
 	);
 
@@ -71,84 +76,75 @@
 	);
 
 	// Email form
-	const emailForm = createForm({
-		get schema() {
-			return emailFormSchema;
-		},
-		initialValues: { email: '' },
-		onSubmit: async (values) => {
+	const emailForm = createForm(() => ({
+		defaultValues: { email: '' },
+		onSubmit: async ({ value }) => {
 			await authClient.emailOtp.sendVerificationOtp({
-				email: values.email,
+				email: value.email,
 				type: 'sign-in',
 				fetchOptions: { throw: true }
 			});
 
-			toast({
-				variant: 'success',
-				message: localization.EMAIL_OTP_VERIFICATION_SENT
-			});
+			toast.success(localization.EMAIL_OTP_VERIFICATION_SENT);
 
-			verifiedEmail = values.email;
+			verifiedEmail = value.email;
 		}
-	});
+	}));
 
 	// OTP form
-	const otpForm = createForm({
-		get schema() {
-			return otpFormSchema;
-		},
-		initialValues: { code: '' },
-		onSubmit: async (values) => {
+	const otpForm = createForm(() => ({
+		defaultValues: { code: '' },
+		onSubmit: async ({ value }) => {
 			await authClient.signIn.emailOtp({
 				email: verifiedEmail!,
-				otp: values.code,
+				otp: value.code,
 				fetchOptions: { throw: true }
 			});
 
 			await onSuccess();
 		}
-	});
+	}));
 
 	// Computed submitting states
-	const emailFormSubmitting = $derived(isSubmittingProp || emailForm.isSubmitting);
+	const emailFormSubmitting = $derived(isSubmittingProp || emailForm.state.isSubmitting);
 	const otpFormSubmitting = $derived(
-		isSubmittingProp || otpForm.isSubmitting || transitionPending
+		isSubmittingProp || otpForm.state.isSubmitting || transitionPending
 	);
 
 	// Handle email form submission with error handling
-	async function handleEmailSubmit(e: SubmitEvent) {
+	async function handleEmailSubmit(e: Event) {
+		e.preventDefault();
 		try {
-			await emailForm.handleSubmit(e);
+			await emailForm.handleSubmit();
 		} catch (error) {
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
+			toast.error(getLocalizedError({ error, localization }));
 		}
 	}
 
 	// Handle OTP form submission with error handling
-	async function handleOTPSubmit(e?: SubmitEvent) {
+	async function handleOTPSubmit(e?: Event) {
+		e?.preventDefault();
 		try {
-			await otpForm.handleSubmit(e);
+			await otpForm.handleSubmit();
 		} catch (error) {
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
+			toast.error(getLocalizedError({ error, localization }));
 			// Reset code on error
-			otpForm.data.code = '';
+			otpForm.setFieldValue('code', '');
 		}
 	}
 
 	// Update parent isSubmitting state
 	$effect(() => {
-		setIsSubmitting?.(emailForm.isSubmitting || otpForm.isSubmitting || transitionPending);
+		setIsSubmitting?.(
+			emailForm.state.isSubmitting || otpForm.state.isSubmitting || transitionPending
+		);
 	});
 
 	// Auto-submit when code reaches 6 characters
 	$effect(() => {
-		if (otpForm.data.code.length === 6 && !otpForm.isSubmitting && verifiedEmail) {
+		const codeField = otpForm.getFieldInfo('code');
+		const codeValue = codeField?.instance?.state.value ?? '';
+		if (codeValue.length === 6 && !otpForm.state.isSubmitting && verifiedEmail) {
 			handleOTPSubmit();
 		}
 	});
@@ -161,26 +157,32 @@
 		novalidate={isHydrated.value}
 		class={cn('grid w-full gap-6', className, classNames?.base)}
 	>
-		<div class="space-y-2">
-			<Label for="email" class={classNames?.label}>
-				{localization.EMAIL}
-			</Label>
+		<emailForm.Field name="email" validators={{ onChange: emailFormSchema.shape.email }}>
+			{#snippet children(field)}
+				<div class="space-y-2">
+					<Label for="email" class={classNames?.label}>
+						{localization.EMAIL}
+					</Label>
 
-			<Input
-				id="email"
-				type="email"
-				placeholder={localization.EMAIL_PLACEHOLDER}
-				disabled={emailFormSubmitting}
-				class={classNames?.input}
-				bind:value={emailForm.data.email}
-			/>
+					<Input
+						id="email"
+						type="email"
+						placeholder={localization.EMAIL_PLACEHOLDER}
+						value={field.state.value}
+						oninput={(e) => field.handleChange(e.currentTarget.value)}
+						onblur={field.handleBlur}
+						disabled={emailFormSubmitting}
+						class={classNames?.input}
+					/>
 
-			{#if emailForm.errors.email}
-				<p class={cn('text-sm text-destructive', classNames?.error)}>
-					{emailForm.errors.email[0]}
-				</p>
-			{/if}
-		</div>
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm text-destructive', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
+					{/if}
+				</div>
+			{/snippet}
+		</emailForm.Field>
 
 		<Button
 			type="submit"
@@ -197,28 +199,33 @@
 {:else}
 	<!-- Step 2: OTP verification form -->
 	<form onsubmit={handleOTPSubmit} class={cn('grid w-full gap-6', className, classNames?.base)}>
-		<div class="space-y-2">
-			<Label for="code" class={classNames?.label}>
-				{localization.EMAIL_OTP}
-			</Label>
+		<otpForm.Field name="code" validators={{ onChange: otpFormSchema.shape.code }}>
+			{#snippet children(field)}
+				<div class="space-y-2">
+					<Label for="code" class={classNames?.label}>
+						{localization.EMAIL_OTP}
+					</Label>
 
-			<InputOTP.Root
-				bind:value={otpForm.data.code}
-				maxlength={6}
-				class={cn(classNames?.otpInputContainer)}
-				disabled={otpFormSubmitting}
-			>
-				{#snippet children({ cells })}
-					<OTPInputGroup {otpSeparators} {cells} class={classNames?.otpInput} />
-				{/snippet}
-			</InputOTP.Root>
+					<InputOTP.Root
+						value={field.state.value}
+						onValueChange={(value) => field.handleChange(value)}
+						maxlength={6}
+						class={cn(classNames?.otpInputContainer)}
+						disabled={otpFormSubmitting}
+					>
+						{#snippet children({ cells })}
+							<OTPInputGroup {otpSeparators} {cells} class={classNames?.otpInput} />
+						{/snippet}
+					</InputOTP.Root>
 
-			{#if otpForm.errors.code}
-				<p class={cn('text-sm text-destructive', classNames?.error)}>
-					{otpForm.errors.code[0]}
-				</p>
-			{/if}
-		</div>
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm text-destructive', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
+					{/if}
+				</div>
+			{/snippet}
+		</otpForm.Field>
 
 		<div class="grid gap-4">
 			<Button

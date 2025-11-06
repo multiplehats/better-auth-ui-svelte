@@ -91,10 +91,7 @@
 				}
 			}
 		} catch (error) {
-			config.toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
+			config.toast.error(getLocalizedError({ error, localization }));
 
 			setIsSubmitting(false);
 		}

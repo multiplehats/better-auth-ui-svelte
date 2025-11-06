@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { z } from 'zod';
+	import { createForm } from '@tanstack/svelte-form';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import QrCodeIcon from '@lucide/svelte/icons/qr-code';
 	import SendIcon from '@lucide/svelte/icons/send';
@@ -10,7 +11,7 @@
 		getAuthClient,
 		getLocalization
 	} from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError, getSearchParam } from '$lib/utils/utils.js';
+	import { cn, getLocalizedError, getSearchParam, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import type { User } from '$lib/types/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -65,7 +66,11 @@
 
 	// Get session data to check if 2FA is being enabled
 	const sessionQuery = hooks?.useSession?.();
-	const sessionData = $derived(sessionQuery && 'data' in sessionQuery ? sessionQuery.data as { user?: User } | null : undefined);
+	const sessionData = $derived(
+		sessionQuery && 'data' in sessionQuery
+			? (sessionQuery.data as { user?: User } | null)
+			: undefined
+	);
 	const isTwoFactorEnabled = $derived((sessionData?.user as User | undefined)?.twoFactorEnabled);
 
 	const twoFactorMethods = $derived(twoFactor || ['totp']);
@@ -81,21 +86,6 @@
 	let isSendingOtp = $state(false);
 	let cooldownSeconds = $state(0);
 
-	// Form state
-	let code = $state('');
-	let trustDevice = $state(false);
-	let errors = $state<Record<string, string | undefined>>({});
-	let formSubmitting = $state(false);
-
-	const isSubmitting = $derived(isSubmittingProp || formSubmitting || transitionPending);
-
-	// Update parent isSubmitting state
-	$effect(() => {
-		if (setIsSubmitting) {
-			setIsSubmitting(formSubmitting || transitionPending);
-		}
-	});
-
 	// Form schema
 	const formSchema = $derived(
 		z.object({
@@ -110,6 +100,46 @@
 			trustDevice: z.boolean().optional()
 		})
 	);
+
+	// Create form
+	const form = createForm(() => ({
+		defaultValues: {
+			code: '',
+			trustDevice: false
+		},
+		onSubmit: async ({ value }) => {
+			try {
+				const verifyMethod =
+					method === 'totp' ? authClient.twoFactor.verifyTotp : authClient.twoFactor.verifyOtp;
+
+				await verifyMethod({
+					code: value.code,
+					trustDevice: value.trustDevice,
+					fetchOptions: { throw: true }
+				});
+
+				await onSuccess();
+
+				if (sessionData && !isTwoFactorEnabled) {
+					toast.success(localization?.TWO_FACTOR_ENABLED);
+				}
+			} catch (error) {
+				toast.error(getLocalizedError({ error, localization }));
+
+				form.reset();
+				throw error;
+			}
+		}
+	}));
+
+	const isSubmitting = $derived(isSubmittingProp || form.state.isSubmitting || transitionPending);
+
+	// Update parent isSubmitting state
+	$effect(() => {
+		if (setIsSubmitting) {
+			setIsSubmitting(form.state.isSubmitting || transitionPending);
+		}
+	});
 
 	// Auto-send OTP on mount if method is OTP
 	$effect(() => {
@@ -140,10 +170,7 @@
 			});
 			cooldownSeconds = 60;
 		} catch (error) {
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
+			toast.error(getLocalizedError({ error, localization }));
 
 			if (error && typeof error === 'object' && 'error' in error) {
 				const betterError = error as { error: { code?: string } };
@@ -157,70 +184,19 @@
 		}
 	}
 
-	function validate(): boolean {
-		try {
-			formSchema.parse({ code, trustDevice });
-			errors = {};
-			return true;
-		} catch (error) {
-			if (error instanceof z.ZodError) {
-				const fieldErrors: Record<string, string> = {};
-				error.issues.forEach((err: z.ZodIssue) => {
-					if (err.path.length > 0) {
-						fieldErrors[err.path[0] as string] = err.message;
-					}
-				});
-				errors = fieldErrors;
-			}
-			return false;
-		}
-	}
-
-	function reset() {
-		code = '';
-		trustDevice = false;
-		errors = {};
-	}
-
-	async function verifyCode() {
-		if (!validate()) return;
-
-		formSubmitting = true;
-
-		try {
-			const verifyMethod =
-				method === 'totp' ? authClient.twoFactor.verifyTotp : authClient.twoFactor.verifyOtp;
-
-			await verifyMethod({
-				code,
-				trustDevice,
-				fetchOptions: { throw: true }
-			});
-
-			await onSuccess();
-
-			if (sessionData && !isTwoFactorEnabled) {
-				toast({
-					variant: 'success',
-					message: localization?.TWO_FACTOR_ENABLED
-				});
-			}
-		} catch (error) {
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
-
-			reset();
-		} finally {
-			formSubmitting = false;
-		}
-	}
-
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
-		await verifyCode();
+		await form.handleSubmit();
 	}
+
+	// Auto-submit when code reaches 6 characters
+	$effect(() => {
+		const codeField = form.getFieldInfo('code');
+		const codeValue = codeField?.instance?.state.value ?? '';
+		if (codeValue.length === 6 && !form.state.isSubmitting) {
+			form.handleSubmit();
+		}
+	});
 </script>
 
 <form onsubmit={handleSubmit} class={cn('grid w-full gap-6', className, classNames?.base)}>
@@ -237,56 +213,60 @@
 
 	{#if method !== null}
 		<!-- OTP Code Input Field -->
-		<div class="space-y-2">
-			<div class="flex items-center justify-between">
-				<Label class={classNames?.label}>
-					{localization.ONE_TIME_PASSWORD}
-				</Label>
+		<form.Field name="code" validators={{ onChange: formSchema.shape.code }}>
+			{#snippet children(field)}
+				<div class="space-y-2">
+					<div class="flex items-center justify-between">
+						<Label class={classNames?.label}>
+							{localization.ONE_TIME_PASSWORD}
+						</Label>
 
-				<Link
-					class={cn('text-sm hover:underline', classNames?.forgotPasswordLink)}
-					href={`${basePath}/${viewPaths.RECOVER_ACCOUNT}${isHydrated ? window.location.search : ''}`}
-				>
-					{localization.FORGOT_AUTHENTICATOR}
-				</Link>
-			</div>
+						<Link
+							class={cn('text-sm hover:underline', classNames?.forgotPasswordLink)}
+							href={`${basePath}/${viewPaths.RECOVER_ACCOUNT}${isHydrated ? window.location.search : ''}`}
+						>
+							{localization.FORGOT_AUTHENTICATOR}
+						</Link>
+					</div>
 
-			<InputOTP.Root
-				bind:value={code}
-				maxlength={6}
-				onComplete={() => {
-					// Auto-submit when all 6 digits are entered
-					if (code.length === 6) {
-						verifyCode();
-					}
-				}}
-				disabled={isSubmitting}
-				class={classNames?.otpInputContainer}
-			>
-				{#snippet children({ cells })}
-					<OTPInputGroup {otpSeparators} {cells} class={classNames?.otpInput} />
-				{/snippet}
-			</InputOTP.Root>
+					<InputOTP.Root
+						value={field.state.value}
+						onValueChange={(value) => field.handleChange(value)}
+						maxlength={6}
+						disabled={isSubmitting}
+						class={classNames?.otpInputContainer}
+					>
+						{#snippet children({ cells })}
+							<OTPInputGroup {otpSeparators} {cells} class={classNames?.otpInput} />
+						{/snippet}
+					</InputOTP.Root>
 
-			{#if errors.code}
-				<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-					{errors.code}
-				</p>
-			{/if}
-		</div>
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
+					{/if}
+				</div>
+			{/snippet}
+		</form.Field>
 
 		<!-- Trust Device Checkbox -->
-		<div class="flex items-center gap-2">
-			<Checkbox
-				id="trustDevice"
-				bind:checked={trustDevice}
-				disabled={isSubmitting}
-				class={classNames?.checkbox}
-			/>
-			<Label for="trustDevice" class={cn('cursor-pointer', classNames?.label)}>
-				{localization.TRUST_DEVICE}
-			</Label>
-		</div>
+		<form.Field name="trustDevice">
+			{#snippet children(field)}
+				<div class="flex items-center gap-2">
+					<Checkbox
+						id="trustDevice"
+						checked={field.state.value}
+						onCheckedChange={(checked) => field.handleChange(checked === true)}
+						disabled={isSubmitting}
+						class={classNames?.checkbox}
+					/>
+					<Label for="trustDevice" class={cn('cursor-pointer', classNames?.label)}>
+						{localization.TRUST_DEVICE}
+					</Label>
+				</div>
+			{/snippet}
+		</form.Field>
 	{/if}
 
 	<!-- Action Buttons -->

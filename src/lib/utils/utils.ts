@@ -75,6 +75,17 @@ export function getKeyByValue<T extends Record<string, unknown>>(
 	return (Object.keys(object) as Array<keyof T>).find((key) => object[key] === value);
 }
 
+/**
+ * Extracts error message from TanStack Form field error
+ */
+export function getFieldError(error: unknown): string {
+	if (typeof error === 'string') return error;
+	if (error && typeof error === 'object' && 'message' in error) {
+		return String(error.message);
+	}
+	return String(error);
+}
+
 export function getPasswordSchema(
 	passwordValidation?: PasswordValidation,
 	localization?: AuthLocalization

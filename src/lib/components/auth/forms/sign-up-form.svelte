@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { z } from 'zod';
+	import { createForm } from '@tanstack/svelte-form';
 	import { Loader2, Trash2, UploadCloud } from '@lucide/svelte';
-	import { createForm } from '$lib/utils/form.svelte';
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useCaptcha } from '$lib/hooks/use-captcha.svelte';
@@ -19,7 +19,7 @@
 	import { fileToBase64, resizeAndCropImage } from '$lib/utils/image-utils.js';
 	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
-	import { getLocalizedError, getPasswordSchema, getSearchParam } from '$lib/utils/utils.js';
+	import { getLocalizedError, getPasswordSchema, getSearchParam, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthFormClassNames } from '../auth-form.svelte';
 
 	interface Props {
@@ -248,17 +248,14 @@
 
 			if (image) {
 				avatarImage = image;
-				form.data.image = image;
+				form.setFieldValue('image', image);
 			} else {
 				avatarImage = null;
-				form.data.image = '';
+				form.setFieldValue('image', '');
 			}
 		} catch (error) {
 			console.error(error);
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
+			toast.error(getLocalizedError({ error, localization }));
 		}
 
 		uploadingAvatar = false;
@@ -266,7 +263,7 @@
 
 	function handleDeleteAvatar() {
 		avatarImage = null;
-		form.data.image = '';
+		form.setFieldValue('image', '');
 	}
 
 	function openFileDialog() {
@@ -285,7 +282,13 @@
 				if (!additionalField?.validate) continue;
 
 				if (typeof value === 'string' && !(await additionalField.validate(value))) {
-					form.setError(field as any, `${additionalField.label} ${localization.IS_INVALID}`);
+					form.setFieldMeta(field as any, (prev) => ({
+						...prev,
+						errorMap: {
+							...prev.errorMap,
+							onSubmit: `${additionalField.label} ${localization.IS_INVALID}`
+						}
+					}));
 					return;
 				}
 			}
@@ -323,21 +326,15 @@
 			} else {
 				// Email verification required
 				navigate(`${basePath}/${viewPaths.SIGN_IN}${window.location.search}`);
-				toast({
-					variant: 'success',
-					message: localization.SIGN_UP_EMAIL!
-				});
+				toast.success(localization.SIGN_UP_EMAIL!);
 			}
 		} catch (error) {
-			toast({
-				variant: 'error',
-				message: getLocalizedError({ error, localization })
-			});
+			toast.error(getLocalizedError({ error, localization }));
 
 			// Reset password fields on error
-			form.data.password = '';
+			form.setFieldValue('password', '');
 			if (confirmPasswordEnabled) {
-				form.data.confirmPassword = '';
+				form.setFieldValue('confirmPassword', '');
 			}
 
 			resetCaptcha();
@@ -345,14 +342,34 @@
 	}
 
 	// Create form
-	const form = createForm({
-		schema: formSchema,
-		initialValues: defaultValues as z.infer<typeof formSchema>,
-		onSubmit: signUp
-	});
+	const form = createForm(() => ({
+		defaultValues: defaultValues as z.infer<typeof formSchema>,
+		onSubmit: async ({ value }) => await signUp(value)
+	}));
+
+	// Get field validators for all fields
+	const emailValidator = $derived(formSchema.shape.email);
+	const passwordValidator = $derived(formSchema.shape.password);
+	const nameValidator = $derived(
+		signUpFields?.includes('name') ? formSchema.shape.name : undefined
+	);
+	const usernameValidator = $derived(
+		usernameEnabled ? formSchema.shape.username : undefined
+	);
+	const confirmPasswordValidator = $derived(
+		confirmPasswordEnabled ? formSchema.shape.confirmPassword : undefined
+	);
+	const imageValidator = $derived(
+		signUpFields?.includes('image') && avatar ? formSchema.shape.image : undefined
+	);
+
+	// Create validators for additional fields dynamically
+	function getAdditionalFieldValidator(field: string) {
+		return (formSchema.shape as any)[field];
+	}
 
 	// Combine isSubmitting states
-	const isSubmitting = $derived(form.isSubmitting || transitionPending);
+	const isSubmitting = $derived(form.state.isSubmitting || transitionPending);
 
 	// Sync external isSubmitting
 	$effect(() => {
@@ -366,171 +383,223 @@
 </script>
 
 <form
-	onsubmit={form.handleSubmit}
+	onsubmit={(e) => {
+		e.preventDefault();
+		form.handleSubmit();
+	}}
 	novalidate={hydrated.value}
 	class={cn('grid w-full gap-6', className, classNames?.base)}
 >
 	<!-- Avatar Upload Field -->
 	{#if signUpFields?.includes('image') && avatar}
-		<input
-			bind:this={fileInputRef}
-			accept="image/*"
-			disabled={uploadingAvatar}
-			hidden
-			type="file"
-			onchange={(e) => {
-				const file = e.currentTarget.files?.item(0);
-				if (file) handleAvatarChange(file);
-				e.currentTarget.value = '';
-			}}
-		/>
+		<form.Field name="image" validators={{ onChange: imageValidator }}>
+			{#snippet children(field)}
+				<input
+					bind:this={fileInputRef}
+					accept="image/*"
+					disabled={uploadingAvatar}
+					hidden
+					type="file"
+					onchange={(e) => {
+						const file = e.currentTarget.files?.item(0);
+						if (file) handleAvatarChange(file);
+						e.currentTarget.value = '';
+					}}
+				/>
 
-		<div class="space-y-2">
-			<Label class={classNames?.label}>{localization.AVATAR}</Label>
+				<div class="space-y-2">
+					<Label class={classNames?.label}>{localization.AVATAR}</Label>
 
-			<div class="flex items-center gap-4">
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger
-						class="size-fit rounded-full"
-					>
-						<UserAvatar
-							isPending={uploadingAvatar}
-							className="size-16"
-							user={avatarImage
-								? {
-										name: form.data.name as string,
-										email: form.data.email as string,
-										image: avatarImage
-									}
-								: null}
-							{localization}
-						/>
-					</DropdownMenu.Trigger>
+					<div class="flex items-center gap-4">
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger class="size-fit rounded-full">
+								<UserAvatar
+									isPending={uploadingAvatar}
+									className="size-16"
+									user={avatarImage
+										? {
+												name: form.getFieldValue('name') as string,
+												email: form.getFieldValue('email') as string,
+												image: avatarImage
+											}
+										: null}
+									{localization}
+								/>
+							</DropdownMenu.Trigger>
 
-					<DropdownMenu.Content align="start">
-						<DropdownMenu.Item onclick={openFileDialog} disabled={uploadingAvatar}>
-							<UploadCloud class="mr-2 h-4 w-4" />
-							{localization.UPLOAD_AVATAR}
-						</DropdownMenu.Item>
+							<DropdownMenu.Content align="start">
+								<DropdownMenu.Item onclick={openFileDialog} disabled={uploadingAvatar}>
+									<UploadCloud class="mr-2 h-4 w-4" />
+									{localization.UPLOAD_AVATAR}
+								</DropdownMenu.Item>
 
-						{#if avatarImage}
-							<DropdownMenu.Item
-								onclick={handleDeleteAvatar}
-								disabled={uploadingAvatar}
-								class="text-destructive focus:text-destructive"
-							>
-								<Trash2 class="mr-2 h-4 w-4" />
-								{localization.DELETE_AVATAR}
-							</DropdownMenu.Item>
-						{/if}
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
+								{#if avatarImage}
+									<DropdownMenu.Item
+										onclick={handleDeleteAvatar}
+										disabled={uploadingAvatar}
+										class="text-destructive focus:text-destructive"
+									>
+										<Trash2 class="mr-2 h-4 w-4" />
+										{localization.DELETE_AVATAR}
+									</DropdownMenu.Item>
+								{/if}
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
 
-				<Button type="button" variant="outline" onclick={openFileDialog} disabled={uploadingAvatar}>
-					{#if uploadingAvatar}
-						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						<Button
+							type="button"
+							variant="outline"
+							onclick={openFileDialog}
+							disabled={uploadingAvatar}
+						>
+							{#if uploadingAvatar}
+								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+							{/if}
+							{localization.UPLOAD}
+						</Button>
+					</div>
+
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm text-red-500', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
 					{/if}
-					{localization.UPLOAD}
-				</Button>
-			</div>
-
-			{#if form.errors.image}
-				<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors.image[0]}</p>
-			{/if}
-		</div>
+				</div>
+			{/snippet}
+		</form.Field>
 	{/if}
 
 	<!-- Name Field -->
 	{#if signUpFields?.includes('name')}
-		<div class="space-y-2">
-			<Label for="name" class={classNames?.label}>{localization.NAME}</Label>
-			<Input
-				id="name"
-				type="text"
-				placeholder={localization.NAME_PLACEHOLDER}
-				autocomplete="name"
-				bind:value={form.data.name}
-				disabled={isSubmitting}
-				class={classNames?.input}
-			/>
-			{#if form.errors.name}
-				<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors.name[0]}</p>
-			{/if}
-		</div>
+		<form.Field name="name" validators={{ onChange: nameValidator }}>
+			{#snippet children(field)}
+				<div class="space-y-2">
+					<Label for="name" class={classNames?.label}>{localization.NAME}</Label>
+					<Input
+						id="name"
+						type="text"
+						placeholder={localization.NAME_PLACEHOLDER}
+						autocomplete="name"
+						value={field.state.value}
+						oninput={(e) => field.handleChange(e.currentTarget.value)}
+						onblur={field.handleBlur}
+						disabled={isSubmitting}
+						class={classNames?.input}
+					/>
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm text-red-500', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
+					{/if}
+				</div>
+			{/snippet}
+		</form.Field>
 	{/if}
 
 	<!-- Username Field -->
 	{#if usernameEnabled}
-		<div class="space-y-2">
-			<Label for="username" class={classNames?.label}>{localization.USERNAME}</Label>
-			<Input
-				id="username"
-				type="text"
-				autocomplete="username"
-				placeholder={localization.USERNAME_PLACEHOLDER}
-				bind:value={form.data.username}
-				disabled={isSubmitting}
-				class={classNames?.input}
-			/>
-			{#if form.errors.username}
-				<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors.username[0]}</p>
-			{/if}
-		</div>
+		<form.Field name="username" validators={{ onChange: usernameValidator }}>
+			{#snippet children(field)}
+				<div class="space-y-2">
+					<Label for="username" class={classNames?.label}>{localization.USERNAME}</Label>
+					<Input
+						id="username"
+						type="text"
+						autocomplete="username"
+						placeholder={localization.USERNAME_PLACEHOLDER}
+						value={field.state.value}
+						oninput={(e) => field.handleChange(e.currentTarget.value)}
+						onblur={field.handleBlur}
+						disabled={isSubmitting}
+						class={classNames?.input}
+					/>
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm text-red-500', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
+					{/if}
+				</div>
+			{/snippet}
+		</form.Field>
 	{/if}
 
 	<!-- Email Field -->
-	<div class="space-y-2">
-		<Label for="email" class={classNames?.label}>{localization.EMAIL}</Label>
-		<Input
-			id="email"
-			type="email"
-			autocomplete="email"
-			placeholder={localization.EMAIL_PLACEHOLDER}
-			bind:value={form.data.email}
-			disabled={isSubmitting}
-			class={classNames?.input}
-		/>
-		{#if form.errors.email}
-			<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors.email[0]}</p>
-		{/if}
-	</div>
+	<form.Field name="email" validators={{ onChange: emailValidator }}>
+		{#snippet children(field)}
+			<div class="space-y-2">
+				<Label for="email" class={classNames?.label}>{localization.EMAIL}</Label>
+				<Input
+					id="email"
+					type="email"
+					autocomplete="email"
+					placeholder={localization.EMAIL_PLACEHOLDER}
+					value={field.state.value}
+					oninput={(e) => field.handleChange(e.currentTarget.value)}
+					onblur={field.handleBlur}
+					disabled={isSubmitting}
+					class={classNames?.input}
+				/>
+				{#if field.state.meta.errors.length > 0}
+					<p class={cn('text-sm text-red-500', classNames?.error)}>
+						{getFieldError(field.state.meta.errors[0])}
+					</p>
+				{/if}
+			</div>
+		{/snippet}
+	</form.Field>
 
 	<!-- Password Field -->
-	<div class="space-y-2">
-		<Label for="password" class={classNames?.label}>{localization.PASSWORD}</Label>
-		<PasswordInput
-			id="password"
-			placeholder={localization.PASSWORD_PLACEHOLDER}
-			bind:value={form.data.password}
-			disabled={isSubmitting}
-			autocomplete="new-password"
-			class={classNames?.input}
-			enableToggle
-		/>
-		{#if form.errors.password}
-			<p class={cn('text-sm text-red-500', classNames?.error)}>{form.errors.password[0]}</p>
-		{/if}
-	</div>
+	<form.Field name="password" validators={{ onChange: passwordValidator }}>
+		{#snippet children(field)}
+			<div class="space-y-2">
+				<Label for="password" class={classNames?.label}>{localization.PASSWORD}</Label>
+				<PasswordInput
+					id="password"
+					placeholder={localization.PASSWORD_PLACEHOLDER}
+					value={field.state.value}
+					oninput={(e) => field.handleChange(e.currentTarget.value)}
+					onblur={field.handleBlur}
+					disabled={isSubmitting}
+					autocomplete="new-password"
+					class={classNames?.input}
+					enableToggle
+				/>
+				{#if field.state.meta.errors.length > 0}
+					<p class={cn('text-sm text-red-500', classNames?.error)}>
+						{getFieldError(field.state.meta.errors[0])}
+					</p>
+				{/if}
+			</div>
+		{/snippet}
+	</form.Field>
 
 	<!-- Confirm Password Field -->
 	{#if confirmPasswordEnabled}
-		<div class="space-y-2">
-			<Label for="confirmPassword" class={classNames?.label}>{localization.CONFIRM_PASSWORD}</Label>
-			<PasswordInput
-				id="confirmPassword"
-				placeholder={localization.CONFIRM_PASSWORD_PLACEHOLDER}
-				bind:value={form.data.confirmPassword}
-				disabled={isSubmitting}
-				autocomplete="new-password"
-				class={classNames?.input}
-				enableToggle
-			/>
-			{#if form.errors.confirmPassword}
-				<p class={cn('text-sm text-red-500', classNames?.error)}>
-					{form.errors.confirmPassword[0]}
-				</p>
-			{/if}
-		</div>
+		<form.Field name="confirmPassword" validators={{ onChange: confirmPasswordValidator }}>
+			{#snippet children(field)}
+				<div class="space-y-2">
+					<Label for="confirmPassword" class={classNames?.label}>
+						{localization.CONFIRM_PASSWORD}
+					</Label>
+					<PasswordInput
+						id="confirmPassword"
+						placeholder={localization.CONFIRM_PASSWORD_PLACEHOLDER}
+						value={field.state.value}
+						oninput={(e) => field.handleChange(e.currentTarget.value)}
+						onblur={field.handleBlur}
+						disabled={isSubmitting}
+						autocomplete="new-password"
+						class={classNames?.input}
+						enableToggle
+					/>
+					{#if field.state.meta.errors.length > 0}
+						<p class={cn('text-sm text-red-500', classNames?.error)}>
+							{getFieldError(field.state.meta.errors[0])}
+						</p>
+					{/if}
+				</div>
+			{/snippet}
+		</form.Field>
 	{/if}
 
 	<!-- Additional Fields -->
@@ -538,81 +607,101 @@
 		{#each signUpFields.filter((field) => field !== 'name' && field !== 'image') as field}
 			{@const additionalField = additionalFields?.[field]}
 			{#if additionalField}
-				{#if additionalField.type === 'boolean'}
-					<!-- Checkbox Field -->
-					<div class="flex items-start space-x-2">
-						<Checkbox
-							id={field}
-							checked={(form.data as any)[field]}
-							onCheckedChange={(checked) => {
-								(form.data as any)[field] = checked;
-							}}
-							disabled={isSubmitting}
-						/>
-						<Label for={field} class={cn('font-normal', classNames?.label)}>
-							{additionalField.label}
-						</Label>
-					</div>
-					{#if (form.errors as any)[field]}
-						<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
-					{/if}
-				{:else if additionalField.type === 'number'}
-					<!-- Number Field -->
-					<div class="space-y-2">
-						<Label for={field} class={classNames?.label}>
-							{additionalField.label}
-						</Label>
-						<Input
-							id={field}
-							type="number"
-							placeholder={additionalField.placeholder ||
-								(typeof additionalField.label === 'string' ? additionalField.label : '')}
-							bind:value={(form.data as any)[field]}
-							disabled={isSubmitting}
-							class={classNames?.input}
-						/>
-						{#if (form.errors as any)[field]}
-							<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
+				<form.Field name={field as any} validators={{ onChange: getAdditionalFieldValidator(field) }}>
+					{#snippet children(fieldState)}
+						{#if additionalField.type === 'boolean'}
+							<!-- Checkbox Field -->
+							<div class="space-y-2">
+								<div class="flex items-start space-x-2">
+									<Checkbox
+										id={field}
+										checked={fieldState.state.value as boolean}
+										onCheckedChange={(checked) => {
+											fieldState.handleChange(checked as any);
+										}}
+										disabled={isSubmitting}
+									/>
+									<Label for={field} class={cn('font-normal', classNames?.label)}>
+										{additionalField.label}
+									</Label>
+								</div>
+								{#if fieldState.state.meta.errors.length > 0}
+									<p class={cn('text-sm text-red-500', classNames?.error)}>
+										{getFieldError(fieldState.state.meta.errors[0])}
+									</p>
+								{/if}
+							</div>
+						{:else if additionalField.type === 'number'}
+							<!-- Number Field -->
+							<div class="space-y-2">
+								<Label for={field} class={classNames?.label}>
+									{additionalField.label}
+								</Label>
+								<Input
+									id={field}
+									type="number"
+									placeholder={additionalField.placeholder ||
+										(typeof additionalField.label === 'string' ? additionalField.label : '')}
+									value={fieldState.state.value}
+									oninput={(e) => fieldState.handleChange(e.currentTarget.value)}
+									onblur={fieldState.handleBlur}
+									disabled={isSubmitting}
+									class={classNames?.input}
+								/>
+								{#if fieldState.state.meta.errors.length > 0}
+									<p class={cn('text-sm text-red-500', classNames?.error)}>
+										{getFieldError(fieldState.state.meta.errors[0])}
+									</p>
+								{/if}
+							</div>
+						{:else if additionalField.multiline}
+							<!-- Textarea Field -->
+							<div class="space-y-2">
+								<Label for={field} class={classNames?.label}>
+									{additionalField.label}
+								</Label>
+								<Textarea
+									id={field}
+									placeholder={additionalField.placeholder ||
+										(typeof additionalField.label === 'string' ? additionalField.label : '')}
+									value={fieldState.state.value}
+									oninput={(e) => fieldState.handleChange(e.currentTarget.value)}
+									onblur={fieldState.handleBlur}
+									disabled={isSubmitting}
+									class={classNames?.input}
+								/>
+								{#if fieldState.state.meta.errors.length > 0}
+									<p class={cn('text-sm text-red-500', classNames?.error)}>
+										{getFieldError(fieldState.state.meta.errors[0])}
+									</p>
+								{/if}
+							</div>
+						{:else}
+							<!-- Text Field -->
+							<div class="space-y-2">
+								<Label for={field} class={classNames?.label}>
+									{additionalField.label}
+								</Label>
+								<Input
+									id={field}
+									type="text"
+									placeholder={additionalField.placeholder ||
+										(typeof additionalField.label === 'string' ? additionalField.label : '')}
+									value={fieldState.state.value}
+									oninput={(e) => fieldState.handleChange(e.currentTarget.value)}
+									onblur={fieldState.handleBlur}
+									disabled={isSubmitting}
+									class={classNames?.input}
+								/>
+								{#if fieldState.state.meta.errors.length > 0}
+									<p class={cn('text-sm text-red-500', classNames?.error)}>
+										{getFieldError(fieldState.state.meta.errors[0])}
+									</p>
+								{/if}
+							</div>
 						{/if}
-					</div>
-				{:else if additionalField.multiline}
-					<!-- Textarea Field -->
-					<div class="space-y-2">
-						<Label for={field} class={classNames?.label}>
-							{additionalField.label}
-						</Label>
-						<Textarea
-							id={field}
-							placeholder={additionalField.placeholder ||
-								(typeof additionalField.label === 'string' ? additionalField.label : '')}
-							bind:value={(form.data as any)[field]}
-							disabled={isSubmitting}
-							class={classNames?.input}
-						/>
-						{#if (form.errors as any)[field]}
-							<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
-						{/if}
-					</div>
-				{:else}
-					<!-- Text Field -->
-					<div class="space-y-2">
-						<Label for={field} class={classNames?.label}>
-							{additionalField.label}
-						</Label>
-						<Input
-							id={field}
-							type="text"
-							placeholder={additionalField.placeholder ||
-								(typeof additionalField.label === 'string' ? additionalField.label : '')}
-							bind:value={(form.data as any)[field]}
-							disabled={isSubmitting}
-							class={classNames?.input}
-						/>
-						{#if (form.errors as any)[field]}
-							<p class={cn('text-sm text-red-500', classNames?.error)}>{(form.errors as any)[field][0]}</p>
-						{/if}
-					</div>
-				{/if}
+					{/snippet}
+				</form.Field>
 			{:else}
 				<!-- Additional field not found, log error -->
 				{console.error(`Additional field ${field} not found`)}
