@@ -231,6 +231,7 @@ export * from './invitation.js';
 export * from './link.js';
 export * from './organization-options.js';
 export * from './password-validation.js';
+export * from './profile.js';
 export * from './refetch.js';
 export * from './render-toast.js';
 export * from './sign-up-options.js';

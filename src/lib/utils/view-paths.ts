@@ -35,7 +35,7 @@ export const accountViewPaths = {
 	API_KEYS: 'api-keys',
 	/** @default "organizations" */
 	ORGANIZATIONS: 'organizations'
-};
+} as const;
 
 export type AccountViewPaths = typeof accountViewPaths;
 
@@ -53,3 +53,5 @@ export type OrganizationViewPaths = typeof organizationViewPaths;
 export type AuthViewPath = keyof AuthViewPaths;
 export type AccountViewPath = keyof AccountViewPaths;
 export type OrganizationViewPath = keyof OrganizationViewPaths;
+
+export type AuthViewPathValues = AuthViewPaths[AuthViewPath];

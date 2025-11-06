@@ -2,7 +2,7 @@
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { cn } from '$lib/utils/utils.js';
-	import type { AuthLocalization } from '$lib/types.js';
+	import type { AuthLocalization } from '$lib/types/index.js';
 
 	interface Props {
 		class?: string;

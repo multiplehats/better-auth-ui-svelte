@@ -1,5 +1,5 @@
 import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-import { getSearchParam } from '$lib/utils/utils';
+import { getSearchParam } from '$lib/utils/utils.js';
 
 export function useOnSuccessTransition({ redirectTo: redirectToProp }: { redirectTo?: string }) {
 	const config = getAuthUIConfig();
@@ -30,6 +30,7 @@ export function useOnSuccessTransition({ redirectTo: redirectToProp }: { redirec
 		// Refetch session using the hooks provided by better-auth/svelte
 		if (hooks?.useSession) {
 			const sessionQuery = hooks.useSession();
+
 			await sessionQuery.refetch?.();
 		}
 

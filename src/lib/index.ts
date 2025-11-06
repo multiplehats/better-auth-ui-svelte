@@ -4,7 +4,7 @@ export { default as SignedIn } from './components/signed-in.svelte';
 export { default as SignedOut } from './components/signed-out.svelte';
 export { default as UserAvatar } from './components/user-avatar.svelte';
 export { default as UserButton } from './components/user-button.svelte';
-// export { default as UserView } from './components/user-view.svelte';
+export { default as UserView } from './components/user-view.svelte';
 export { default as AuthLoading } from './components/auth-loading.svelte';
 export * as ProviderIcons from './components/provider-icons/index.js';
 // export { default as PasswordInput } from './components/password-input.svelte';
@@ -31,20 +31,21 @@ export { default as TwoFactorForm } from './components/auth/forms/two-factor-for
 
 // Organization Components
 // export { default as AcceptInvitationCard } from './components/organization/accept-invitation-card.svelte';
-// export { default as CreateOrganizationDialog } from './components/organization/create-organization-dialog.svelte';
+export { default as CreateOrganizationDialog } from './components/organization/create-organization-dialog.svelte';
 // export { default as DeleteOrganizationCard } from './components/organization/delete-organization-card.svelte';
-// export { default as OrganizationCellView } from './components/organization/organization-cell-view.svelte';
+export { default as OrganizationCellView } from './components/organization/organization-cell-view.svelte';
 // export { default as OrganizationInvitationsCard } from './components/organization/organization-invitations-card.svelte';
-// export { default as OrganizationLogo } from './components/organization/organization-logo.svelte';
+export { default as OrganizationLogo } from './components/organization/organization-logo.svelte';
 // export { default as OrganizationLogoCard } from './components/organization/organization-logo-card.svelte';
 // export { default as OrganizationMembersCard } from './components/organization/organization-members-card.svelte';
 // export { default as OrganizationNameCard } from './components/organization/organization-name-card.svelte';
 // export { default as OrganizationSettingsCards } from './components/organization/organization-settings-cards.svelte';
 // export { default as OrganizationSlugCard } from './components/organization/organization-slug-card.svelte';
-// export { default as OrganizationSwitcher } from './components/organization/organization-switcher.svelte';
+export { default as OrganizationSwitcher } from './components/organization/organization-switcher.svelte';
 // export { default as OrganizationView } from './components/organization/organization-view.svelte';
 // export { default as OrganizationsCard } from './components/organization/organizations-card.svelte';
 // export { default as UserInvitationsCard } from './components/organization/user-invitations-card.svelte';
+export { default as PersonalAccountView } from './components/organization/personal-account-view.svelte';
 
 // Settings Components - Account
 // export { default as AccountsCard } from './components/settings/account/accounts-card.svelte';
@@ -108,5 +109,11 @@ export { authLocalization } from './localization/auth-localization.js';
 // Types
 export type { AuthUIConfig, User, Session, AuthLocalization } from './types/index.js';
 export type { AuthFormClassNames } from './components/auth/auth-form.svelte';
+export type { UserButtonClassNames } from './components/user-button.svelte';
+export type { UserViewClassNames } from './components/user-view.svelte';
+export type { UserAvatarClassNames } from './components/user-avatar.svelte';
+export type { OrganizationSwitcherClassNames } from './components/organization/organization-switcher.svelte';
+export type { OrganizationViewClassNames } from './components/organization/organization-cell-view.svelte';
+export type { OrganizationLogoClassNames } from './components/organization/organization-logo.svelte';
 export * from './types/auth-hooks.js';
 export * from './types/auth-mutators.js';

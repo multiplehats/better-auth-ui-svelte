@@ -5,7 +5,7 @@
 	import { toast, Toaster } from 'svelte-sonner';
 	import { authClient } from '$lib/auth-client.js';
 	import { ModeWatcher } from 'mode-watcher';
-	import { authPathConfig } from '$lib/config/auth-config.js';
+	import { authPathConfig, accountConfig } from '$lib/config/auth-config.js';
 
 	let { children }: LayoutProps = $props();
 </script>
@@ -15,8 +15,10 @@
 
 <AuthUIProvider
 	{authClient}
+	gravatar={true}
 	basePath={authPathConfig.basePath}
 	viewPaths={authPathConfig.viewPaths}
+	account={accountConfig}
 	magicLink={true}
 	{toast}
 >

@@ -21,7 +21,8 @@
 	const organizationRefetching = $derived(organizationResult.isRefetching);
 	const refetchOrganization = $derived(organizationResult.refetch);
 
-	const listOrganizationsResult = useListOrganizations();
+	const listOrganizationsStore = useListOrganizations();
+	const listOrganizationsResult = $derived($listOrganizationsStore);
 	const organizations = $derived('data' in listOrganizationsResult ? listOrganizationsResult.data : undefined);
 	const refetchListOrganizations = $derived('refetch' in listOrganizationsResult ? listOrganizationsResult.refetch : undefined);
 
