@@ -1,58 +1,472 @@
-# Svelte library
+# Better Auth UI - Svelte 5
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+<picture>
+    <source srcset="https://raw.githubusercontent.com/daveyplate/better-auth-ui/main/docs/public/better-auth-ui-promo-dark.png" media="(prefers-color-scheme: dark)">
+    <source srcset="https://raw.githubusercontent.com/daveyplate/better-auth-ui/main/docs/public/better-auth-ui-promo-light.png" media="(prefers-color-scheme: light)">
+    <img src="https://raw.githubusercontent.com/daveyplate/better-auth-ui/main/docs/public/better-auth-ui-promo-dark.png" alt="Better Auth UI Logo">
+</picture>
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+Pre-built, customizable authentication UI components for [Better Auth](https://www.better-auth.com) in Svelte 5.
 
-## Creating a project
+This is a Svelte 5 port of the [Better Auth UI React library](https://github.com/daveyplate/better-auth-ui). The API is nearly identical to the original React library, making it easy to follow the [official documentation](https://better-auth-ui.com). All credits for the original design and architecture go to [daveycodez](https://github.com/daveycodez).
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Why Choose Better Auth UI?
 
-```sh
-# create a new project in the current directory
-npx sv create
+- **Easy** – Plug & play authentication components
+- **Customizable** – Fully styled with TailwindCSS and shadcn-svelte, easy to extend
+- **Robust** – Built with Svelte 5 runes and modern best practices
 
-# create a new project in my-app
-npx sv create my-app
+## Key Features
+
+- 🚀 **Svelte 5 Runes** - Built with the latest Svelte 5 reactive primitives
+- 🔐 **Better Auth Integration** - Native integration with Better Auth's Svelte client
+- 🎨 **Tailwind CSS** - Fully styled with Tailwind CSS v4
+- 📦 **shadcn-svelte Components** - Built on top of high-quality UI components
+- ✅ **Form Validation** - Zod 4 schema validation out of the box
+- 🌐 **Localization Ready** - Easy to customize all text strings
+- 📱 **Fully Responsive** - Mobile-first design
+
+## Installation
+
+Install the package using your preferred package manager:
+
+```bash
+pnpm install better-auth-ui-svelte better-auth zod svelte-sonner
 ```
 
-## Developing
+### Peer Dependencies
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Make sure you have these installed in your project:
 
-```sh
-npm run dev
+- `svelte` ^5.0.0
+- `better-auth` ^1.3.0
+- `bits-ui` ^2.0.0
+- `@lucide/svelte` ^0.400.0
+- `tailwindcss` ^4.0.0
+- `zod` ^4.0.0
+- `svelte-sonner` ^0.4.0
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+### TailwindCSS Configuration
+
+For **TailwindCSS v4**, add the following `@import` to your global CSS file:
+
+```css
+/* app.css or global.css */
+@import 'better-auth-ui-svelte/css';
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+For **TailwindCSS v3** _(Deprecated)_, add the following to your Tailwind config:
 
-## Building
-
-To build your library:
-
-```sh
-npm pack
+```js
+content: ['./node_modules/better-auth-ui-svelte/dist/**/*.{js,svelte}'];
 ```
 
-To create a production version of your showcase app:
+## SvelteKit Integration
 
-```sh
-npm run build
+Follow these steps to integrate Better Auth UI into your SvelteKit project:
+
+### Step 1: Set Up Better Auth Client
+
+Create your Better Auth client instance (e.g., in `src/lib/auth-client.ts`):
+
+```typescript
+import { createAuthClient } from 'better-auth/svelte';
+
+export const authClient = createAuthClient({
+  baseURL: import.meta.env.VITE_AUTH_URL || 'http://localhost:3000',
+  // Add any plugins you need
+  plugins: [
+    // organizationClient(),
+    // twoFactorClient(),
+    // etc.
+  ]
+});
 ```
 
-You can preview the production build with `npm run preview`.
+### Step 2: Set Up AuthUIProvider
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The `<AuthUIProvider />` wraps your application with authentication context. Set it up in your root layout:
 
-## Publishing
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+	import { AuthUIProvider } from 'better-auth-ui-svelte';
+	import { Toaster } from 'svelte-sonner';
+	import { authClient } from '$lib/auth-client';
+	import { goto, invalidateAll } from '$app/navigation';
+</script>
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+<Toaster />
 
-To publish your library to [npm](https://www.npmjs.com):
-
-```sh
-npm publish
+<AuthUIProvider
+	{authClient}
+	navigate={goto}
+	onSessionChange={async () => {
+		// Invalidate all server data when session changes
+		await invalidateAll();
+	}}
+>
+	<slot />
+</AuthUIProvider>
 ```
+
+The [`<AuthUIProvider />`](#authui-provider-props) can be customized with additional settings:
+
+```svelte
+<AuthUIProvider
+	{authClient}
+	navigate={goto}
+	onSessionChange={async () => await invalidateAll()}
+	social={{
+		providers: ['github', 'google', 'facebook']
+	}}
+	magicLink
+	passkey
+	multiSession
+	twoFactor={['otp', 'totp']}
+>
+	<slot />
+</AuthUIProvider>
+```
+
+### Step 3: Create Auth Pages with Dynamic Routes
+
+Create a dynamic route to handle all authentication views. Create the file `src/routes/auth/[path]/+page.svelte`:
+
+```svelte
+<script lang="ts">
+	import { AuthView, authViewPaths } from 'better-auth-ui-svelte';
+	import { page } from '$app/stores';
+
+	const path = $derived($page.params.path);
+</script>
+
+<main class="container flex grow items-center justify-center p-4">
+	<AuthView {path} />
+</main>
+```
+
+For better type safety and pre-rendering support, also create `src/routes/auth/[path]/+page.ts`:
+
+```typescript
+import { authViewPaths } from 'better-auth-ui-svelte';
+import type { PageLoad } from './$types';
+
+export const prerender = true;
+
+export const entries = () => {
+	return Object.values(authViewPaths).map((path) => ({ path }));
+};
+
+export const load: PageLoad = async ({ params }) => {
+	return {
+		path: params.path
+	};
+};
+```
+
+This single dynamic route handles all authentication views:
+
+- `/auth/sign-in` – Sign in via email/password and social providers
+- `/auth/sign-up` – New account registration
+- `/auth/magic-link` – Email login without a password
+- `/auth/forgot-password` – Request password reset email
+- `/auth/reset-password` – Set new password after receiving reset link
+- `/auth/two-factor` – Two-factor authentication
+- `/auth/recover-account` – Recover account via backup code
+- `/auth/email-otp` – Email OTP verification
+- `/auth/sign-out` – Log the user out
+- `/auth/callback` – OAuth callback handler
+- `/auth/accept-invitation` – Accept organization invitation
+
+## Usage Examples
+
+### Using Individual Forms
+
+You can use individual authentication forms directly in your pages:
+
+```svelte
+<script lang="ts">
+	import { SignInForm, SignUpForm } from 'better-auth-ui-svelte';
+</script>
+
+<SignInForm
+	redirectTo="/dashboard"
+	onSuccess={() => {
+		console.log('Signed in!');
+	}}
+/>
+```
+
+### Conditional Rendering
+
+Use `<SignedIn />` and `<SignedOut />` to conditionally render content:
+
+```svelte
+<script lang="ts">
+	import { SignedIn, SignedOut } from 'better-auth-ui-svelte';
+</script>
+
+<SignedOut>
+	<a href="/auth/sign-in">Sign In</a>
+</SignedOut>
+
+<SignedIn>
+	<a href="/dashboard">Dashboard</a>
+</SignedIn>
+```
+
+### User Button
+
+Display a user button with avatar and dropdown menu:
+
+```svelte
+<script lang="ts">
+	import { UserButton } from 'better-auth-ui-svelte';
+</script>
+
+<UserButton align="end" />
+```
+
+## Available Components
+
+### Core Components
+
+- **`<AuthView />`** - Dynamic authentication view handler (sign in, sign up, forgot password, etc.)
+- **`<AuthUIProvider />`** - Context provider for auth configuration
+- **`<AuthLoading />`** - Loading state component
+
+### Authentication Forms
+
+- **`<SignInForm />`** - Email/password sign in
+- **`<SignUpForm />`** - User registration
+- **`<ForgotPasswordForm />`** - Password reset request
+- **`<ResetPasswordForm />`** - Set new password
+- **`<MagicLinkForm />`** - Magic link authentication
+- **`<TwoFactorForm />`** - Two-factor authentication
+- **`<RecoverAccountForm />`** - Account recovery
+- **`<EmailOtpForm />`** - Email OTP verification
+
+### User Components
+
+- **`<UserButton />`** - User dropdown menu with avatar
+- **`<UserAvatar />`** - User avatar with fallback to initials
+- **`<SignedIn />`** - Renders children only when authenticated
+- **`<SignedOut />`** - Renders children only when not authenticated
+
+### Other Components
+
+- **`<AuthCallback />`** - OAuth callback handler
+- **`<SignOut />`** - Sign out component
+
+## Customization
+
+### Localization
+
+Customize all text strings by passing a `localization` prop to `<AuthUIProvider />`:
+
+```svelte
+<script lang="ts">
+	import { AuthUIProvider, authLocalization } from 'better-auth-ui-svelte';
+	import { authClient } from '$lib/auth-client';
+
+	const customLocalization = {
+		...authLocalization,
+		SIGN_IN: 'Log In',
+		SIGN_UP: 'Create Account',
+		EMAIL: 'Email Address',
+		PASSWORD: 'Your Password'
+	};
+</script>
+
+<AuthUIProvider {authClient} localization={customLocalization}>
+	<slot />
+</AuthUIProvider>
+```
+
+### Styling
+
+All components accept a `className` prop for custom styling:
+
+```svelte
+<SignInForm className="max-w-md mx-auto" />
+```
+
+For granular styling control, use the `classNames` prop:
+
+```svelte
+<AuthView
+	path="sign-in"
+	classNames={{
+		base: 'border-2 border-primary',
+		header: 'bg-primary/10',
+		title: 'text-xl font-bold',
+		footerLink: 'text-primary hover:underline'
+	}}
+/>
+```
+
+### AuthUI Provider Props
+
+The `<AuthUIProvider />` accepts the following configuration options:
+
+```typescript
+interface AuthUIProviderProps {
+  // Required
+  authClient: ReturnType<typeof createAuthClient>;
+
+  // Navigation (SvelteKit)
+  navigate?: (href: string) => void;
+
+  // Session management
+  onSessionChange?: () => void | Promise<void>;
+
+  // Social authentication
+  social?: {
+    providers?: ('google' | 'github' | 'facebook' | 'apple' | 'discord' | 'twitter')[];
+  };
+
+  // Additional auth methods
+  magicLink?: boolean;
+  passkey?: boolean;
+
+  // Two-factor authentication
+  twoFactor?: ('otp' | 'totp')[];
+
+  // Multi-session support
+  multiSession?: boolean;
+
+  // Localization
+  localization?: Partial<AuthLocalization>;
+
+  // Avatar handling
+  avatar?: {
+    upload?: (file: File) => Promise<string>;
+    delete?: (url: string) => Promise<void>;
+  };
+
+  // Settings page configuration
+  settings?: {
+    url?: string;
+  };
+
+  // Organization configuration
+  organization?: {
+    pathMode?: 'id' | 'slug';
+    basePath?: string;
+    slug?: string;
+  };
+}
+```
+
+## Form Utilities
+
+The library includes a lightweight form utility built with Svelte 5 runes:
+
+```typescript
+import { createForm } from 'better-auth-ui-svelte';
+import { z } from 'zod';
+
+const form = createForm({
+  schema: z.object({
+    email: z.string().email(),
+    password: z.string().min(8)
+  }),
+  initialValues: {
+    email: '',
+    password: ''
+  },
+  onSubmit: async (values) => {
+    // Handle form submission
+    console.log('Form values:', values);
+  }
+});
+
+// Use in your component
+form.handleSubmit();
+form.setValue('email', 'test@example.com');
+```
+
+## Exports
+
+The library exports the following utilities:
+
+```typescript
+// Component exports
+export { AuthView, AuthUIProvider, SignInForm, SignUpForm, UserButton, UserAvatar, ... };
+
+// Path constants
+export { authViewPaths, accountViewPaths, organizationViewPaths };
+
+// Utilities
+export { createForm, getViewByPath };
+
+// Context helpers
+export { getAuthUIConfig, getAuthClient, getLocalization };
+
+// Localization
+export { authLocalization };
+
+// Types
+export type { AuthUIConfig, User, Session, AuthLocalization };
+```
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build library
+pnpm run build
+
+# Lint and format
+pnpm run lint
+pnpm run format
+```
+
+## Architecture
+
+Better Auth UI for Svelte is built with:
+
+- **Svelte 5 Runes** (`$state`, `$derived`, `$effect`) for reactive state
+- **Better Auth Svelte Client** for authentication state and methods
+- **Svelte Context** for configuration and dependency injection
+- **Zod 4** for schema validation
+- **Bits UI** via shadcn-svelte for accessible UI primitives
+- **Tailwind CSS v4** for styling
+
+## Differences from React Version
+
+While the API is nearly identical, there are some Svelte-specific differences:
+
+1. **Navigation**: Instead of Next.js router, use SvelteKit's `goto` function
+2. **Session Management**: Use `invalidateAll()` instead of `router.refresh()`
+3. **Dynamic Routes**: Use SvelteKit's `[path]` syntax instead of Next.js `[path]`
+4. **Reactivity**: Built with Svelte 5 runes instead of React hooks
+5. **Link Component**: SvelteKit doesn't need a custom Link component
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT
+
+## Credits
+
+- Original React version by [daveycodez](https://github.com/daveyplate/better-auth-ui)
+- Svelte 5 port by Chris Jayden [multiplehats](https://github.com/multiplehats)
+- Built with [Better Auth](https://www.better-auth.com)
+- UI components from [shadcn-svelte](https://www.shadcn-svelte.com)
+
+## Related Projects
+
+- [Better Auth](https://www.better-auth.com) - Framework agnostic authentication library
+- [Better Auth UI (React)](https://github.com/daveyplate/better-auth-ui) - Original React version
+- [Better Auth UI Docs](https://better-auth-ui.com) - Official documentation (React-based, but API is nearly identical)
+- [shadcn-svelte](https://www.shadcn-svelte.com) - Beautifully designed Svelte components
