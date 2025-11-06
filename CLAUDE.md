@@ -1,6 +1,6 @@
 # Project Documentation
 
-This project is a port of `better-auth-ui` which is a React library for Better Auth components. This port uses Svelte to provide the same functionality in a Svelte environment. You can find the current progress here: /Users/jayden/Code/stacksee/better-auth-ui/SVELTE5_CONVERSION_PLAN.md
+This project is a port of `better-auth-ui` which is a React library for Better Auth components. This port uses Svelte to provide the same functionality in a Svelte environment
 
 # Svelte MCP Server
 
