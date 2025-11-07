@@ -28,15 +28,12 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 
 	const { pathMode, slug: contextSlug } = organizationOptions || {};
 
-	// Get nanostores and convert them to reactive Svelte 5 values
 	const organizationsStore = useListOrganizations();
 	const activeOrgStore = useActiveOrganization();
 
-	// Convert nanostores to reactive values
 	const organizations = fromStore(organizationsStore);
 	const activeOrg = fromStore(activeOrgStore);
 
-	// Derive the current organization based on path mode
 	const currentOrg = $derived.by(() => {
 		let data: Organization | null | undefined = undefined;
 		let isPending = false;
@@ -49,7 +46,7 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 
 			data =
 				orgsResult && 'data' in orgsResult
-					? orgsResult.data?.find((org: Organization) => org.slug === slug) ?? null
+					? (orgsResult.data?.find((org: Organization) => org.slug === slug) ?? null)
 					: null;
 			isPending = orgsResult && 'isPending' in orgsResult ? orgsResult.isPending : false;
 			isRefetching = orgsResult && 'isRefetching' in orgsResult ? orgsResult.isRefetching : false;
@@ -57,9 +54,7 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 			const activeResult = activeOrg.value;
 
 			data =
-				activeResult && 'data' in activeResult
-					? (activeResult.data as Organization | null)
-					: null;
+				activeResult && 'data' in activeResult ? (activeResult.data as Organization | null) : null;
 			isPending = activeResult && 'isPending' in activeResult ? activeResult.isPending : false;
 			isRefetching =
 				activeResult && 'isRefetching' in activeResult ? activeResult.isRefetching : false;
