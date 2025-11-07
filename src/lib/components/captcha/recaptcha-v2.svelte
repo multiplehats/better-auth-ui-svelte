@@ -47,7 +47,7 @@
 		}
 	</style>
 
-	{#await import('svelte-google-recaptcha') then { ReCAPTCHA }}
+	<!-- {#await import('svelte-google-recaptcha') then { ReCAPTCHA }}
 		<ReCAPTCHA
 			bind:this={captchaRef}
 			sitekey={captcha.siteKey}
@@ -60,5 +60,5 @@
 					: 'mx-auto h-[76px] w-[302px] overflow-hidden rounded bg-muted'
 			)}
 		/>
-	{/await}
+	{/await} -->
 {/if}

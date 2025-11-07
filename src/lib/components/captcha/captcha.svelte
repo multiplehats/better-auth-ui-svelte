@@ -69,10 +69,10 @@
 	{/if}
 
 	{#if showHCaptcha}
-		{#await import('@hcaptcha/svelte-hcaptcha') then { HCaptcha }}
+		<!-- {#await import('@hcaptcha/svelte-hcaptcha') then { HCaptcha }}
 			<div class="mx-auto">
 				<HCaptcha bind:captchaRef={ref} sitekey={captcha.siteKey} {theme} />
 			</div>
-		{/await}
+		{/await} -->
 	{/if}
 {/if}
