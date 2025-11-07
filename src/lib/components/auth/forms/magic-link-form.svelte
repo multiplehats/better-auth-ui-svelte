@@ -76,11 +76,14 @@
 	// Form schema
 	const formSchema = $derived(
 		z.object({
-			email: z.string().min(1, {
-				message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
-			}).email({
-				message: `${localization.EMAIL} ${localization.IS_INVALID}`
-			})
+			email: z
+				.string()
+				.min(1, {
+					message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
+				})
+				.email({
+					message: `${localization.EMAIL} ${localization.IS_INVALID}`
+				})
 		})
 	);
 

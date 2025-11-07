@@ -232,10 +232,7 @@ export function getAllOrganizationPaths(
 ): Record<OrganizationViewPath, string> {
 	return Object.keys(organizationViewPaths).reduce(
 		(acc, key) => {
-			acc[key as OrganizationViewPath] = getOrganizationPath(
-				key as OrganizationViewPath,
-				config
-			);
+			acc[key as OrganizationViewPath] = getOrganizationPath(key as OrganizationViewPath, config);
 			return acc;
 		},
 		{} as Record<OrganizationViewPath, string>

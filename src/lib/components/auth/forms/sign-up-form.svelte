@@ -19,7 +19,12 @@
 	import { fileToBase64, resizeAndCropImage } from '$lib/utils/image-utils.js';
 	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
-	import { getLocalizedError, getPasswordSchema, getSearchParam, getFieldError } from '$lib/utils/utils.js';
+	import {
+		getLocalizedError,
+		getPasswordSchema,
+		getSearchParam,
+		getFieldError
+	} from '$lib/utils/utils.js';
 	import type { AuthFormClassNames } from '../auth-form.svelte';
 
 	interface Props {
@@ -353,9 +358,7 @@
 	const nameValidator = $derived(
 		signUpFields?.includes('name') ? formSchema.shape.name : undefined
 	);
-	const usernameValidator = $derived(
-		usernameEnabled ? formSchema.shape.username : undefined
-	);
+	const usernameValidator = $derived(usernameEnabled ? formSchema.shape.username : undefined);
 	const confirmPasswordValidator = $derived(
 		confirmPasswordEnabled ? formSchema.shape.confirmPassword : undefined
 	);
@@ -607,7 +610,10 @@
 		{#each signUpFields.filter((field) => field !== 'name' && field !== 'image') as field}
 			{@const additionalField = additionalFields?.[field]}
 			{#if additionalField}
-				<form.Field name={field as any} validators={{ onChange: getAdditionalFieldValidator(field) }}>
+				<form.Field
+					name={field as any}
+					validators={{ onChange: getAdditionalFieldValidator(field) }}
+				>
 					{#snippet children(fieldState)}
 						{#if additionalField.type === 'boolean'}
 							<!-- Checkbox Field -->

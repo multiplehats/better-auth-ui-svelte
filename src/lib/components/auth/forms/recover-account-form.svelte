@@ -71,9 +71,7 @@
 	}));
 
 	// Compute final isSubmitting state
-	const isSubmitting = $derived(
-		isSubmittingProp ?? (form.state.isSubmitting || transitionPending)
-	);
+	const isSubmitting = $derived(isSubmittingProp ?? (form.state.isSubmitting || transitionPending));
 
 	// Sync isSubmitting state
 	$effect(() => {

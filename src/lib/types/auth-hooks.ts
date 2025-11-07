@@ -25,28 +25,20 @@ export type AuthHooks = {
 	useListApiKeys: () => AuthHook<ApiKey[]>;
 	useActiveOrganization: () => Partial<ReturnType<AnyAuthClient['useActiveOrganization']>>;
 	useListOrganizations: () => Partial<ReturnType<AnyAuthClient['useListOrganizations']>>;
-	useHasPermission: (params: {
-		permission: string;
-	}) => AuthHook<{
+	useHasPermission: (params: { permission: string }) => AuthHook<{
 		error: null;
 		success: boolean;
 	}>;
-	useInvitation: (params: {
-		id: string;
-	}) => AuthHook<
+	useInvitation: (params: { id: string }) => AuthHook<
 		Invitation & {
 			organizationName: string;
 			organizationSlug: string;
 			organizationLogo?: string;
 		}
 	>;
-	useListInvitations: (params: {
-		query?: { organizationId?: string };
-	}) => AuthHook<Invitation[]>;
+	useListInvitations: (params: { query?: { organizationId?: string } }) => AuthHook<Invitation[]>;
 	useListUserInvitations: () => AuthHook<Invitation[]>;
-	useListMembers: (params: {
-		query?: { organizationId?: string };
-	}) => AuthHook<{
+	useListMembers: (params: { query?: { organizationId?: string } }) => AuthHook<{
 		members: (Member & { user?: Partial<User> | null })[];
 		total: number;
 	}>;

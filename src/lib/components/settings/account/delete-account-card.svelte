@@ -17,7 +17,14 @@
 
 	interface Props extends DeleteAccountCardProps {}
 
-	let { className, classNames, accounts, isPending, localization: propLocalization, skipHook }: Props = $props();
+	let {
+		className,
+		classNames,
+		accounts,
+		isPending,
+		localization: propLocalization,
+		skipHook
+	}: Props = $props();
 
 	const {
 		hooks: { useListAccounts },

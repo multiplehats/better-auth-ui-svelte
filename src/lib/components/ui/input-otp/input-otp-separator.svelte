@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
-	import type { WithElementRef } from "$lib/utils/ui.js";
-	import DotIcon from "@lucide/svelte/icons/dot";
+	import type { HTMLAttributes } from 'svelte/elements';
+	import type { WithElementRef } from '$lib/utils/ui.js';
+	import DotIcon from '@lucide/svelte/icons/dot';
 
 	let {
 		ref = $bindable(null),

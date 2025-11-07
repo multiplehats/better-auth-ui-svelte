@@ -41,7 +41,7 @@
 </script>
 
 <SettingsCard
-	className={className}
+	{className}
 	{classNames}
 	title={mergedLocalization.ACCOUNTS}
 	description={mergedLocalization.ACCOUNTS_DESCRIPTION}

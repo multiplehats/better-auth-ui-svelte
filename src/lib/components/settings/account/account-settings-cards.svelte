@@ -66,7 +66,9 @@
 				{@const additionalField = additionalFields?.[field]}
 				{#if additionalField}
 					<!-- Custom fields are not typed in the session user object -->
-					{@const defaultValue = sessionData?.user[field as keyof typeof sessionData.user] as unknown}
+					{@const defaultValue = sessionData?.user[
+						field as keyof typeof sessionData.user
+					] as unknown}
 					<UpdateFieldCard
 						classNames={classNames?.card}
 						value={defaultValue}

@@ -7,7 +7,13 @@
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError, getPasswordSchema, isValidEmail, getFieldError } from '$lib/utils/utils.js';
+	import {
+		cn,
+		getLocalizedError,
+		getPasswordSchema,
+		isValidEmail,
+		getFieldError
+	} from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
@@ -85,11 +91,14 @@
 				? z.string().min(1, {
 						message: `${localization.USERNAME} ${localization.IS_REQUIRED}`
 					})
-				: z.string().min(1, {
-						message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
-					}).email({
-						message: `${localization.EMAIL} ${localization.IS_INVALID}`
-					}),
+				: z
+						.string()
+						.min(1, {
+							message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
+						})
+						.email({
+							message: `${localization.EMAIL} ${localization.IS_INVALID}`
+						}),
 			password: getPasswordSchema(passwordValidation, {
 				PASSWORD_REQUIRED: localization.PASSWORD_REQUIRED,
 				PASSWORD_TOO_SHORT: localization.PASSWORD_TOO_SHORT,

@@ -40,10 +40,12 @@
 			});
 
 			if (response?.error) {
-				config.toast.error(getLocalizedError({
-					error: response.error,
-					localization: loc
-				}));
+				config.toast.error(
+					getLocalizedError({
+						error: response.error,
+						localization: loc
+					})
+				);
 
 				setIsSubmitting?.(false);
 			} else {

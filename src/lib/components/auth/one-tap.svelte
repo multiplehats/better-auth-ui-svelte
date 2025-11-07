@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getAuthClient, getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import {
+		getAuthClient,
+		getAuthUIConfig,
+		getLocalization
+	} from '$lib/context/auth-ui-config.svelte';
 	import { getLocalizedError } from '$lib/utils/utils.js';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';

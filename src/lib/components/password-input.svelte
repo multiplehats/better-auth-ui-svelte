@@ -3,7 +3,12 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { cn } from '$lib/utils/utils.js';
-	import type { ChangeEventHandler, FocusEventHandler, FormEventHandler, FullAutoFill } from 'svelte/elements';
+	import type {
+		ChangeEventHandler,
+		FocusEventHandler,
+		FormEventHandler,
+		FullAutoFill
+	} from 'svelte/elements';
 
 	interface Props {
 		class?: string;

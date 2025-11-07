@@ -78,13 +78,13 @@ Create your Better Auth client instance (e.g., in `src/lib/auth-client.ts`):
 import { createAuthClient } from 'better-auth/svelte';
 
 export const authClient = createAuthClient({
-  baseURL: 'http://localhost:5173',
-  // Add any plugins you need
-  plugins: [
-    // organizationClient(),
-    // twoFactorClient(),
-    // etc.
-  ]
+	baseURL: 'http://localhost:5173',
+	// Add any plugins you need
+	plugins: [
+		// organizationClient(),
+		// twoFactorClient(),
+		// etc.
+	]
 });
 ```
 
@@ -291,50 +291,50 @@ The `<AuthUIProvider />` accepts the following configuration options:
 
 ```typescript
 interface AuthUIProviderProps {
-  // Required
-  authClient: ReturnType<typeof createAuthClient>;
+	// Required
+	authClient: ReturnType<typeof createAuthClient>;
 
-  // Navigation (SvelteKit)
-  navigate?: (href: string) => void;
+	// Navigation (SvelteKit)
+	navigate?: (href: string) => void;
 
-  // Session management
-  onSessionChange?: () => void | Promise<void>;
+	// Session management
+	onSessionChange?: () => void | Promise<void>;
 
-  // Social authentication
-  social?: {
-    providers?: ('google' | 'github' | 'facebook' | 'apple' | 'discord' | 'twitter')[];
-  };
+	// Social authentication
+	social?: {
+		providers?: ('google' | 'github' | 'facebook' | 'apple' | 'discord' | 'twitter')[];
+	};
 
-  // Additional auth methods
-  magicLink?: boolean;
-  passkey?: boolean;
+	// Additional auth methods
+	magicLink?: boolean;
+	passkey?: boolean;
 
-  // Two-factor authentication
-  twoFactor?: ('otp' | 'totp')[];
+	// Two-factor authentication
+	twoFactor?: ('otp' | 'totp')[];
 
-  // Multi-session support
-  multiSession?: boolean;
+	// Multi-session support
+	multiSession?: boolean;
 
-  // Localization
-  localization?: Partial<AuthLocalization>;
+	// Localization
+	localization?: Partial<AuthLocalization>;
 
-  // Avatar handling
-  avatar?: {
-    upload?: (file: File) => Promise<string>;
-    delete?: (url: string) => Promise<void>;
-  };
+	// Avatar handling
+	avatar?: {
+		upload?: (file: File) => Promise<string>;
+		delete?: (url: string) => Promise<void>;
+	};
 
-  // Settings page configuration
-  settings?: {
-    url?: string;
-  };
+	// Settings page configuration
+	settings?: {
+		url?: string;
+	};
 
-  // Organization configuration
-  organization?: {
-    pathMode?: 'id' | 'slug';
-    basePath?: string;
-    slug?: string;
-  };
+	// Organization configuration
+	organization?: {
+		pathMode?: 'id' | 'slug';
+		basePath?: string;
+		slug?: string;
+	};
 }
 ```
 
@@ -357,18 +357,18 @@ Better Auth UI for Svelte includes utility functions to generate authentication 
 import { getAuthPath, getAuthUrl } from 'better-auth-ui-svelte';
 
 // Get auth paths (default: '/auth')
-getAuthPath('SIGN_IN');          // '/auth/sign-in'
-getAuthPath('SIGN_UP');          // '/auth/sign-up'
-getAuthPath('FORGOT_PASSWORD');  // '/auth/forgot-password'
+getAuthPath('SIGN_IN'); // '/auth/sign-in'
+getAuthPath('SIGN_UP'); // '/auth/sign-up'
+getAuthPath('FORGOT_PASSWORD'); // '/auth/forgot-password'
 
 // Get full URLs (useful for emails, redirects)
 getAuthUrl('RESET_PASSWORD', {
-  baseURL: 'https://example.com'
+	baseURL: 'https://example.com'
 }); // 'https://example.com/auth/reset-password'
 
 // Account and organization paths
-getAccountPath('SETTINGS');      // '/account/settings'
-getOrganizationPath('MEMBERS');  // '/organization/members'
+getAccountPath('SETTINGS'); // '/account/settings'
+getOrganizationPath('MEMBERS'); // '/organization/members'
 ```
 
 ### Server-Side Redirects
@@ -381,19 +381,19 @@ import { redirect } from '@sveltejs/kit';
 import { getAuthPath } from 'better-auth-ui-svelte';
 
 export async function handle({ event, resolve }) {
-  const session = await getSession(event);
+	const session = await getSession(event);
 
-  // Redirect unauthenticated users to sign-in
-  if (!session && event.url.pathname.startsWith('/app')) {
-    throw redirect(303, getAuthPath('SIGN_IN'));
-  }
+	// Redirect unauthenticated users to sign-in
+	if (!session && event.url.pathname.startsWith('/app')) {
+		throw redirect(303, getAuthPath('SIGN_IN'));
+	}
 
-  // Redirect authenticated users away from auth pages
-  if (session && event.url.pathname === getAuthPath('SIGN_IN')) {
-    throw redirect(303, '/app');
-  }
+	// Redirect authenticated users away from auth pages
+	if (session && event.url.pathname === getAuthPath('SIGN_IN')) {
+		throw redirect(303, '/app');
+	}
 
-  return resolve(event);
+	return resolve(event);
 }
 ```
 
@@ -406,12 +406,12 @@ Create a shared config file to keep paths consistent across your app:
 import type { PathConfig } from 'better-auth-ui-svelte';
 
 export const authPathConfig: PathConfig = {
-  basePath: '/auth',
-  // Optionally customize individual paths
-  viewPaths: {
-    SIGN_IN: 'login',      // /auth/login instead of /auth/sign-in
-    SIGN_UP: 'register'    // /auth/register instead of /auth/sign-up
-  }
+	basePath: '/auth',
+	// Optionally customize individual paths
+	viewPaths: {
+		SIGN_IN: 'login', // /auth/login instead of /auth/sign-in
+		SIGN_UP: 'register' // /auth/register instead of /auth/sign-up
+	}
 };
 ```
 

@@ -22,7 +22,13 @@
 		onOpenChange?: (open: boolean) => void;
 	}
 
-	let { classNames, accounts, localization: propLocalization, open, onOpenChange }: Props = $props();
+	let {
+		classNames,
+		accounts,
+		localization: propLocalization,
+		open,
+		onOpenChange
+	}: Props = $props();
 
 	const {
 		authClient,

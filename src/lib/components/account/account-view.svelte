@@ -30,9 +30,8 @@
 	// import SecuritySettingsCards from '../settings/security/security-settings-cards.svelte';
 	// TODO: Import ApiKeysCard when api-key directory is ported
 	// import ApiKeysCard from '../settings/api-key/api-keys-card.svelte';
-	// TODO: Import organization components when fully ported
-	// import OrganizationsCard from '../organization/organizations-card.svelte';
-	// import UserInvitationsCard from '../organization/user-invitations-card.svelte';
+	import OrganizationsCard from '../organization/organizations-card.svelte';
+	import UserInvitationsCard from '../organization/user-invitations-card.svelte';
 	import { Button } from '../ui/button/index.js';
 	import * as Drawer from '../ui/drawer/index.js';
 	import { Label } from '../ui/label/index.js';
@@ -66,7 +65,9 @@
 	const path = $derived(pathProp ?? pathname?.split('/').pop());
 
 	const view = $derived(
-		viewProp || (accountOptions?.viewPaths ? getViewByPath(accountOptions.viewPaths, path!) : undefined) || 'SETTINGS'
+		viewProp ||
+			(accountOptions?.viewPaths ? getViewByPath(accountOptions.viewPaths, path!) : undefined) ||
+			'SETTINGS'
 	);
 
 	const navItems = $derived.by(() => {
@@ -103,7 +104,9 @@
 {#if !accountOptions}
 	<!-- Return nothing if account options not configured -->
 {:else}
-	<div class={cn('flex w-full grow flex-col gap-4 md:flex-row md:gap-12', className, classNames?.base)}>
+	<div
+		class={cn('flex w-full grow flex-col gap-4 md:flex-row md:gap-12', className, classNames?.base)}
+	>
 		{#if !hideNav}
 			<!-- Mobile Navigation (Drawer) -->
 			<div class="flex justify-between gap-2 md:hidden">
@@ -176,7 +179,7 @@
 
 		<!-- Main Content Area -->
 		{#if view === 'SETTINGS'}
-			<AccountSettingsCards {classNames} localization={localization} />
+			<AccountSettingsCards {classNames} {localization} />
 		{:else if view === 'SECURITY'}
 			<!-- TODO: Uncomment when SecuritySettingsCards is ported -->
 			<div class="text-muted-foreground">
@@ -185,19 +188,13 @@
 			<!-- <SecuritySettingsCards {classNames} localization={localization} /> -->
 		{:else if view === 'API_KEYS'}
 			<!-- TODO: Uncomment when ApiKeysCard is ported -->
-			<div class="text-muted-foreground">
-				API Keys coming soon (ApiKeysCard not yet ported)
-			</div>
+			<div class="text-muted-foreground">API Keys coming soon (ApiKeysCard not yet ported)</div>
 			<!-- <ApiKeysCard classNames={classNames?.card} localization={localization} /> -->
 		{:else if view === 'ORGANIZATIONS' && organization}
-			<!-- TODO: Uncomment when organization cards are ported -->
-			<div class="text-muted-foreground">
-				Organizations coming soon (OrganizationsCard and UserInvitationsCard not yet ported)
+			<div class="grid w-full gap-4 md:gap-6">
+				<OrganizationsCard classNames={classNames?.card} {localization} />
+				<UserInvitationsCard classNames={classNames?.card} {localization} />
 			</div>
-			<!-- <div class="grid w-full gap-4 md:gap-6">
-				<OrganizationsCard classNames={classNames?.card} localization={localization} />
-				<UserInvitationsCard classNames={classNames?.card} localization={localization} />
-			</div> -->
 		{/if}
 	</div>
 {/if}

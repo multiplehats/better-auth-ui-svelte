@@ -160,12 +160,17 @@
 	</form.Field>
 
 	{#if confirmPasswordEnabled}
-		<form.Field name="confirmPassword" validators={{ onChange: getPasswordSchema(mergedPasswordValidation, {
-			PASSWORD_REQUIRED: loc.CONFIRM_PASSWORD_REQUIRED,
-			PASSWORD_TOO_SHORT: loc.PASSWORD_TOO_SHORT,
-			PASSWORD_TOO_LONG: loc.PASSWORD_TOO_LONG,
-			INVALID_PASSWORD: loc.INVALID_PASSWORD
-		}) }}>
+		<form.Field
+			name="confirmPassword"
+			validators={{
+				onChange: getPasswordSchema(mergedPasswordValidation, {
+					PASSWORD_REQUIRED: loc.CONFIRM_PASSWORD_REQUIRED,
+					PASSWORD_TOO_SHORT: loc.PASSWORD_TOO_SHORT,
+					PASSWORD_TOO_LONG: loc.PASSWORD_TOO_LONG,
+					INVALID_PASSWORD: loc.INVALID_PASSWORD
+				})
+			}}
+		>
 			{#snippet children(field)}
 				<div class="space-y-2">
 					<label for="confirmPassword" class={cn('text-sm font-medium', classNames?.label)}>
