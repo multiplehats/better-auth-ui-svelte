@@ -29,7 +29,8 @@ export function useAuthData<T>({
 	const sessionStore = authClient.useSession();
 	const session = fromStore(sessionStore);
 	const sessionData = $derived(session.value?.data);
-	const sessionPending = $derived(session.value?.isPending ?? true);
+
+	const sessionPending = $derived(session.value?.isPending === true);
 
 	// Subscribe to cache updates
 	const unsubscribe = authDataCache.subscribe(stableCacheKey, () => {
@@ -38,6 +39,10 @@ export function useAuthData<T>({
 			data = cacheEntry.data;
 			isRefetching = cacheEntry.isRefetching;
 		}
+
+		// Update isPending whenever cache changes
+		// React version: isPending = sessionPending || (cacheEntry?.data === undefined && !error)
+		isPending = sessionPending || (cacheEntry?.data === undefined && !error);
 	});
 
 	// Refetch function
@@ -124,9 +129,10 @@ export function useAuthData<T>({
 		const isStale = !cacheEntry || Date.now() - cacheEntry.timestamp > staleTime;
 
 		if (!initialized || !hasCachedData || userIdChanged || (hasCachedData && isStale)) {
+			// Mark as initialized since we're handling this query
+			initialized = true;
 			// Only fetch if we don't have data or if the data is stale
 			if (!hasCachedData || isStale) {
-				initialized = true;
 				refetch();
 			}
 		}
@@ -135,7 +141,8 @@ export function useAuthData<T>({
 		previousUserId = currentUserId;
 	});
 
-	// Update isPending based on session and cache state
+	// Update isPending when sessionPending or error changes
+	// (cache changes are handled in the subscription callback above)
 	$effect(() => {
 		const cacheEntry = authDataCache.get<T>(stableCacheKey);
 		isPending = sessionPending || (cacheEntry?.data === undefined && !error);

@@ -7,10 +7,11 @@
 		"prebuild": "tsx scripts/prebuild.ts",
 		"postbuild": "tsx scripts/postbuild.ts",
 		"build": "pnpm run prebuild && vite build && npm run prepack && pnpm run postbuild",
+		"ci:publish": "pnpm prepack && changeset publish",
 		"preview": "vite preview",
 		"sync": "svelte-kit sync",
 		"prepare": "pnpm run sync || echo ''",
-		"prepack": "pnpm run sync && svelte-package && publint",
+		"prepack": "pnpm run sync && pnpm run prebuild && svelte-package && publint",
 		"check": "pnpm run sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "pnpm run sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
@@ -66,6 +67,8 @@
 		}
 	},
 	"devDependencies": {
+		"@changesets/cli": "^2.29.4",
+		"@svitejs/changesets-changelog-github-compact": "^1.2.0",
 		"@eslint/compat": "^1.4.0",
 		"@eslint/js": "^9.38.0",
 		"@internationalized/date": "^3.8.1",

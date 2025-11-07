@@ -24,6 +24,10 @@
 		basePath: '/organization',
 		personalPath: '/dashboard'
 	}}
+	multiSession={true}
+	social={{
+		providers: ['google']
+	}}
 	magicLink={true}
 	{toast}
 >

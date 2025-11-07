@@ -8,14 +8,9 @@
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
 	import type { AuthLocalization, Refetch } from '$lib/types/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Card } from '$lib/components/ui/card/index.js';
-	import {
-		DropdownMenu,
-		DropdownMenuContent,
-		DropdownMenuItem,
-		DropdownMenuTrigger
-	} from '$lib/components/ui/dropdown-menu/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import UserView from '$lib/components/user-view.svelte';
 	import type { SettingsCardClassNames } from '../shared/settings-card.svelte';
 
@@ -82,35 +77,35 @@
 <Card class={cn('flex-row p-4', className, classNames?.cell)}>
 	<UserView user={deviceSession.user} localization={mergedLocalization} />
 
-	<DropdownMenu>
-		<DropdownMenuTrigger>
-			{#snippet child(props)}
-				<Button
-					class={cn('relative ms-auto', classNames?.button, classNames?.outlineButton)}
-					disabled={isLoading}
-					size="icon"
-					type="button"
-					variant="outline"
-					{...props}
-				>
-					{#if isLoading}
-						<Loader2 class="animate-spin" />
-					{:else}
-						<Ellipsis class={classNames?.icon} />
-					{/if}
-				</Button>
-			{/snippet}
-		</DropdownMenuTrigger>
+	<DropdownMenu.Root>
+		<DropdownMenu.Trigger
+			disabled={isLoading}
+			class={cn(
+				buttonVariants({
+					size: 'icon',
+					variant: 'outline'
+				}),
+				'relative ms-auto',
+				classNames?.button,
+				classNames?.outlineButton
+			)}
+		>
+			{#if isLoading}
+				<Loader2 class="animate-spin" />
+			{:else}
+				<Ellipsis class={classNames?.icon} />
+			{/if}
+		</DropdownMenu.Trigger>
 
-		<DropdownMenuContent>
+		<DropdownMenu.Content>
 			{#if !isCurrentSession}
-				<DropdownMenuItem onclick={handleSetActiveSession}>
+				<DropdownMenu.Item onclick={handleSetActiveSession}>
 					<Repeat class={classNames?.icon} />
 					{mergedLocalization.SWITCH_ACCOUNT}
-				</DropdownMenuItem>
+				</DropdownMenu.Item>
 			{/if}
 
-			<DropdownMenuItem
+			<DropdownMenu.Item
 				onclick={() => {
 					if (isCurrentSession) {
 						navigate(`${basePath}/${viewPaths.SIGN_OUT}`);
@@ -128,7 +123,7 @@
 				{/if}
 
 				{isCurrentSession ? mergedLocalization.SIGN_OUT : mergedLocalization.REVOKE}
-			</DropdownMenuItem>
-		</DropdownMenuContent>
-	</DropdownMenu>
+			</DropdownMenu.Item>
+		</DropdownMenu.Content>
+	</DropdownMenu.Root>
 </Card>

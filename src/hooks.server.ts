@@ -29,9 +29,9 @@ export async function handle({ event, resolve }) {
 	const isAuthenticated = !!session?.user;
 
 	// Redirect authenticated users away from auth pages (sign-in, sign-up)
-	if (isAuthenticated && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
-		throw redirect(303, DEFAULT_AUTH_REDIRECT);
-	}
+	// if (isAuthenticated && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
+	// 	throw redirect(303, DEFAULT_AUTH_REDIRECT);
+	// }
 
 	// Redirect unauthenticated users from protected routes
 	if (!isAuthenticated && PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {

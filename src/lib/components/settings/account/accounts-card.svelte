@@ -8,14 +8,14 @@
 	import AccountCell from './account-cell.svelte';
 
 	export interface AccountsCardProps {
-		class?: string;
+		className?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
 	}
 
 	interface Props extends AccountsCardProps {}
 
-	let { class: className, classNames, localization }: Props = $props();
+	let { className, classNames, localization }: Props = $props();
 
 	const {
 		basePath,
@@ -27,32 +27,37 @@
 
 	const mergedLocalization = { ...contextLocalization, ...localization };
 
-	const deviceSessions = useListDeviceSessions();
-	const sessionData = useSession();
+	const deviceSessionsResult = useListDeviceSessions();
+	const sessionStore = useSession();
+
+	// Derive reactive values
+	const deviceSessionsData = $derived(deviceSessionsResult.data);
+	const deviceSessionsPending = $derived(deviceSessionsResult.isPending);
+	const sessionData = $derived($sessionStore.data);
 
 	const otherDeviceSessions = $derived(
-		(deviceSessions.data || []).filter((ds) => ds.session.id !== $sessionData.data?.session.id)
+		(deviceSessionsData || []).filter((ds) => ds.session.id !== sessionData?.session.id)
 	);
 </script>
 
 <SettingsCard
-	{className}
+	className={className}
 	{classNames}
 	title={mergedLocalization.ACCOUNTS}
 	description={mergedLocalization.ACCOUNTS_DESCRIPTION}
 	actionLabel={mergedLocalization.ADD_ACCOUNT}
 	instructions={mergedLocalization.ACCOUNTS_INSTRUCTIONS}
-	isPending={deviceSessions.isPending}
+	isPending={deviceSessionsPending}
 	action={() => navigate(`${basePath}/${viewPaths.SIGN_IN}`)}
 >
-	{#if deviceSessions.data?.length}
+	{#if deviceSessionsData?.length}
 		<CardContent class={cn('grid gap-4', classNames?.content)}>
-			{#if $sessionData.data}
+			{#if sessionData}
 				<AccountCell
 					{classNames}
-					deviceSession={$sessionData.data}
+					deviceSession={sessionData}
 					localization={mergedLocalization}
-					refetch={deviceSessions.refetch}
+					refetch={deviceSessionsResult.refetch}
 				/>
 			{/if}
 
@@ -61,7 +66,7 @@
 					{classNames}
 					{deviceSession}
 					localization={mergedLocalization}
-					refetch={deviceSessions.refetch}
+					refetch={deviceSessionsResult.refetch}
 				/>
 			{/each}
 		</CardContent>

@@ -20,6 +20,7 @@ import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 
 export const auth = betterAuth({
+	baseURL: 'http://localhost:5173',
 	emailAndPassword: {
 		enabled: true
 	},
