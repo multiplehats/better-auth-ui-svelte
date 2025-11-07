@@ -14,19 +14,17 @@ console.log('🔄 Running prebuild script...');
 try {
 	let content: string = readFileSync(typesFilePath, 'utf-8');
 
-	// Comment out the authClient import
+	// Replace the authClient import with the createAuthClient import
 	const importPattern: RegExp = /import type \{ authClient \} from '\$lib\/auth-client\.js';/;
-	const importReplacement: string = `// import type { authClient } from '$lib/auth-client.js';`;
+	const importReplacement: string = `import type { createAuthClient } from "better-auth/svelte";`;
 
 	if (importPattern.test(content)) {
 		content = content.replace(importPattern, importReplacement);
 	}
 
 	// Replace the development type with the build type
-	const devPattern: RegExp =
-		/\/\*\*\n \* Type swapping via prebuild\/postbuild scripts:[\s\S]*?\*\/\n\/\/ export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' \| 'getSession'>;\nexport type AnyAuthClient = Omit<typeof authClient, 'signUp' \| 'getSession'>;/;
-
-	const buildReplacement: string = `export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;\n// export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
+	const devPattern: RegExp = /export type AnyAuthClient = Omit<typeof authClient, 'signUp' \| 'getSession'>;/;
+	const buildReplacement: string = `export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;`;
 
 	if (devPattern.test(content)) {
 		content = content.replace(devPattern, buildReplacement);
@@ -36,7 +34,7 @@ try {
 
 	// Replace the AuthClient type (without Omit)
 	const authClientDevPattern: RegExp = /export type AuthClient = typeof authClient;/;
-	const authClientBuildReplacement: string = `export type AuthClient = ReturnType<typeof createAuthClient>;\n// export type AuthClient = typeof authClient;`;
+	const authClientBuildReplacement: string = `export type AuthClient = ReturnType<typeof createAuthClient>;`;
 
 	if (authClientDevPattern.test(content)) {
 		content = content.replace(authClientDevPattern, authClientBuildReplacement);

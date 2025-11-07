@@ -15,7 +15,7 @@ try {
 	let content: string = readFileSync(typesFilePath, 'utf-8');
 
 	// Restore the authClient import
-	const importPattern: RegExp = /\/\/ import type \{ authClient \} from '\$lib\/auth-client\.js';/;
+	const importPattern: RegExp = /import type \{ createAuthClient \} from "better-auth\/svelte";/;
 	const importReplacement: string = `import type { authClient } from '$lib/auth-client.js';`;
 
 	if (importPattern.test(content)) {
@@ -23,20 +23,8 @@ try {
 	}
 
 	// Revert back to development type
-	const buildPattern: RegExp =
-		/export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' \| 'getSession'>;\n\/\/ export type AnyAuthClient = Omit<typeof authClient, 'signUp' \| 'getSession'>;/;
-
-	const devReplacement: string = `/**
- * Type swapping via prebuild/postbuild scripts:
- * - DEV: Uses \`typeof authClient\` for accurate plugin types from our specific Better Auth config
- * - BUILD: Uses \`ReturnType<typeof createAuthClient>\` for generic types, since consumers
- *   may have different plugin configurations than our development instance
- *
- * This ensures proper type-checking during development while maintaining compatibility
- * for library consumers with varying Better Auth plugin configurations.
- */
-// export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;
-export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
+	const buildPattern: RegExp = /export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' \| 'getSession'>;/;
+	const devReplacement: string = `export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
 
 	if (buildPattern.test(content)) {
 		content = content.replace(buildPattern, devReplacement);
@@ -45,8 +33,7 @@ export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
 	}
 
 	// Revert AuthClient type back to development mode (without Omit)
-	const authClientBuildPattern: RegExp =
-		/export type AuthClient = ReturnType<typeof createAuthClient>;\n\/\/ export type AuthClient = typeof authClient;/;
+	const authClientBuildPattern: RegExp = /export type AuthClient = ReturnType<typeof createAuthClient>;/;
 	const authClientDevReplacement: string = `export type AuthClient = typeof authClient;`;
 
 	if (authClientBuildPattern.test(content)) {
