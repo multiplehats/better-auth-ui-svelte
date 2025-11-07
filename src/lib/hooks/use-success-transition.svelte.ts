@@ -29,9 +29,11 @@ export function useOnSuccessTransition({ redirectTo: redirectToProp }: { redirec
 	async function onSuccess() {
 		// Refetch session using the hooks provided by better-auth/svelte
 		if (hooks?.useSession) {
-			const sessionQuery = hooks.useSession();
-
-			await sessionQuery.refetch?.();
+			const sessionHook = hooks.useSession();
+			// Check if refetch method exists on the hook (some hooks may not have it)
+			if (sessionHook && 'refetch' in sessionHook && typeof sessionHook.refetch === 'function') {
+				await sessionHook.refetch?.();
+			}
 		}
 
 		success = true;

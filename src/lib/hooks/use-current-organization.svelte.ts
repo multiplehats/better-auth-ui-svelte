@@ -1,10 +1,25 @@
 import type { Organization } from 'better-auth/plugins/organization';
 import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
-import { computed } from 'nanostores';
+import { fromStore } from '$lib/utils/store-to-rune.svelte.js';
 
 /**
- * Hook that returns the current organization based on the path mode
- * Returns a nanostore that can be subscribed to with $ in .svelte files
+ * Hook that returns the current organization based on the path mode.
+ * This hook bridges better-auth's nanostores with Svelte 5's rune-based reactivity.
+ *
+ * IMPORTANT: Must be called during component initialization for proper reactivity.
+ *
+ * @example
+ * ```svelte
+ * <script>
+ *   const org = useCurrentOrganization({ slug: 'my-org' });
+ * </script>
+ *
+ * {#if org.isPending}
+ *   Loading...
+ * {:else if org.data}
+ *   <h1>{org.data.name}</h1>
+ * {/if}
+ * ```
  */
 export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {}) {
 	const config = getAuthUIConfig();
@@ -13,63 +28,61 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 
 	const { pathMode, slug: contextSlug } = organizationOptions || {};
 
-	// Get nanostores - these are already reactive
+	// Get nanostores and convert them to reactive Svelte 5 values
 	const organizationsStore = useListOrganizations();
 	const activeOrgStore = useActiveOrganization();
 
-	// Create a computed store that derives the current organization
-	const currentOrgStore = computed(
-		[organizationsStore, activeOrgStore],
-		(organizationsResult: any, activeOrgResult: any) => {
-			let data: Organization | undefined = undefined;
-			let isPending = false;
-			let isRefetching = false;
-			let refetch: (() => void) | undefined = undefined;
+	// Convert nanostores to reactive values
+	const organizations = fromStore(organizationsStore);
+	const activeOrg = fromStore(activeOrgStore);
 
-			if (pathMode === 'slug') {
-				const slug = slugProp || contextSlug;
-				data =
-					organizationsResult && 'data' in organizationsResult
-						? organizationsResult.data?.find((org: Organization) => org.slug === slug)
-						: undefined;
-				isPending =
-					organizationsResult && 'isPending' in organizationsResult
-						? organizationsResult.isPending
-						: false;
-				isRefetching =
-					organizationsResult && 'isRefetching' in organizationsResult
-						? organizationsResult.isRefetching
-						: false;
-			} else {
-				data = activeOrgResult && 'data' in activeOrgResult ? activeOrgResult.data : undefined;
-				isPending =
-					activeOrgResult && 'isPending' in activeOrgResult ? activeOrgResult.isPending : false;
-				isRefetching =
-					activeOrgResult && 'isRefetching' in activeOrgResult
-						? activeOrgResult.isRefetching
-						: false;
-				refetch =
-					activeOrgResult && 'refetch' in activeOrgResult ? activeOrgResult.refetch : undefined;
-			}
+	// Derive the current organization based on path mode
+	const currentOrg = $derived.by(() => {
+		let data: Organization | null | undefined = undefined;
+		let isPending = false;
+		let isRefetching = false;
+		let refetch: (() => void) | undefined = undefined;
 
-			return { data, isPending, isRefetching, refetch };
+		if (pathMode === 'slug') {
+			const slug = slugProp || contextSlug;
+			const orgsResult = organizations.value;
+
+			data =
+				orgsResult && 'data' in orgsResult
+					? orgsResult.data?.find((org: Organization) => org.slug === slug) ?? null
+					: null;
+			isPending = orgsResult && 'isPending' in orgsResult ? orgsResult.isPending : false;
+			isRefetching = orgsResult && 'isRefetching' in orgsResult ? orgsResult.isRefetching : false;
+		} else {
+			const activeResult = activeOrg.value;
+
+			data =
+				activeResult && 'data' in activeResult
+					? (activeResult.data as Organization | null)
+					: null;
+			isPending = activeResult && 'isPending' in activeResult ? activeResult.isPending : false;
+			isRefetching =
+				activeResult && 'isRefetching' in activeResult ? activeResult.isRefetching : false;
+			refetch = activeResult && 'refetch' in activeResult ? activeResult.refetch : undefined;
 		}
-	);
 
-	// Return an object with getters that read from the computed store
-	// This allows usage like: const org = useCurrentOrganization(); org.data
+		return { data, isPending, isRefetching, refetch };
+	});
+
+	// Return an object with getters that read from the derived value
+	// This provides a clean API that's reactive in Svelte 5
 	return {
 		get data() {
-			return currentOrgStore.get().data;
+			return currentOrg.data;
 		},
 		get isPending() {
-			return currentOrgStore.get().isPending;
+			return currentOrg.isPending;
 		},
 		get isRefetching() {
-			return currentOrgStore.get().isRefetching;
+			return currentOrg.isRefetching;
 		},
 		get refetch() {
-			return currentOrgStore.get().refetch;
+			return currentOrg.refetch;
 		}
 	};
 }

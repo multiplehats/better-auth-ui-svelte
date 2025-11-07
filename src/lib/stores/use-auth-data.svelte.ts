@@ -1,6 +1,6 @@
 import { authDataCache } from '../utils/auth-data-cache.js';
 import { getAuthUIConfig } from '../context/auth-ui-config.svelte.js';
-import { get } from 'svelte/store';
+import { fromStore } from '../utils/store-to-rune.svelte.js';
 import type { BetterFetchError } from '@better-fetch/fetch';
 
 export function useAuthData<T>({
@@ -26,10 +26,10 @@ export function useAuthData<T>({
 	let initialized = $state(false);
 	let previousUserId = $state<string | undefined>(undefined);
 
-	// Subscribe to session changes
 	const sessionStore = authClient.useSession();
-	const sessionData = $derived(get(sessionStore).data);
-	const sessionPending = $derived(get(sessionStore).isPending);
+	const session = fromStore(sessionStore);
+	const sessionData = $derived(session.value?.data);
+	const sessionPending = $derived(session.value?.isPending ?? true);
 
 	// Subscribe to cache updates
 	const unsubscribe = authDataCache.subscribe(stableCacheKey, () => {
