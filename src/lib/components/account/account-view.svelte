@@ -27,7 +27,7 @@
 	import { useAuthenticate } from '$lib/hooks/use-authenticate.svelte.js';
 	import { AccountSettingsCards } from '../settings/account/index.js';
 	// TODO: Import SecuritySettingsCards when security directory is ported
-	// import SecuritySettingsCards from '../settings/security/security-settings-cards.svelte';
+	import SecuritySettingsCards from '../settings/security-settings-cards.svelte';
 	// TODO: Import ApiKeysCard when api-key directory is ported
 	// import ApiKeysCard from '../settings/api-key/api-keys-card.svelte';
 	import OrganizationsCard from '../organization/organizations-card.svelte';
@@ -181,11 +181,7 @@
 		{#if view === 'SETTINGS'}
 			<AccountSettingsCards {classNames} {localization} />
 		{:else if view === 'SECURITY'}
-			<!-- TODO: Uncomment when SecuritySettingsCards is ported -->
-			<div class="text-muted-foreground">
-				Security settings coming soon (SecuritySettingsCards not yet ported)
-			</div>
-			<!-- <SecuritySettingsCards {classNames} localization={localization} /> -->
+			<SecuritySettingsCards {classNames} {localization} />
 		{:else if view === 'API_KEYS'}
 			<!-- TODO: Uncomment when ApiKeysCard is ported -->
 			<div class="text-muted-foreground">API Keys coming soon (ApiKeysCard not yet ported)</div>

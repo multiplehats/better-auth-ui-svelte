@@ -121,6 +121,7 @@
 		"nodemailer": "^7.0.10",
 		"postgres": "^3.4.7",
 		"svelte-sonner": "^1.0.5",
+		"ua-parser-js": "^2.0.5",
 		"zod": "^4.1.12"
 	},
 	"engines": {

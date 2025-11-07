@@ -22,7 +22,13 @@ import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 export const auth = betterAuth({
 	baseURL: 'http://localhost:5173',
 	emailAndPassword: {
-		enabled: true
+		enabled: true,
+		sendResetPassword(data) {
+			// Implement your email sending logic here
+			console.log(`Send reset password email to ${data.url} with URL: ${data.url}`);
+
+			return Promise.resolve();
+		}
 	},
 	database: drizzleAdapter(db, {
 		provider: 'pg'
