@@ -1,43 +1,43 @@
 name: Release
 
 on:
-    push:
-        branches:
-            - main
-            - next
+  push:
+    branches:
+      - main
+      - next
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 # Add workflow-level permissions
 permissions:
-    contents: write
-    pull-requests: write
-    packages: write
+  contents: write
+  pull-requests: write
+  packages: write
 
 jobs:
-    release:
-        name: Release
-        runs-on: macos-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: pnpm
+  release:
+    name: Release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
 
-            - name: Create Release Pull Request or Publish to npm
-              id: changesets
-              uses: changesets/action@v1
-              with:
-                commit: "chore(release): version package"
-                title: "chore(release): version package"
-                publish: pnpm ci:publish
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          commit: 'chore(release): version package'
+          title: 'chore(release): version package'
+          publish: pnpm ci:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
