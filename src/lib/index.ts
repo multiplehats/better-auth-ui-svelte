@@ -48,7 +48,7 @@ export { default as OrganizationSwitcher } from './components/organization/organ
 export { default as PersonalAccountView } from './components/organization/personal-account-view.svelte';
 
 // Settings Components - Account
-// export { default as AccountsCard } from './components/settings/account/accounts-card.svelte';
+export { default as AccountsCard } from './components/settings/account/accounts-card.svelte';
 // export { default as DeleteAccountCard } from './components/settings/account/delete-account-card.svelte';
 // export { default as UpdateAvatarCard } from './components/settings/account/update-avatar-card.svelte';
 // export { default as UpdateFieldCard } from './components/settings/account/update-field-card.svelte';

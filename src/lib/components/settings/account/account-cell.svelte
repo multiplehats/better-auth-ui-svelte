@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { User, Session } from 'better-auth';
-	import { Ellipsis, Loader2, LogOut, Repeat, UserX2 } from 'lucide-svelte';
+	import Ellipsis from '@lucide/svelte/icons/ellipsis';
+	import Loader2 from '@lucide/svelte/icons/loader-2';
+	import LogOut from '@lucide/svelte/icons/log-out';
+	import Repeat from '@lucide/svelte/icons/repeat';
+	import UserX2 from '@lucide/svelte/icons/user-x';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
 	import type { AuthLocalization, Refetch } from '$lib/types/index.js';

@@ -115,15 +115,10 @@
 	const user = $derived(sessionData?.user as Profile | undefined);
 
 	// Nanostores work directly with Svelte's $ syntax
-	const organizationsStore = useListOrganizations() as ReturnType<typeof useListOrganizations> & { subscribe: Function };
+	const organizationsStore = useListOrganizations() as ReturnType<typeof useListOrganizations> & {
+		subscribe: Function;
+	};
 	const organizationsResult = $derived($organizationsStore);
-
-	// Debug: Log the store structure
-	$effect(() => {
-		console.log('📦 organizationsStore:', organizationsStore);
-		console.log('📦 $organizationsStore (subscribed):', $organizationsStore);
-		console.log('📦 organizationsResult:', organizationsResult);
-	});
 
 	const organizations = $derived<Organization[] | null | undefined>(organizationsResult?.data);
 
@@ -145,26 +140,6 @@
 			(organizationsPending && !organizations) || // Only pending if we don't have orgs yet
 			(organizationPending && !organizations) // Only pending if we don't have orgs yet
 	);
-
-	// Comprehensive debug logging
-	$effect(() => {
-		console.log('🔍 Organization Switcher Debug:');
-		console.log('  📊 State:');
-		console.log('    - organizationsResult:', organizationsResult);
-		console.log('    - organizations:', organizations);
-		console.log('    - organizations length:', organizations?.length);
-		console.log('    - activeOrganization:', activeOrganization);
-		console.log('  ⏳ Pending States:');
-		console.log('    - organizationsPending:', organizationsPending);
-		console.log('    - organizationPending:', organizationPending);
-		console.log('    - sessionPending:', sessionPending);
-		console.log('    - activeOrganizationPending:', activeOrganizationPending);
-		console.log('    - isPending (computed):', isPending);
-		console.log('  ⚙️ Config:');
-		console.log('    - pathMode:', pathMode);
-		console.log('    - slug:', slug);
-		console.log('    - currentOrgResult:', currentOrgResult);
-	});
 
 	// Reset active organization pending when refetching completes
 	$effect(() => {
