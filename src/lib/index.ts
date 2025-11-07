@@ -72,7 +72,8 @@ export { default as AccountSettingsCards } from './components/settings/account/a
 // export { default as PasskeysCard } from './components/settings/passkey/passkeys-card.svelte';
 
 // Settings Components - Providers
-// export { default as ProvidersCard } from './components/settings/providers/providers-card.svelte';
+export { default as ProvidersCard } from './components/settings/providers/providers-card.svelte';
+export type { ProvidersCardProps } from './components/settings/providers/providers-card.svelte';
 
 // Settings Components - Security
 // export { default as ChangeEmailCard } from './components/settings/security/change-email-card.svelte';

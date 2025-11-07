@@ -16,12 +16,11 @@
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn } from '$lib/utils/ui.js';
 	import DeleteAccountCard from './account/delete-account-card.svelte';
+	import PasskeysCard from './passkey/passkeys-card.svelte';
+	import ProvidersCard from './providers/providers-card.svelte';
 	import ChangePasswordCard from './security/change-password-card.svelte';
 	import SessionsCard from './security/sessions-card.svelte';
-	// TODO: Import these components when they are ported
-	// import PasskeysCard from './passkey/passkeys-card.svelte';
-	// import ProvidersCard from './providers/providers-card.svelte';
-	// import TwoFactorCard from './two-factor/two-factor-card.svelte';
+	import TwoFactorCard from './two-factor/two-factor-card.svelte';
 
 	interface Props extends SecuritySettingsCardsProps {}
 
@@ -44,8 +43,7 @@
 	const listAccountsResult = useListAccounts();
 	const accounts = $derived(listAccountsResult.data);
 	const accountsPending = $derived(listAccountsResult.isPending);
-	// TODO: Uncomment when ProvidersCard is ported
-	// const refetchAccounts = listAccountsResult.refetch;
+	const refetchAccounts = listAccountsResult.refetch;
 
 	// Check if credentials are linked
 	const credentialsLinked = $derived(
@@ -64,8 +62,7 @@
 		/>
 	{/if}
 
-	<!-- TODO: Uncomment when ProvidersCard is ported -->
-	<!-- {#if social?.providers?.length || genericOAuth?.providers?.length}
+	{#if social?.providers?.length || genericOAuth?.providers?.length}
 		<ProvidersCard
 			{accounts}
 			classNames={classNames?.card}
@@ -74,23 +71,21 @@
 			refetch={refetchAccounts}
 			skipHook
 		/>
-	{/if} -->
+	{/if}
 
-	<!-- TODO: Uncomment when TwoFactorCard is ported -->
-	<!-- {#if twoFactor && credentialsLinked}
+	{#if twoFactor && credentialsLinked}
 		<TwoFactorCard
 			classNames={classNames?.card}
 			localization={mergedLocalization}
 		/>
-	{/if} -->
+	{/if}
 
-	<!-- TODO: Uncomment when PasskeysCard is ported -->
-	<!-- {#if passkey}
+	{#if passkey}
 		<PasskeysCard
 			classNames={classNames?.card}
 			localization={mergedLocalization}
 		/>
-	{/if} -->
+	{/if}
 
 	<SessionsCard classNames={classNames?.card} localization={mergedLocalization} />
 
