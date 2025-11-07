@@ -19,6 +19,11 @@
 	basePath={authPathConfig.basePath}
 	viewPaths={authPathConfig.viewPaths}
 	account={accountConfig}
+	organization={{
+		pathMode: 'default',
+		basePath: '/organization',
+		personalPath: '/dashboard'
+	}}
 	magicLink={true}
 	{toast}
 >

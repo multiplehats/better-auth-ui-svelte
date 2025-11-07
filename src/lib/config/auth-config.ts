@@ -38,5 +38,5 @@ export const HOME_PATH = '/';
  */
 export const accountConfig = {
 	basePath: '/app/account',
-	fields: ['image', 'name'] as const
+	fields: ['image', 'name']
 };

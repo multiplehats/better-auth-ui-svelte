@@ -2,6 +2,7 @@
 	import type { Snippet, Component } from 'svelte';
 	import { setAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { authLocalization } from '$lib/localization/auth-localization.js';
+	import { BASE_ERROR_CODES } from '$lib/localization/base-error-codes.js';
 	import DefaultLink from './default-link.svelte';
 	import RecaptchaV3 from './captcha/recaptcha-v3.svelte';
 	import OrganizationRefetcher from './organization-refetcher.svelte';
@@ -693,6 +694,30 @@
 
 	// Set the context for child components synchronously
 	setAuthUIConfig(config);
+
+	// Handle error query parameters and show toast
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+
+		const searchParams = new URLSearchParams(window.location.search);
+		const errorCode = searchParams.get('error');
+
+		if (errorCode) {
+			const errorMessage = BASE_ERROR_CODES[errorCode as keyof typeof BASE_ERROR_CODES];
+
+			if (errorMessage) {
+				const toast = toastProp || defaultToast;
+				toast.error(errorMessage);
+			}
+
+			// Clean up the error parameter from the URL
+			searchParams.delete('error');
+			const newUrl = searchParams.toString()
+				? `${window.location.pathname}?${searchParams.toString()}`
+				: window.location.pathname;
+			window.history.replaceState({}, '', newUrl);
+		}
+	});
 </script>
 
 {#if sessionData && organization}

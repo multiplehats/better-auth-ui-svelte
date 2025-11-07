@@ -21,19 +21,24 @@
 	const organizationRefetching = $derived(organizationResult.isRefetching);
 	const refetchOrganization = $derived(organizationResult.refetch);
 
-	const listOrganizationsStore = useListOrganizations();
+	const listOrganizationsStore = useListOrganizations() as ReturnType<typeof useListOrganizations> & { subscribe: Function };
 	const listOrganizationsResult = $derived($listOrganizationsStore);
-	const organizations = $derived('data' in listOrganizationsResult ? listOrganizationsResult.data : undefined);
-	const refetchListOrganizations = $derived('refetch' in listOrganizationsResult ? listOrganizationsResult.refetch : undefined);
+	const organizations = $derived(listOrganizationsResult && 'data' in listOrganizationsResult ? listOrganizationsResult.data : undefined);
+	const refetchListOrganizations = $derived(listOrganizationsResult && 'refetch' in listOrganizationsResult ? listOrganizationsResult.refetch : undefined);
 
 	// Refetch organizations when user changes
-	$effect(() => {
-		if (!sessionData?.user.id) return;
+	let previousUserId = $state<string | undefined>(undefined);
 
-		if (organization || organizations) {
+	$effect(() => {
+		const currentUserId = sessionData?.user.id;
+
+		// Only refetch if user ID actually changed (not on initial load)
+		if (currentUserId && previousUserId && currentUserId !== previousUserId) {
 			refetchOrganization?.();
 			refetchListOrganizations?.();
 		}
+
+		previousUserId = currentUserId;
 	});
 
 	// Navigate to personal path if organization slug is not found

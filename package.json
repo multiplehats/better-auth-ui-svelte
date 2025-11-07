@@ -128,6 +128,7 @@
 		"@better-fetch/fetch": "^1.1.18",
 		"@tanstack/svelte-form": "^1.23.8",
 		"better-auth": "^1.3.34",
+		"nanostores": "^1.0.1",
 		"nodemailer": "^7.0.10",
 		"postgres": "^3.4.7",
 		"svelte-sonner": "^1.0.5",
