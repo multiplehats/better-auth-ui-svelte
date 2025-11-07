@@ -19,6 +19,7 @@
 	import SignOut from './sign-out.svelte';
 	import type { AuthViewPath } from '$lib/utils/view-paths.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
+	import AcceptInvitationCard from '../organization/accept-invitation-card.svelte';
 
 	export interface AuthViewClassNames {
 		base?: string;
@@ -128,8 +129,7 @@
 {:else if view === 'SIGN_OUT'}
 	<SignOut />
 {:else if view === 'ACCEPT_INVITATION'}
-	<!-- TODO: Import and render AcceptInvitationCard when it's created -->
-	<div>Accept Invitation (not yet implemented)</div>
+	<AcceptInvitationCard {localization} />
 {:else}
 	<!-- Main card layout for all other views -->
 	<Card.Root class={cn('w-full max-w-sm', className, classNames?.base)}>

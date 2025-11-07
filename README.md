@@ -8,11 +8,11 @@
 
 Pre-built, customizable authentication UI components for [Better Auth](https://www.better-auth.com) in Svelte 5.
 
-This is a Svelte 5 port of the [Better Auth UI React library](https://github.com/daveyplate/better-auth-ui). The API is nearly identical to the original React library, making it easy to follow the [official documentation](https://better-auth-ui.com). All credits for the original design and architecture go to [daveycodez](https://github.com/daveycodez).
+This is a **complete Svelte 5 port** of the [Better Auth UI React library](https://github.com/daveyplate/better-auth-ui) with **full feature parity**. The API is nearly identical to the original React library, making it easy to follow the [official documentation](https://better-auth-ui.com). All credits for the original design and architecture go to [daveycodez](https://github.com/daveycodez).
 
-## Warning
+## ⚠️ Early Stage Warning
 
-This library is currently in **active development** and not yet on NPM. Breaking changes may occur.
+> **Important:** This library is in early stage development. While we have achieved full feature parity with the React version and all components have been ported, the library has not been battle-tested in production environments yet. Issues may arise. **Use at your own risk until we reach v1.0 stable.**
 
 ## Why Choose Better Auth UI?
 
@@ -22,6 +22,7 @@ This library is currently in **active development** and not yet on NPM. Breaking
 
 ## Key Features
 
+- ✨ **Full Feature Parity** - Complete port of all React components and functionality
 - 🚀 **Svelte 5 Runes** - Built with the latest Svelte 5 reactive primitives
 - 🔐 **Better Auth Integration** - Native integration with Better Auth's Svelte client
 - 🛣️ **Path Helpers** - Server & client-side path utilities (unique to Svelte port)
@@ -33,7 +34,9 @@ This library is currently in **active development** and not yet on NPM. Breaking
 
 ## Installation
 
-Install the package using your preferred package manager:
+> **Note:** The package is not yet published to NPM. For now, you can clone the repository and link it locally.
+
+Once published, install the package using your preferred package manager:
 
 ```bash
 pnpm install better-auth-ui-svelte better-auth zod svelte-sonner
@@ -233,10 +236,46 @@ Display a user button with avatar and dropdown menu:
 - **`<SignedIn />`** - Renders children only when authenticated
 - **`<SignedOut />`** - Renders children only when not authenticated
 
-### Other Components
+### Settings Components
+
+#### Account Settings
+
+- **`<AccountSettingsCards />`** - Complete account settings UI
+- **`<AccountsCard />`** - Manage connected accounts
+- **`<UpdateAvatarCard />`** - Avatar upload and management
+- **`<UpdateNameCard />`** - Update user name
+- **`<UpdateUsernameCard />`** - Update username
+- **`<UpdateFieldCard />`** - Generic field update card
+- **`<DeleteAccountCard />`** - Account deletion with confirmation
+
+#### Security Settings
+
+- **`<SecuritySettingsCards />`** - Complete security settings UI
+- **`<ChangeEmailCard />`** - Email change with verification
+- **`<ChangePasswordCard />`** - Password change with validation
+- **`<SessionsCard />`** - Active sessions management
+- **`<PasskeysCard />`** - Passkey authentication management
+- **`<TwoFactorCard />`** - Two-factor authentication setup
+- **`<ApiKeysCard />`** - API key management
+
+### Organization Components
+
+- **`<OrganizationSwitcher />`** - Switch between organizations
+- **`<CreateOrganizationDialog />`** - Create new organization
+- **`<OrganizationView />`** - Organization details view
+- **`<OrganizationSettingsCards />`** - Organization settings
+- **`<OrganizationMembersCard />`** - Member management
+- **`<OrganizationInvitationsCard />`** - Invitation management
+- **`<UserInvitationsCard />`** - User's received invitations
+
+### Utility Components
 
 - **`<AuthCallback />`** - OAuth callback handler
 - **`<SignOut />`** - Sign out component
+- **`<RedirectToSignIn />`** - Redirect unauthenticated users to sign in
+- **`<RedirectToSignUp />`** - Redirect users to sign up
+- **`<PasswordInput />`** - Password input with visibility toggle
+- **`<FormError />`** - Form error display component
 
 ## Customization
 
@@ -579,7 +618,7 @@ Better Auth UI for Svelte is built with:
 
 ## Differences from React Version
 
-While the API is nearly identical, there are some Svelte-specific differences:
+This Svelte port maintains **full feature parity** with the React version. The API is nearly identical, with these framework-specific differences:
 
 1. **Path Helpers**: Unique to this Svelte port - utility functions for generating auth paths that work client and server-side (see [Path Helpers](#path-helpers-svelte-specific-feature))
 2. **Navigation**: Instead of Next.js router, use SvelteKit's `goto` function
@@ -587,6 +626,7 @@ While the API is nearly identical, there are some Svelte-specific differences:
 4. **Dynamic Routes**: Use SvelteKit's `[path]` syntax instead of Next.js `[path]`
 5. **Reactivity**: Built with Svelte 5 runes instead of React hooks
 6. **Link Component**: SvelteKit doesn't need a custom Link component
+7. **Form Handling**: Uses TanStack Svelte Form instead of React Hook Form (same API)
 
 ## Contributing
 
@@ -599,7 +639,7 @@ MIT
 ## Credits
 
 - Original React version by [daveycodez](https://github.com/daveyplate/better-auth-ui)
-- Svelte 5 port by Chris Jayden [multiplehats](https://github.com/multiplehats)
+- Complete Svelte 5 port with full feature parity by Chris Jayden [multiplehats](https://github.com/multiplehats)
 - Built with [Better Auth](https://www.better-auth.com)
 - UI components from [shadcn-svelte](https://www.shadcn-svelte.com)
 

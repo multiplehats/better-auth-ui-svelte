@@ -7,9 +7,9 @@ export { default as UserButton } from './components/user-button.svelte';
 export { default as UserView } from './components/user-view.svelte';
 export { default as AuthLoading } from './components/auth-loading.svelte';
 export * as ProviderIcons from './components/provider-icons/index.js';
-// export { default as PasswordInput } from './components/password-input.svelte';
-// export { default as RedirectToSignIn } from './components/redirect-to-sign-in.svelte';
-// export { default as RedirectToSignUp } from './components/redirect-to-sign-up.svelte';
+export { default as PasswordInput } from './components/password-input.svelte';
+export { default as RedirectToSignIn } from './components/redirect-to-sign-in.svelte';
+export { default as RedirectToSignUp } from './components/redirect-to-sign-up.svelte';
 
 // Account Components
 export * from './components/account/index.js';
@@ -28,6 +28,10 @@ export { default as ResetPasswordForm } from './components/auth/forms/reset-pass
 export { default as SignInForm } from './components/auth/forms/sign-in-form.svelte';
 export { default as SignUpForm } from './components/auth/forms/sign-up-form.svelte';
 export { default as TwoFactorForm } from './components/auth/forms/two-factor-form.svelte';
+
+// Form Utilities
+export { default as FormError } from './components/form-error.svelte';
+export type { FormErrorProps } from './components/form-error.svelte';
 
 // Organization Components
 // export { default as AcceptInvitationCard } from './components/organization/accept-invitation-card.svelte';
@@ -66,30 +70,31 @@ export { default as UpdateUsernameCard } from './components/settings/account/upd
 export { default as AccountSettingsCards } from './components/settings/account/account-settings-cards.svelte';
 
 // Settings Components - API Key
-// export { default as ApiKeysCard } from './components/settings/api-key/api-keys-card.svelte';
+export { default as ApiKeysCard } from './components/settings/api-key/api-keys-card.svelte';
+export type { ApiKeysCardProps } from './components/settings/api-key/api-keys-card.svelte';
 
 // Settings Components - Passkey
-// export { default as PasskeysCard } from './components/settings/passkey/passkeys-card.svelte';
+export { default as PasskeysCard } from './components/settings/passkey/passkeys-card.svelte';
 
 // Settings Components - Providers
 export { default as ProvidersCard } from './components/settings/providers/providers-card.svelte';
 export type { ProvidersCardProps } from './components/settings/providers/providers-card.svelte';
 
 // Settings Components - Security
-// export { default as ChangeEmailCard } from './components/settings/security/change-email-card.svelte';
-// export { default as ChangePasswordCard } from './components/settings/security/change-password-card.svelte';
-// export { default as SessionsCard } from './components/settings/security/sessions-card.svelte';
-// export { default as SecuritySettingsCards } from './components/settings/security-settings-cards.svelte';
+export { default as ChangeEmailCard } from './components/settings/security/change-email-card.svelte';
+export { default as ChangePasswordCard } from './components/settings/security/change-password-card.svelte';
+export { default as SessionsCard } from './components/settings/security/sessions-card.svelte';
+export { default as SecuritySettingsCards } from './components/settings/security-settings-cards.svelte';
 
 // Settings Components - Shared
-// export { default as SettingsCard } from './components/settings/shared/settings-card.svelte';
+export { default as SettingsCard } from './components/settings/shared/settings-card.svelte';
 
 // Settings Components - Skeletons
 // export { default as InputFieldSkeleton } from './components/settings/skeletons/input-field-skeleton.svelte';
 export { default as SettingsCellSkeleton } from './components/settings/skeletons/settings-cell-skeleton.svelte';
 
 // Settings Components - Two Factor
-// export { default as TwoFactorCard } from './components/settings/two-factor/two-factor-card.svelte';
+export { default as TwoFactorCard } from './components/settings/two-factor/two-factor-card.svelte';
 
 // Hooks
 export * from './stores/use-auth-data.svelte.js';

@@ -4,6 +4,7 @@ export * from './security/index.js';
 export * from './providers/index.js';
 export * from './two-factor/index.js';
 export * from './passkey/index.js';
+export * from './api-key/index.js';
 
 export { default as SecuritySettingsCards } from './security-settings-cards.svelte';
 export type { SecuritySettingsCardsProps } from './security-settings-cards.svelte';

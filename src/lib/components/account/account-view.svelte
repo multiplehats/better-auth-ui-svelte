@@ -1,5 +1,4 @@
 <script lang="ts" module>
-	import type { Snippet } from 'svelte';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { AccountViewPath } from '$lib/utils/view-paths.js';
 	import type { SettingsCardClassNames } from '../settings/shared/settings-card.svelte';
@@ -26,10 +25,8 @@
 	import { cn, getViewByPath } from '$lib/utils/utils.js';
 	import { useAuthenticate } from '$lib/hooks/use-authenticate.svelte.js';
 	import { AccountSettingsCards } from '../settings/account/index.js';
-	// TODO: Import SecuritySettingsCards when security directory is ported
 	import SecuritySettingsCards from '../settings/security-settings-cards.svelte';
-	// TODO: Import ApiKeysCard when api-key directory is ported
-	// import ApiKeysCard from '../settings/api-key/api-keys-card.svelte';
+	import ApiKeysCard from '../settings/api-key/api-keys-card.svelte';
 	import OrganizationsCard from '../organization/organizations-card.svelte';
 	import UserInvitationsCard from '../organization/user-invitations-card.svelte';
 	import { Button } from '../ui/button/index.js';
@@ -183,9 +180,7 @@
 		{:else if view === 'SECURITY'}
 			<SecuritySettingsCards {classNames} {localization} />
 		{:else if view === 'API_KEYS'}
-			<!-- TODO: Uncomment when ApiKeysCard is ported -->
-			<div class="text-muted-foreground">API Keys coming soon (ApiKeysCard not yet ported)</div>
-			<!-- <ApiKeysCard classNames={classNames?.card} localization={localization} /> -->
+			<ApiKeysCard classNames={classNames?.card} {localization} /> -->
 		{:else if view === 'ORGANIZATIONS' && organization}
 			<div class="grid w-full gap-4 md:gap-6">
 				<OrganizationsCard classNames={classNames?.card} {localization} />
