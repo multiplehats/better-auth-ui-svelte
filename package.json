@@ -11,7 +11,7 @@
 		"preview": "vite preview",
 		"sync": "svelte-kit sync",
 		"prepare": "pnpm run sync || echo ''",
-		"prepack": "pnpm run sync && pnpm run prebuild && svelte-package && cp src/style.css dist/style.css && publint",
+		"prepack": "pnpm run sync && pnpm run prebuild && svelte-package && cp src/lib/style.css dist/style.css && publint",
 		"check": "pnpm run sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "pnpm run sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
