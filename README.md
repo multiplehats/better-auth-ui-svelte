@@ -34,12 +34,16 @@ This is a **complete Svelte 5 port** of the [Better Auth UI React library](https
 
 ## Installation
 
-> **Note:** The package is not yet published to NPM. For now, you can clone the repository and link it locally.
+Ensure you have Better Auth and shadcn set up in your project first.
 
-Once published, install the package using your preferred package manager:
+Them install the package:
 
 ```bash
-pnpm install better-auth-ui-svelte better-auth zod svelte-sonner
+pnpm add better-auth-ui-svelte
+
+## bun add better-auth-ui-svelte
+## npm install better-auth-ui-svelte
+## yarn add better-auth-ui-svelte
 ```
 
 ### Peer Dependencies
