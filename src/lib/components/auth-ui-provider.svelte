@@ -570,7 +570,7 @@
 
 	// Get session data
 	const sessionStore = authClient.useSession();
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 
 	// Create a reactive context object using getters to preserve reactivity
 	// This ensures child components always access the current derived values

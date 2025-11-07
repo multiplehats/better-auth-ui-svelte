@@ -33,7 +33,7 @@
 	// Derive reactive values
 	const deviceSessionsData = $derived(deviceSessionsResult.data);
 	const deviceSessionsPending = $derived(deviceSessionsResult.isPending);
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 
 	const otherDeviceSessions = $derived(
 		(deviceSessionsData || []).filter((ds) => ds.session.id !== sessionData?.session.id)

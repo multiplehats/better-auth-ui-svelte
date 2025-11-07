@@ -39,7 +39,7 @@
 	} = getAuthUIConfig();
 
 	const sessionStore = useSession();
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 </script>
 
 <div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>

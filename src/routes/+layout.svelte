@@ -21,8 +21,7 @@
 	account={accountConfig}
 	organization={{
 		pathMode: 'default',
-		basePath: '/organization',
-		personalPath: '/dashboard'
+		basePath: '/app/organization'
 	}}
 	multiSession={true}
 	social={{

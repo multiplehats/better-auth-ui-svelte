@@ -16,7 +16,7 @@
 	const mergedLocalization = { ...contextLocalization, ...propLocalization };
 
 	const sessionStore = useSession();
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 	const value = $derived(
 		(sessionData?.user as User)?.displayUsername || (sessionData?.user as User)?.username
 	);

@@ -16,7 +16,7 @@
 	const mergedLocalization = { ...contextLocalization, ...propLocalization };
 
 	const sessionStore = useSession();
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 </script>
 
 <UpdateFieldCard

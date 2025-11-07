@@ -59,7 +59,7 @@
 
 	// Get current user's session
 	const sessionStore = hooks.useSession();
-	const sessionData = $derived($sessionStore.data);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 	const membership = $derived(
 		members?.find(
 			(m: Member & { user?: Partial<User> | null }) => m.userId === sessionData?.user.id

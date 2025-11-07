@@ -36,8 +36,8 @@
 	const mergedLocalization = { ...contextLocalization, ...propLocalization };
 
 	const sessionStore = useSession();
-	const sessionData = $derived($sessionStore.data);
-	const isPending = $derived($sessionStore.isPending);
+	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
+	const isPending = $derived('isPending' in $sessionStore ? $sessionStore.isPending : true);
 
 	let fileInputRef: HTMLInputElement | null = null;
 	let loading = $state(false);

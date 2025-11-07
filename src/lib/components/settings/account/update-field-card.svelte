@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { untrack } from 'svelte';
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
@@ -59,7 +60,7 @@
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
 	const sessionStore = useSession();
-	const isPending = $derived($sessionStore.isPending);
+	const isPending = $derived('isPending' in $sessionStore ? $sessionStore.isPending : true);
 
 	// Create the appropriate schema based on type
 	let fieldSchema = $derived.by(() => {
@@ -135,8 +136,11 @@
 	const isSubmitting = $derived(form.state.isSubmitting);
 
 	// Update form values when prop value changes
+	// Use untrack to prevent infinite loop from form state updates
 	$effect(() => {
-		form.setFieldValue(name, value || '');
+		untrack(() => {
+			form.setFieldValue(name, value || '');
+		});
 	});
 </script>
 

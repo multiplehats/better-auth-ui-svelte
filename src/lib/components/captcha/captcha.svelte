@@ -54,7 +54,7 @@
 	{/if}
 
 	{#if showTurnstile}
-		{#await import('@marsidev/svelte-turnstile') then { Turnstile }}
+		<!-- {#await import('@marsidev/svelte-turnstile') then { Turnstile }}
 			<div class="mx-auto">
 				<Turnstile
 					bind:ref
@@ -65,7 +65,7 @@
 					}}
 				/>
 			</div>
-		{/await}
+		{/await} -->
 	{/if}
 
 	{#if showHCaptcha}
