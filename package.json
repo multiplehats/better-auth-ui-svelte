@@ -1,6 +1,6 @@
 {
 	"name": "better-auth-ui-svelte",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Pre-built authentication UI components for Better Auth in Svelte 5",
 	"scripts": {
 		"dev": "vite dev",
@@ -11,7 +11,7 @@
 		"preview": "vite preview",
 		"sync": "svelte-kit sync",
 		"prepare": "pnpm run sync || echo ''",
-		"prepack": "pnpm run sync && pnpm run prebuild && svelte-package && publint",
+		"prepack": "pnpm run sync && pnpm run prebuild && svelte-package && cp src/style.css dist/style.css && publint",
 		"check": "pnpm run sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "pnpm run sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
