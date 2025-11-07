@@ -49,11 +49,11 @@ export { default as PersonalAccountView } from './components/organization/person
 
 // Settings Components - Account
 export { default as AccountsCard } from './components/settings/account/accounts-card.svelte';
-// export { default as DeleteAccountCard } from './components/settings/account/delete-account-card.svelte';
-// export { default as UpdateAvatarCard } from './components/settings/account/update-avatar-card.svelte';
-// export { default as UpdateFieldCard } from './components/settings/account/update-field-card.svelte';
-// export { default as UpdateNameCard } from './components/settings/account/update-name-card.svelte';
-// export { default as UpdateUsernameCard } from './components/settings/account/update-username-card.svelte';
+export { default as DeleteAccountCard } from './components/settings/account/delete-account-card.svelte';
+export { default as UpdateAvatarCard } from './components/settings/account/update-avatar-card.svelte';
+export { default as UpdateFieldCard } from './components/settings/account/update-field-card.svelte';
+export { default as UpdateNameCard } from './components/settings/account/update-name-card.svelte';
+export { default as UpdateUsernameCard } from './components/settings/account/update-username-card.svelte';
 // export { default as AccountSettingsCards } from './components/settings/account-settings-cards.svelte';
 
 // Settings Components - API Key
