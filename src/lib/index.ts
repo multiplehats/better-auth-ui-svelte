@@ -19,6 +19,8 @@ export { default as AuthCallback } from './components/auth/auth-callback.svelte'
 export { default as AuthForm } from './components/auth/auth-form.svelte';
 export { default as AuthView } from './components/auth/auth-view.svelte';
 export { default as SignOut } from './components/auth/sign-out.svelte';
+export { default as VerifyEmail } from './components/auth/verify-email.svelte';
+export { default as MagicLinkSent } from './components/auth/magic-link-sent.svelte';
 
 // Auth Forms
 export { default as ForgotPasswordForm } from './components/auth/forms/forgot-password-form.svelte';

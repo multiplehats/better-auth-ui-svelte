@@ -32,7 +32,10 @@
 	social={{
 		providers: ['google']
 	}}
-	magicLink={true}
+	magicLink={{
+		resendCooldown: 60,
+		redirectToSentPage: true
+	}}
 	{toast}
 >
 	{@render children()}

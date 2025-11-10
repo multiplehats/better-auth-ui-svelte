@@ -125,7 +125,20 @@ export interface AuthUIConfig {
 	 * Enable or disable Magic Link support
 	 * @default false
 	 */
-	magicLink?: boolean;
+	magicLink?:
+		| boolean
+		| {
+				/**
+				 * When true, redirects to a dedicated "check your email" page after sending magic link
+				 * @default false
+				 */
+				redirectToSentPage?: boolean;
+				/**
+				 * Resend cooldown in seconds
+				 * @default 60
+				 */
+				resendCooldown?: number;
+		  };
 	/**
 	 * Enable or disable Email OTP support
 	 * @default false

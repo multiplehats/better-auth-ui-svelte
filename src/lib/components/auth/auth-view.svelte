@@ -18,6 +18,7 @@
 	import AuthCallback from './auth-callback.svelte';
 	import SignOut from './sign-out.svelte';
 	import VerifyEmail from './verify-email.svelte';
+	import MagicLinkSent from './magic-link-sent.svelte';
 	import type { AuthViewPath } from '$lib/utils/view-paths.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import AcceptInvitationCard from '../organization/accept-invitation-card.svelte';
@@ -131,6 +132,8 @@
 	<SignOut />
 {:else if view === 'VERIFY_EMAIL'}
 	<VerifyEmail {className} {classNames} {localization} />
+{:else if view === 'MAGIC_LINK_SENT'}
+	<MagicLinkSent {className} {classNames} {localization} />
 {:else if view === 'ACCEPT_INVITATION'}
 	<AcceptInvitationCard {localization} />
 {:else}

@@ -216,6 +216,25 @@ export const authLocalization = {
 	/** @default "Check your email for the magic link" */
 	MAGIC_LINK_EMAIL: 'Check your email for the magic link',
 
+	/** @default "Magic Link Sent!" */
+	MAGIC_LINK_SENT: 'Magic link sent!',
+
+	/** @default "We've sent a magic link to" */
+	MAGIC_LINK_SENT_TO: "We've sent a magic link to",
+
+	/** @default "Please check your email and click the magic link to sign in to your account." */
+	MAGIC_LINK_CHECK_INBOX:
+		'Please check your email and click the magic link to sign in to your account.',
+
+	/** @default "The link will expire in 5 minutes for security reasons." */
+	MAGIC_LINK_EXPIRES: 'The link will expire in 5 minutes for security reasons.',
+
+	/** @default "Didn't receive the email?" */
+	MAGIC_LINK_NO_EMAIL: "Didn't receive the email?",
+
+	/** @default "Resend magic link" */
+	RESEND_MAGIC_LINK: 'Resend magic link',
+
 	/** @default "Email Code" */
 	EMAIL_OTP: 'Email Code',
 

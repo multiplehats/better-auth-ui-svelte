@@ -7,6 +7,8 @@ export const authViewPaths = {
 	FORGOT_PASSWORD: 'forgot-password',
 	/** @default "magic-link" */
 	MAGIC_LINK: 'magic-link',
+	/** @default "magic-link-sent" */
+	MAGIC_LINK_SENT: 'magic-link-sent',
 	/** @default "recover-account" */
 	RECOVER_ACCOUNT: 'recover-account',
 	/** @default "reset-password" */

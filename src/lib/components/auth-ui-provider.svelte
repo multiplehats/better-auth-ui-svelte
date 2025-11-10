@@ -106,7 +106,20 @@
 		 * Enable or disable Magic Link support
 		 * @default false
 		 */
-		magicLink?: boolean;
+		magicLink?:
+			| boolean
+			| {
+					/**
+					 * Cooldown period in seconds before allowing another magic link email
+					 * @default 60
+					 */
+					resendCooldown?: number;
+					/**
+					 * When true, redirects to magic-link-sent page after requesting a magic link
+					 * @default false
+					 */
+					redirectToSentPage?: boolean;
+			  };
 		/**
 		 * Enable or disable Multi Session support
 		 * @default false
