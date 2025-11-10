@@ -71,7 +71,7 @@
 			const emailVerificationConfig =
 				typeof config.emailVerification === 'object' ? config.emailVerification : {};
 			const cooldownPeriod = emailVerificationConfig.resendCooldown || 60;
-			const storageKey = `verify-email-cooldown-${email}`;
+			const storageKey = `better-auth-verify-email-cooldown-${email}`;
 
 			// Check if there's an existing cooldown in localStorage
 			const storedCooldown = localStorage.getItem(storageKey);
@@ -114,7 +114,7 @@
 			// Countdown reached 0, re-enable button and clean up localStorage
 			resendDisabled = false;
 			if (email) {
-				const storageKey = `verify-email-cooldown-${email}`;
+				const storageKey = `better-auth-verify-email-cooldown-${email}`;
 				localStorage.removeItem(storageKey);
 			}
 		}
@@ -156,7 +156,7 @@
 			resendDisabled = true;
 
 			// Store in localStorage for persistence across page reloads
-			const storageKey = `verify-email-cooldown-${email}`;
+			const storageKey = `better-auth-verify-email-cooldown-${email}`;
 			localStorage.setItem(
 				storageKey,
 				JSON.stringify({
