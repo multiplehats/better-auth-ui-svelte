@@ -573,18 +573,6 @@ export const authLocalization = {
 	/** @default "Continue to Sign In" */
 	CONTINUE_TO_SIGN_IN: 'Continue to Sign In',
 
-	/** @default "Enter your verification token from the email" */
-	ENTER_VERIFICATION_TOKEN: 'Enter your verification token from the email',
-
-	/** @default "Paste your verification token here" */
-	VERIFICATION_TOKEN_PLACEHOLDER: 'Paste your verification token here',
-
-	/** @default "Verify Token" */
-	VERIFY_TOKEN: 'Verify Token',
-
-	/** @default "Back to email verification" */
-	BACK_TO_EMAIL_VERIFICATION: 'Back to email verification',
-
 	/** @default "Go back" */
 	GO_BACK: 'Go back',
 

@@ -319,8 +319,9 @@
 			// If redirectToVerifyPage is true, redirect to verify-email page after verification
 			let signUpCallbackURL = getCallbackURL();
 			if (emailVerification?.redirectToVerifyPage) {
+				const origin = baseURL || (typeof window !== 'undefined' ? window.location.origin : '');
 				const verifyEmailPath = `${basePath}/${viewPaths.VERIFY_EMAIL}`;
-				signUpCallbackURL = `${baseURL || ''}${verifyEmailPath}?verified=true&email=${encodeURIComponent(email as string)}`;
+				signUpCallbackURL = `${origin}${verifyEmailPath}?verified=true&email=${encodeURIComponent(email as string)}`;
 			}
 
 			const data = await authClient.signUp.email({

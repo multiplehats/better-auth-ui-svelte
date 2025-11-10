@@ -4,7 +4,6 @@
 	import { cn } from '$lib/utils/ui.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import MailOpen from '@lucide/svelte/icons/mail-open';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
@@ -38,8 +37,6 @@
 	let isVerifying = $state(false);
 	let isVerified = $state(false);
 	let verificationError = $state<string | null>(null);
-	let showManualVerification = $state(false);
-	let manualTokenInput = $state('');
 
 	onMount(() => {
 		// Try to get email and token from URL params
@@ -207,20 +204,6 @@
 		const signInPath = `${config.basePath}/${config.viewPaths.SIGN_IN}`;
 		config.navigate(signInPath);
 	};
-
-	const handleManualVerification = async () => {
-		if (!manualTokenInput.trim() || isVerifying) return;
-
-		// Set the token and verify
-		verificationToken = manualTokenInput.trim();
-		await handleVerifyEmail();
-	};
-
-	const toggleManualVerification = () => {
-		showManualVerification = !showManualVerification;
-		manualTokenInput = '';
-		verificationError = null;
-	};
 </script>
 
 <Card.Root class={cn('w-full max-w-sm', className, classNames?.base)}>
@@ -301,77 +284,30 @@
 				← {localization.BACK_TO_SIGN_IN}
 			</Button>
 		{:else}
-			<!-- Waiting for email state or manual verification -->
-			{#if showManualVerification}
-				<!-- Manual verification mode -->
-				<div class="space-y-4">
-					<p class="text-sm text-muted-foreground">
-						{localization.ENTER_VERIFICATION_TOKEN ||
-							'Enter your verification token from the email'}
-					</p>
+			<!-- Waiting for email state -->
+			<p>{localization.EMAIL_VERIFICATION_CHECK_INBOX}</p>
+			<p>{localization.EMAIL_VERIFICATION_AFTER_VERIFY}</p>
 
-					<div class="space-y-2">
-						<Input
-							type="text"
-							placeholder={localization.VERIFICATION_TOKEN_PLACEHOLDER ||
-								'Paste your verification token here'}
-							bind:value={manualTokenInput}
-							onkeydown={(e) => {
-								if (e.key === 'Enter') {
-									handleManualVerification();
-								}
-							}}
-							class="font-mono text-sm"
-						/>
-
-						{#if verificationError}
-							<p class="text-xs text-destructive">{verificationError}</p>
-						{/if}
-					</div>
-
-					<Button
-						onclick={handleManualVerification}
-						disabled={isVerifying || !manualTokenInput.trim()}
-						class="w-full"
-					>
-						{#if isVerifying}
-							{localization.VERIFYING || 'Verifying'}...
-						{:else}
-							{localization.VERIFY_TOKEN || 'Verify Token'}
-						{/if}
-					</Button>
-
-					<Button variant="ghost" onclick={toggleManualVerification} class="w-full text-xs">
-						<MailOpen class="mr-2 size-3" />
-						{localization.BACK_TO_EMAIL_VERIFICATION || 'Back to email verification'}
-					</Button>
+			<div class="mt-4 flex flex-col gap-2">
+				<div class="text-sm text-muted-foreground">
+					{localization.EMAIL_VERIFICATION_NO_EMAIL}
 				</div>
-			{:else}
-				<!-- Email waiting mode -->
-				<p>{localization.EMAIL_VERIFICATION_CHECK_INBOX}</p>
-				<p>{localization.EMAIL_VERIFICATION_AFTER_VERIFY}</p>
 
-				<div class="mt-4 flex flex-col gap-2">
-					<div class="text-sm text-muted-foreground">
-						{localization.EMAIL_VERIFICATION_NO_EMAIL}
-					</div>
-
-					<Button
-						variant="outline"
-						disabled={isResending || resendDisabled}
-						onclick={handleResendEmail}
-						class="w-full"
-					>
-						{#if countdown > 0}
-							{localization.RESEND_VERIFICATION_EMAIL} ({countdown}s)
-						{:else if isResending}
-							{localization.RESEND_VERIFICATION_EMAIL}...
-						{:else}
-							{localization.RESEND_VERIFICATION_EMAIL}
-						{/if}
-					</Button>
-				</div>
-			{/if}
+				<Button
+					variant="outline"
+					disabled={isResending || resendDisabled}
+					onclick={handleResendEmail}
+					class="w-full"
+				>
+					{#if countdown > 0}
+						{localization.RESEND_VERIFICATION_EMAIL} ({countdown}s)
+					{:else if isResending}
+						{localization.RESEND_VERIFICATION_EMAIL}...
+					{:else}
+						{localization.RESEND_VERIFICATION_EMAIL}
+					{/if}
+				</Button>
+			</div>
 
 			<div class="mt-2">
 				<Button variant="ghost" onclick={handleBackToSignIn} class="w-full">
