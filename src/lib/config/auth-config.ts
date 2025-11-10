@@ -9,7 +9,8 @@ export const authPathConfig: PathConfig = {
 	// Add custom viewPaths here if needed
 	viewPaths: {
 		// SIGN_IN: 'login',
-		// SIGN_UP: 'register'
+		// SIGN_UP: 'register',
+		VERIFY_EMAIL: 'verify-email'
 	}
 };
 

@@ -17,6 +17,7 @@
 	import OneTap from './one-tap.svelte';
 	import AuthCallback from './auth-callback.svelte';
 	import SignOut from './sign-out.svelte';
+	import VerifyEmail from './verify-email.svelte';
 	import type { AuthViewPath } from '$lib/utils/view-paths.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import AcceptInvitationCard from '../organization/accept-invitation-card.svelte';
@@ -128,6 +129,8 @@
 	<AuthCallback {redirectTo} />
 {:else if view === 'SIGN_OUT'}
 	<SignOut />
+{:else if view === 'VERIFY_EMAIL'}
+	<VerifyEmail {className} {classNames} {localization} />
 {:else if view === 'ACCEPT_INVITATION'}
 	<AcceptInvitationCard {localization} />
 {:else}

@@ -11,32 +11,40 @@ import {
 } from '$lib/config/auth-config.js';
 
 export async function handle({ event, resolve }) {
+	const { pathname } = event.url;
+
+	// Initialize locals
 	event.locals.session = null;
 	event.locals.user = null;
 
-	// Fetch current session from Better Auth
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
+	// For non-API routes, set up the session before Better Auth processes
+	if (!pathname.startsWith('/api/auth')) {
+		const session = await auth.api.getSession({
+			headers: event.request.headers
+		});
 
-	// Make session and user available on server
-	if (session) {
-		event.locals.session = session.session;
-		event.locals.user = session.user;
+		if (session) {
+			event.locals.session = session.session;
+			event.locals.user = session.user;
+		}
+
+		const isAuthenticated = !!session?.user;
+
+		// Guard: Redirect authenticated users away from auth pages
+		// Allow verify-email page as it handles multiple states
+		if (isAuthenticated && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
+			if (!pathname.includes('verify-email')) {
+				throw redirect(303, DEFAULT_AUTH_REDIRECT);
+			}
+		}
+
+		// Guard: Redirect unauthenticated users from protected routes
+		if (!isAuthenticated && PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
+			// Otherwise redirect to sign-in
+			throw redirect(303, getAuthPath('SIGN_IN', authPathConfig));
+		}
 	}
 
-	const { pathname } = event.url;
-	const isAuthenticated = !!session?.user;
-
-	// Redirect authenticated users away from auth pages (sign-in, sign-up)
-	// if (isAuthenticated && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
-	// 	throw redirect(303, DEFAULT_AUTH_REDIRECT);
-	// }
-
-	// Redirect unauthenticated users from protected routes
-	if (!isAuthenticated && PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
-		throw redirect(303, getAuthPath('SIGN_IN', authPathConfig));
-	}
-
+	// Let Better Auth handle the request
 	return svelteKitHandler({ event, resolve, auth, building });
 }

@@ -91,10 +91,17 @@
 			resendDisabled = true;
 
 			try {
-				await authClient.sendVerificationEmail({
-					email,
-					fetchOptions: { throw: true }
-				});
+				await authClient.sendVerificationEmail(
+					{
+						email,
+						callbackURL: window.location.pathname
+					},
+					{
+						onError: (ctx) => {
+							throw new Error(ctx.error.message || 'Failed to send verification email');
+						}
+					}
+				);
 
 				toast.success(mergedLocalization.EMAIL_VERIFICATION!);
 			} catch (error) {
@@ -161,7 +168,7 @@
 		</SettingsCard>
 	</form>
 
-	{#if emailVerification && sessionData?.user && !sessionData?.user.emailVerified}
+	{#if emailVerification?.enabled && sessionData?.user && !sessionData?.user.emailVerified}
 		<form
 			onsubmit={(e) => {
 				e.preventDefault();

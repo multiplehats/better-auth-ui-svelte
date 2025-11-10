@@ -4,7 +4,7 @@ export const STRIPE_ERROR_CODES = {
 	ALREADY_SUBSCRIBED_PLAN: "You're already subscribed to this plan",
 	UNABLE_TO_CREATE_CUSTOMER: 'Unable to create customer',
 	FAILED_TO_FETCH_PLANS: 'Failed to fetch plans',
-	EMAIL_VERIFICATION_REQUIRED: 'Email verification is required before you can subscribe to a plan',
+	EMAIL_VERIFICATION_REQUIRED: 'Email verification is required before you can sign up',
 	SUBSCRIPTION_NOT_ACTIVE: 'Subscription is not active',
 	SUBSCRIPTION_NOT_SCHEDULED_FOR_CANCELLATION: 'Subscription is not scheduled for cancellation'
 };

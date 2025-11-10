@@ -92,7 +92,20 @@ export interface AuthUIConfig {
 	/**
 	 * Show Verify Email card for unverified emails
 	 */
-	emailVerification?: boolean;
+	emailVerification?:
+		| boolean
+		| {
+				/**
+				 * Resend cooldown in seconds
+				 * @default 60
+				 */
+				resendCooldown?: number;
+				/**
+				 * When true, redirects to the verify email page after sign up or email change
+				 * @default false
+				 */
+				redirectToVerifyPage?: boolean;
+		  };
 	/**
 	 * Freshness age for Session data
 	 * @default 60 * 60 * 24

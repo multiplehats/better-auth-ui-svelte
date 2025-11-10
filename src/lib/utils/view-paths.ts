@@ -20,7 +20,9 @@ export const authViewPaths = {
 	/** @default "two-factor" */
 	TWO_FACTOR: 'two-factor',
 	/** @default "accept-invitation" */
-	ACCEPT_INVITATION: 'accept-invitation'
+	ACCEPT_INVITATION: 'accept-invitation',
+	/** @default "verify-email" */
+	VERIFY_EMAIL: 'verify-email'
 };
 
 export type AuthViewPaths = typeof authViewPaths;
