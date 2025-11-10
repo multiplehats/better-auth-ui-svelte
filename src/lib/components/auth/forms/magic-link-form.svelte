@@ -57,7 +57,9 @@
 		localization: contextLocalization,
 		redirectTo: contextRedirectTo,
 		viewPaths,
-		toast
+		toast,
+		navigate,
+		magicLink: magicLinkConfig
 	} = config;
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
@@ -105,7 +107,18 @@
 					fetchOptions
 				});
 
-				toast.success(localization.MAGIC_LINK_EMAIL || 'Magic link sent to your email');
+				// Check if we should redirect to the sent page
+				const shouldRedirect =
+					typeof magicLinkConfig === 'object' && magicLinkConfig.redirectToSentPage;
+
+				if (shouldRedirect) {
+					// Navigate to the magic-link-sent page with the email as a query param
+					const magicLinkSentPath = `${basePath}/${viewPaths.MAGIC_LINK_SENT}`;
+					navigate(`${magicLinkSentPath}?email=${encodeURIComponent(value.email)}`);
+				} else {
+					// Show toast notification (original behavior)
+					toast.success(localization.MAGIC_LINK_EMAIL || 'Magic link sent to your email');
+				}
 
 				// Reset form
 				form.reset();

@@ -216,6 +216,25 @@ export const authLocalization = {
 	/** @default "Check your email for the magic link" */
 	MAGIC_LINK_EMAIL: 'Check your email for the magic link',
 
+	/** @default "Magic Link Sent!" */
+	MAGIC_LINK_SENT: 'Magic link sent!',
+
+	/** @default "We've sent a magic link to" */
+	MAGIC_LINK_SENT_TO: "We've sent a magic link to",
+
+	/** @default "Please check your email and click the magic link to sign in to your account." */
+	MAGIC_LINK_CHECK_INBOX:
+		'Please check your email and click the magic link to sign in to your account.',
+
+	/** @default "The link will expire in 5 minutes for security reasons." */
+	MAGIC_LINK_EXPIRES: 'The link will expire in 5 minutes for security reasons.',
+
+	/** @default "Didn't receive the email?" */
+	MAGIC_LINK_NO_EMAIL: "Didn't receive the email?",
+
+	/** @default "Resend magic link" */
+	RESEND_MAGIC_LINK: 'Resend magic link',
+
 	/** @default "Email Code" */
 	EMAIL_OTP: 'Email Code',
 
@@ -375,10 +394,10 @@ export const authLocalization = {
 	RESEND_CODE: 'Resend code',
 
 	/** @default "Resend verification email" */
-	RESEND_VERIFICATION_EMAIL: 'Resend Verification Email',
+	RESEND_VERIFICATION_EMAIL: 'Resend verification email',
 
 	/** @default "Reset Password" */
-	RESET_PASSWORD: 'Reset Password',
+	RESET_PASSWORD: 'Reset password',
 
 	/** @default "Save new password" */
 	RESET_PASSWORD_ACTION: 'Save new password',
@@ -522,6 +541,56 @@ export const authLocalization = {
 	/** @default "Please verify your email address. Check your inbox for the verification email. If you haven't received the email, click the button below to resend." */
 	VERIFY_YOUR_EMAIL_DESCRIPTION:
 		"Please verify your email address. Check your inbox for the verification email. If you haven't received the email, click the button below to resend.",
+
+	/** @default "Email Verification Required" */
+	EMAIL_VERIFICATION_REQUIRED: 'Email Verification Required',
+
+	/** @default "We've sent a verification link to" */
+	EMAIL_VERIFICATION_SENT_TO: "We've sent a verification link to",
+
+	/** @default "Please check your email and click the verification link to complete your registration." */
+	EMAIL_VERIFICATION_CHECK_INBOX:
+		'Please check your email and click the verification link to complete your registration.',
+
+	/** @default "After verifying your email, you can sign in to your account." */
+	EMAIL_VERIFICATION_AFTER_VERIFY: 'After verifying your email, you can sign in to your account.',
+
+	/** @default "Didn't receive the email?" */
+	EMAIL_VERIFICATION_NO_EMAIL: "Didn't receive the email?",
+
+	/** @default "Back to sign in" */
+	BACK_TO_SIGN_IN: 'Back to sign in',
+
+	/** @default "Email Verified!" */
+	EMAIL_VERIFIED: 'Email verified!',
+
+	/** @default "Email verified successfully!" */
+	EMAIL_VERIFICATION_SUCCESS: 'Email verified successfully!',
+
+	/** @default "Your email has been successfully verified. You can now sign in to your account." */
+	EMAIL_VERIFICATION_SUCCESS_DESCRIPTION:
+		'Your email has been successfully verified. You can now sign in to your account.',
+
+	/** @default "You can now access all features of your account." */
+	EMAIL_VERIFICATION_SUCCESS_MESSAGE: 'You can now access all features of your account.',
+
+	/** @default "Failed to verify email" */
+	EMAIL_VERIFICATION_FAILED: 'Failed to verify email',
+
+	/** @default "Verify Your Email" */
+	VERIFY_EMAIL_TITLE: 'Verify Your Email',
+
+	/** @default "Click the button below to verify your email address." */
+	VERIFY_EMAIL_TOKEN_DESCRIPTION: 'Click the button below to verify your email address.',
+
+	/** @default "Verify Email" */
+	VERIFY_EMAIL_BUTTON: 'Verify Email',
+
+	/** @default "Verifying" */
+	VERIFYING: 'Verifying',
+
+	/** @default "Continue to Sign In" */
+	CONTINUE_TO_SIGN_IN: 'Continue to Sign In',
 
 	/** @default "Go back" */
 	GO_BACK: 'Go back',

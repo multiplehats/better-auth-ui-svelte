@@ -7,6 +7,8 @@ export const authViewPaths = {
 	FORGOT_PASSWORD: 'forgot-password',
 	/** @default "magic-link" */
 	MAGIC_LINK: 'magic-link',
+	/** @default "magic-link-sent" */
+	MAGIC_LINK_SENT: 'magic-link-sent',
 	/** @default "recover-account" */
 	RECOVER_ACCOUNT: 'recover-account',
 	/** @default "reset-password" */
@@ -20,7 +22,9 @@ export const authViewPaths = {
 	/** @default "two-factor" */
 	TWO_FACTOR: 'two-factor',
 	/** @default "accept-invitation" */
-	ACCEPT_INVITATION: 'accept-invitation'
+	ACCEPT_INVITATION: 'accept-invitation',
+	/** @default "verify-email" */
+	VERIFY_EMAIL: 'verify-email'
 };
 
 export type AuthViewPaths = typeof authViewPaths;

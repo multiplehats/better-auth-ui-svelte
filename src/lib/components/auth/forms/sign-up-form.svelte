@@ -66,6 +66,7 @@
 	const basePath = config.basePath;
 	const baseURL = config.baseURL;
 	const credentials = config.credentials;
+	const emailVerification = config.emailVerification;
 	const nameRequired = config.nameRequired;
 	const persistClient = config.persistClient;
 	const contextRedirectTo = config.redirectTo;
@@ -314,13 +315,22 @@
 				additionalParams.image = image;
 			}
 
+			// Determine the callback URL for email verification
+			// If redirectToVerifyPage is true, redirect to verify-email page after verification
+			let signUpCallbackURL = getCallbackURL();
+			if (emailVerification?.redirectToVerifyPage) {
+				const origin = baseURL || (typeof window !== 'undefined' ? window.location.origin : '');
+				const verifyEmailPath = `${basePath}/${viewPaths.VERIFY_EMAIL}`;
+				signUpCallbackURL = `${origin}${verifyEmailPath}?verified=true&email=${encodeURIComponent(email as string)}`;
+			}
+
 			const data = await authClient.signUp.email({
 				email: email as string,
 				password: password as string,
 				name: (name as string) || '',
 				...additionalParams,
 				...additionalFieldValues,
-				callbackURL: getCallbackURL(),
+				callbackURL: signUpCallbackURL,
 				fetchOptions
 			});
 
@@ -329,9 +339,14 @@
 				// User is signed in immediately
 				await onSuccess();
 			} else {
-				// Email verification required
-				navigate(`${basePath}/${viewPaths.SIGN_IN}${window.location.search}`);
-				toast.success(localization.SIGN_UP_EMAIL!);
+				// Email verification required - redirect to verify-email view
+				// Note: This handles token-based email verification (default).
+				// If the server uses emailOTP with overrideDefaultEmailVerification,
+				// users receive OTP codes via email instead of verification links.
+				const searchParams = new URLSearchParams(window.location.search);
+				searchParams.set('email', email); // URLSearchParams handles encoding automatically
+				navigate(`${basePath}/${viewPaths.VERIFY_EMAIL}?${searchParams.toString()}`);
+				// Don't show a toast here since the verify-email view will show all needed info
 			}
 		} catch (error) {
 			toast.error(getLocalizedError({ error, localization }));

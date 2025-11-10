@@ -14,6 +14,12 @@ This is a **complete Svelte 5 port** of the [Better Auth UI React library](https
 
 > **Important:** This library is in early stage development. While we have achieved full feature parity with the React version and all components have been ported, the library has not been battle-tested in production environments yet. Issues may arise. **Use at your own risk until we reach v1.0 stable.**
 
+## About This Port
+
+This Svelte port was primarily built to support my own projects including [stacksee.com](https://stacksee.com) and [textatlas.com](https://textatlas.com). While it currently maintains full feature parity with the original React library, **this port may evolve independently over time**. I may add new features, make different architectural decisions, or implement functionality specifically tailored to my project needs that diverge from the original library.
+
+If you're looking for a library that strictly mirrors the React version, please be aware that this port's API and features may change to better serve the needs of my projects and the Svelte ecosystem.
+
 ## Why Choose Better Auth UI?
 
 - **Easy** – Plug & play authentication components
@@ -349,7 +355,14 @@ interface AuthUIProviderProps {
 	};
 
 	// Additional auth methods
-	magicLink?: boolean;
+	magicLink?: boolean | {
+		resendCooldown?: number;
+		redirectToSentPage?: boolean;
+	};
+	emailVerification?: boolean | {
+		resendCooldown?: number;
+		redirectToVerifyPage?: boolean;
+	};
 	passkey?: boolean;
 
 	// Two-factor authentication

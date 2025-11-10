@@ -2,15 +2,20 @@
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import type { LayoutProps } from '../../$types.js';
 	import { authViewPaths } from '$lib/index.js';
+
 	let { children, params }: LayoutProps = $props();
 
-	const isSplitLayout = [
-		authViewPaths.SIGN_IN,
-		authViewPaths.SIGN_UP,
-		authViewPaths.FORGOT_PASSWORD,
-		authViewPaths.RESET_PASSWORD,
-		authViewPaths.MAGIC_LINK
-	].includes(params.path ?? '');
+	const isSplitLayout = $derived(
+		[
+			authViewPaths.SIGN_IN,
+			authViewPaths.SIGN_UP,
+			authViewPaths.FORGOT_PASSWORD,
+			authViewPaths.RESET_PASSWORD,
+			authViewPaths.MAGIC_LINK,
+			authViewPaths.VERIFY_EMAIL,
+			authViewPaths.MAGIC_LINK_SENT
+		].includes(params.path ?? '')
+	);
 </script>
 
 {#if isSplitLayout}

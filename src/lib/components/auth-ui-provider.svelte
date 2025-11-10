@@ -73,7 +73,22 @@
 		/**
 		 * Show Verify Email card for unverified emails
 		 */
-		emailVerification?: boolean;
+		emailVerification?:
+			| boolean
+			| {
+					/**
+					 * Cooldown period in seconds before allowing another verification email
+					 * @default 60
+					 */
+					resendCooldown?: number;
+					/**
+					 * When true, redirects to verify-email page after clicking verification link
+					 * instead of the main app. Useful when autoSignInAfterVerification in the server auth conrig is false
+					 * in your server config, so users see a success message before signing in.
+					 * @default false
+					 */
+					redirectToVerifyPage?: boolean;
+			  };
 		/**
 		 * Enable or disable Email OTP support
 		 * @default false
@@ -91,7 +106,20 @@
 		 * Enable or disable Magic Link support
 		 * @default false
 		 */
-		magicLink?: boolean;
+		magicLink?:
+			| boolean
+			| {
+					/**
+					 * Cooldown period in seconds before allowing another magic link email
+					 * @default 60
+					 */
+					resendCooldown?: number;
+					/**
+					 * When true, redirects to magic-link-sent page after requesting a magic link
+					 * @default false
+					 */
+					redirectToSentPage?: boolean;
+			  };
 		/**
 		 * Enable or disable Multi Session support
 		 * @default false
@@ -558,6 +586,25 @@
 	// Merge mutators
 	const mutators = $derived({ ...defaultMutators, ...mutatorsProp });
 
+	// Process emailVerification prop
+	const emailVerificationConfig = $derived.by(() => {
+		if (!emailVerification) return undefined;
+
+		if (emailVerification === true) {
+			return {
+				enabled: true,
+				resendCooldown: 60, // Default 60 seconds
+				redirectToVerifyPage: false // Default false
+			};
+		}
+
+		return {
+			enabled: true,
+			resendCooldown: emailVerification.resendCooldown || 60,
+			redirectToVerifyPage: emailVerification.redirectToVerifyPage || false
+		};
+	});
+
 	// Process basePath and baseURL (remove trailing slashes)
 	const basePath = $derived(
 		(basePathProp.endsWith('/') ? basePathProp.slice(0, -1) : basePathProp) === '/'
@@ -609,7 +656,7 @@
 			return deleteUser;
 		},
 		get emailVerification() {
-			return emailVerification;
+			return emailVerificationConfig;
 		},
 		get emailOTP() {
 			return emailOTP;

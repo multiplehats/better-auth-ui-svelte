@@ -17,15 +17,37 @@ import {
 } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
 import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
+import { BETTER_AUTH_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 
 export const auth = betterAuth({
-	baseURL: 'http://localhost:5173',
+	baseURL: BETTER_AUTH_URL,
 	emailAndPassword: {
 		enabled: true,
+		requireEmailVerification: true,
 		sendResetPassword(data) {
 			// Implement your email sending logic here
-			console.log(`Send reset password email to ${data.url} with URL: ${data.url}`);
+			console.log('\n┌─────────────────────────────────────────┐');
+			console.log('│  🔐 PASSWORD RESET EMAIL                │');
+			console.log('├─────────────────────────────────────────┤');
+			console.log(`│  To: ${data.user.email}`);
+			console.log('│  URL (click to open):');
+			console.log(`│  ${data.url}`);
+			console.log('└─────────────────────────────────────────┘\n');
+
+			return Promise.resolve();
+		}
+	},
+	emailVerification: {
+		autoSignInAfterVerification: false,
+		sendVerificationEmail(data) {
+			// Implement your email sending logic here
+			console.log('\n┌─────────────────────────────────────────┐');
+			console.log('│  ✉️  EMAIL VERIFICATION                 │');
+			console.log('├─────────────────────────────────────────┤');
+			console.log(`│  To: ${data.user.email}`);
+			console.log('│  Verification URL (click to open):');
+			console.log(`│  ${data.url}`);
+			console.log('└─────────────────────────────────────────┘\n');
 
 			return Promise.resolve();
 		}
@@ -51,11 +73,26 @@ export const auth = betterAuth({
 		username(),
 		magicLink({
 			async sendMagicLink(data) {
+				console.log('\n┌─────────────────────────────────────────┐');
+				console.log('│  🪄  MAGIC LINK EMAIL                   │');
+				console.log('├─────────────────────────────────────────┤');
+				console.log(`│  To: ${data.email}`);
+				console.log('│  Magic Link URL (click to open):');
+				console.log(`│  ${data.url}`);
+				console.log('└─────────────────────────────────────────┘\n');
+
 				await sendMagicLinkEmail(data.email, data.url);
 			}
 		}),
 		emailOTP({
 			async sendVerificationOTP(data) {
+				console.log('\n┌─────────────────────────────────────────┐');
+				console.log('│  🔢  OTP VERIFICATION EMAIL             │');
+				console.log('├─────────────────────────────────────────┤');
+				console.log(`│  To: ${data.email}`);
+				console.log('│  One-Time Password (copy):');
+				console.log(`│  ${data.otp}`);
+				console.log('└─────────────────────────────────────────┘\n');
 				await sendOTPEmail(data.email, data.otp);
 			}
 		}),
