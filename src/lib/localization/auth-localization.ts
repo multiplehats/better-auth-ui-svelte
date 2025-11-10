@@ -375,7 +375,7 @@ export const authLocalization = {
 	RESEND_CODE: 'Resend code',
 
 	/** @default "Resend verification email" */
-	RESEND_VERIFICATION_EMAIL: 'Resend verfication email',
+	RESEND_VERIFICATION_EMAIL: 'Resend verification email',
 
 	/** @default "Reset Password" */
 	RESET_PASSWORD: 'Reset password',
