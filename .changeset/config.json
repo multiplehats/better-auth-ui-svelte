@@ -3,7 +3,7 @@
 	"changelog": [
 		"@svitejs/changesets-changelog-github-compact",
 		{
-			"repo": "stackseehq/analytics"
+			"repo": "multiplehats/better-auth-ui-svelte"
 		}
 	],
 	"commit": false,
