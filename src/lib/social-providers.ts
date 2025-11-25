@@ -24,7 +24,13 @@ import {
 	ZoomIcon
 } from '$lib/components/provider-icons/index.js';
 
-export const socialProviders = [
+export type Provider = {
+	provider: string;
+	name: string;
+	icon: ProviderIcon;
+};
+
+export const socialProviders: readonly Provider[] = [
 	{
 		provider: 'apple',
 		name: 'Apple',
@@ -135,10 +141,4 @@ export const socialProviders = [
 		name: 'Zoom',
 		icon: ZoomIcon
 	}
-] as const;
-
-export type Provider = {
-	provider: string;
-	name: string;
-	icon?: ProviderIcon;
-};
+];

@@ -1,4 +1,4 @@
-import { createAuthClient } from 'better-auth/svelte';
+import { createAuthClient, type InferSessionFromClient } from 'better-auth/svelte';
 import {
 	organizationClient,
 	apiKeyClient,
@@ -13,12 +13,13 @@ import {
 	multiSessionClient,
 	passkeyClient
 } from 'better-auth/client/plugins';
+import type { Atom } from 'nanostores';
 
 /**
  * Better Auth Svelte client
  * This provides reactive stores for authentication state
  */
-export const authClient = createAuthClient({
+export const authClient: ReturnType<typeof createAuthClient> = createAuthClient({
 	plugins: [
 		apiKeyClient(),
 		multiSessionClient(),
@@ -38,4 +39,5 @@ export const authClient = createAuthClient({
 });
 
 // Export convenience methods
-export const { useSession } = authClient;
+export const useSession: () => Atom<InferSessionFromClient<typeof authClient>> =
+	authClient.useSession;
