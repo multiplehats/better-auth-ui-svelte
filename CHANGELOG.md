@@ -1,5 +1,15 @@
 # better-auth-ui-svelte
 
+## 0.3.6
+
+### Patch Changes
+
+- Fix SSR hydration errors caused by nested button elements in bits-ui trigger components: ([`056224f`](https://github.com/multiplehats/better-auth-ui-svelte/commit/056224f91f7fc9c8b8eac86a57fab62d76a86d94))
+  - Fix nested buttons in `account-view.svelte` and `organization-view.svelte` Drawer.Trigger components
+  - Fix nested buttons in `account-cell.svelte`, `sign-up-form.svelte`, and `invitation-cell.svelte` DropdownMenu.Trigger components
+  - Apply proper `{#snippet child({ props })}` pattern to prevent invalid HTML structure during SSR
+  - Resolves `node_invalid_placement_ssr` warnings and hydration mismatches
+
 ## 0.3.5
 
 ### Patch Changes
