@@ -102,7 +102,7 @@
 	<!-- Return nothing if account options not configured -->
 {:else}
 	<div
-		class={cn('flex w-full grow flex-col gap-4 md:flex-row md:gap-12', className, classNames?.base)}
+		class={cn('flex w-full flex-col gap-4 md:flex-row md:gap-12', className, classNames?.base)}
 	>
 		{#if !hideNav}
 			<!-- Mobile Navigation (Drawer) -->
@@ -113,9 +113,11 @@
 
 				<Drawer.Root bind:open={drawerOpen}>
 					<Drawer.Trigger>
-						<Button variant="outline">
-							<Menu />
-						</Button>
+						{#snippet child({ props })}
+							<Button {...props} variant="outline">
+								<Menu />
+							</Button>
+						{/snippet}
 					</Drawer.Trigger>
 					<Drawer.Content>
 						<Drawer.Header>
@@ -180,7 +182,7 @@
 		{:else if view === 'SECURITY'}
 			<SecuritySettingsCards {classNames} {localization} />
 		{:else if view === 'API_KEYS'}
-			<ApiKeysCard classNames={classNames?.card} {localization} /> -->
+			<ApiKeysCard classNames={classNames?.card} {localization} />
 		{:else if view === 'ORGANIZATIONS' && organization}
 			<div class="grid w-full gap-4 md:gap-6">
 				<OrganizationsCard classNames={classNames?.card} {localization} />

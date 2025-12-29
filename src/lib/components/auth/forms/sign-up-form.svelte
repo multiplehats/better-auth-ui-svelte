@@ -431,18 +431,29 @@
 					<div class="flex items-center gap-4">
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger class="size-fit rounded-full">
-								<UserAvatar
-									isPending={uploadingAvatar}
-									className="size-16"
-									user={avatarImage
-										? {
-												name: form.getFieldValue('name') as string,
-												email: form.getFieldValue('email') as string,
-												image: avatarImage
-											}
-										: null}
-									{localization}
-								/>
+								{#snippet child({ props })}
+									<Button
+										{...props}
+										class="size-fit rounded-full"
+										size="icon"
+										type="button"
+										variant="ghost"
+										disabled={uploadingAvatar}
+									>
+										<UserAvatar
+											isPending={uploadingAvatar}
+											className="size-16"
+											user={avatarImage
+												? {
+														name: form.getFieldValue('name') as string,
+														email: form.getFieldValue('email') as string,
+														image: avatarImage
+													}
+												: null}
+											{localization}
+										/>
+									</Button>
+								{/snippet}
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Content align="start">

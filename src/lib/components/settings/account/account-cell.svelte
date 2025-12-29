@@ -78,23 +78,23 @@
 	<UserView user={deviceSession.user} localization={mergedLocalization} />
 
 	<DropdownMenu.Root>
-		<DropdownMenu.Trigger
-			disabled={isLoading}
-			class={cn(
-				buttonVariants({
-					size: 'icon',
-					variant: 'outline'
-				}),
-				'relative ms-auto',
-				classNames?.button,
-				classNames?.outlineButton
-			)}
-		>
-			{#if isLoading}
-				<Loader2 class="animate-spin" />
-			{:else}
-				<Ellipsis class={classNames?.icon} />
-			{/if}
+		<DropdownMenu.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					class={cn('relative ms-auto', classNames?.button, classNames?.outlineButton)}
+					disabled={isLoading}
+					size="icon"
+					type="button"
+					variant="outline"
+				>
+					{#if isLoading}
+						<Loader2 class="animate-spin" />
+					{:else}
+						<Ellipsis class={classNames?.icon} />
+					{/if}
+				</Button>
+			{/snippet}
 		</DropdownMenu.Trigger>
 
 		<DropdownMenu.Content>

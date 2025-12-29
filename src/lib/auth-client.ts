@@ -10,10 +10,10 @@ import {
 	oneTapClient,
 	genericOAuthClient,
 	anonymousClient,
-	multiSessionClient,
-	passkeyClient
+	multiSessionClient
 } from 'better-auth/client/plugins';
 import type { Atom } from 'nanostores';
+import { passkeyClient } from '@better-auth/passkey/client';
 
 /**
  * Better Auth Svelte client

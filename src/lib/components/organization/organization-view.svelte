@@ -125,9 +125,11 @@
 
 				<Drawer.Root bind:open={drawerOpen}>
 					<Drawer.Trigger>
-						<Button variant="outline">
-							<Menu />
-						</Button>
+						{#snippet child({ props })}
+							<Button {...props} variant="outline">
+								<Menu />
+							</Button>
+						{/snippet}
 					</Drawer.Trigger>
 					<Drawer.Content>
 						<Drawer.Header>

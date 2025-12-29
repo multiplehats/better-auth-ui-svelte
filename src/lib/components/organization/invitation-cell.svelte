@@ -100,19 +100,23 @@
 	<span class="truncate text-sm opacity-70">{role?.label}</span>
 
 	<DropdownMenu.Root>
-		<DropdownMenu.Trigger
-			class={cn(
-				buttonVariants({ variant: 'outline', size: 'icon' }),
-				'relative ms-auto',
-				classNames?.button,
-				classNames?.outlineButton
-			)}
-		>
-			{#if isLoading}
-				<Loader2 class="animate-spin" />
-			{:else}
-				<EllipsisIcon class={classNames?.icon} />
-			{/if}
+		<DropdownMenu.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					class={cn('relative ms-auto', classNames?.button, classNames?.outlineButton)}
+					disabled={isLoading}
+					size="icon"
+					type="button"
+					variant="outline"
+				>
+					{#if isLoading}
+						<Loader2 class="animate-spin" />
+					{:else}
+						<EllipsisIcon class={classNames?.icon} />
+					{/if}
+				</Button>
+			{/snippet}
 		</DropdownMenu.Trigger>
 
 		<DropdownMenu.Content onCloseAutoFocus={(e) => e.preventDefault()}>

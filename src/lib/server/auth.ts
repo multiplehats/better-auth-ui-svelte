@@ -15,7 +15,7 @@ import {
 	multiSession,
 	genericOAuth
 } from 'better-auth/plugins';
-import { passkey } from 'better-auth/plugins/passkey';
+import { passkey } from '@better-auth/passkey';
 import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
 import { BETTER_AUTH_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 
