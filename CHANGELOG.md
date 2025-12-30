@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.3.7
+
+### Patch Changes
+
+- Fix linter and TypeScript errors/warnings across the codebase to improve code quality and type safety ([`a468864`](https://github.com/multiplehats/better-auth-ui-svelte/commit/a46886460621faff7f59b0aedfeee874561bc83b))
+
 ## 0.3.6
 
 ### Patch Changes
