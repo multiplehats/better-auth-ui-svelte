@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.3.8
+
+### Patch Changes
+
+- Fix SSR error "Cannot read properties of undefined (reading 'Sub')" by replacing bits-ui primitive imports with local component wrappers. This eliminates the need for users to configure `ssr.noExternal` in their vite.config and resolves runtime errors during server-side rendering. ([`edefbef`](https://github.com/multiplehats/better-auth-ui-svelte/commit/edefbef6c840a1269345cbe6fb8759d1d92e4f07))
+
 ## 0.3.7
 
 ### Patch Changes
