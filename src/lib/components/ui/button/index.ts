@@ -1,16 +1,17 @@
-import Root from './button.svelte';
-
-// TypeScript doesn't recognize module-level exports from .svelte files, so we suppress the error
-// @ts-expect-error - TS2614: Module has no exported member
-export {
-	buttonVariants,
+import Root, {
 	type ButtonProps,
 	type ButtonSize,
-	type ButtonVariant
-} from './button.svelte';
+	type ButtonVariant,
+	buttonVariants,
+} from "./button.svelte";
 
 export {
 	Root,
+	type ButtonProps as Props,
 	//
-	Root as Button
+	Root as Button,
+	buttonVariants,
+	type ButtonProps,
+	type ButtonSize,
+	type ButtonVariant,
 };
