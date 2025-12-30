@@ -72,7 +72,9 @@
 
 	const isSelf = $derived(sessionData?.user.id === member?.userId);
 
-	const organizationsHook = useListOrganizations() as any;
+	const organizationsHook = useListOrganizations() as ReturnType<typeof useListOrganizations> & {
+		subscribe: (fn: (value: unknown) => void) => () => void;
+	};
 	const organizationsResult = $derived($organizationsHook);
 	const organizations = $derived(organizationsResult?.data);
 	const organization = $derived(
@@ -82,7 +84,7 @@
 	const hasPermissionHook = useHasPermission({
 		organizationId: member.organizationId,
 		permission: { member: ['update'] }
-	} as any);
+	});
 	const hasPermissionToUpdateMember = $derived(hasPermissionHook?.data);
 </script>
 

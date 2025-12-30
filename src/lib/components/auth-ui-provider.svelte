@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Snippet, Component } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import { setAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { authLocalization } from '$lib/localization/auth-localization.js';
 	import { BASE_ERROR_CODES } from '$lib/localization/base-error-codes.js';
@@ -241,7 +241,7 @@
 		/**
 		 * All other props
 		 */
-		[key: string]: any;
+		[key: string]: unknown;
 	}
 
 	let {
@@ -512,7 +512,7 @@
 				useAuthData({
 					queryFn: authClient.listAccounts,
 					cacheKey: 'listAccounts'
-				}) as any,
+				}) as unknown,
 			useAccountInfo: (params) =>
 				useAuthData({
 					queryFn: () => authClient.accountInfo({ accountId: params.providerId }),
@@ -746,8 +746,8 @@
 	$effect(() => {
 		if (typeof window === 'undefined') return;
 
-		const searchParams = new URLSearchParams(window.location.search);
-		const errorCode = searchParams.get('error');
+		const searchParams = window.location.search ? new URL(window.location.href).searchParams : null;
+		const errorCode = searchParams?.get('error');
 
 		if (errorCode) {
 			const errorMessage = BASE_ERROR_CODES[errorCode as keyof typeof BASE_ERROR_CODES];

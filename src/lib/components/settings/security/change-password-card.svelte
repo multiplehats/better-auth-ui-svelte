@@ -8,9 +8,7 @@
 	import PasswordInput from '$lib/components/password-input.svelte';
 	import { CardContent } from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import SettingsCard, {
-		type SettingsCardClassNames
-	} from '../shared/settings-card.svelte';
+	import SettingsCard, { type SettingsCardClassNames } from '../shared/settings-card.svelte';
 	import { InputFieldSkeleton } from '../skeletons/index.js';
 
 	export interface ChangePasswordCardProps {
@@ -23,7 +21,7 @@
 		passwordValidation?: PasswordValidation;
 	}
 
-	interface Props extends ChangePasswordCardProps {}
+	type Props = ChangePasswordCardProps;
 
 	let {
 		className,

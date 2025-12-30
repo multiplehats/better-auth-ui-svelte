@@ -14,14 +14,9 @@
 		localization?: Partial<AuthLocalization>;
 	}
 
-	interface Props extends PasskeysCardProps {}
+	type Props = PasskeysCardProps;
 
-	let {
-		className,
-		classNames,
-		localization: propLocalization,
-		...restProps
-	}: Props = $props();
+	let { className, classNames, localization: propLocalization, ...restProps }: Props = $props();
 
 	const {
 		authClient,
@@ -36,12 +31,18 @@
 	const listPasskeysAtom = useListPasskeys();
 	// useListPasskeys returns an atom that we need to dereference with $
 	// The type is Partial, so we need to handle the case where the atom might not exist
-	let passkeys = $state<any[] | null | undefined>(undefined);
+	let passkeys = $state<Array<{ id: string; name?: string; createdAt: string }> | null | undefined>(
+		undefined
+	);
 	let isPending = $state<boolean | undefined>(undefined);
 	let refetch = $state<(() => void) | undefined>(undefined);
 
 	$effect(() => {
-		if (listPasskeysAtom && typeof listPasskeysAtom === 'object' && 'subscribe' in listPasskeysAtom) {
+		if (
+			listPasskeysAtom &&
+			typeof listPasskeysAtom === 'object' &&
+			'subscribe' in listPasskeysAtom
+		) {
 			const value = $listPasskeysAtom;
 			passkeys = value?.data;
 			isPending = value?.isPending;
@@ -108,12 +109,7 @@
 		{#if passkeys && passkeys.length > 0}
 			<CardContent class={cn('grid gap-4', classNames?.content)}>
 				{#each passkeys as passkey (passkey.id)}
-					<PasskeyCell
-						{classNames}
-						localization={mergedLocalization}
-						{passkey}
-						{refetch}
-					/>
+					<PasskeyCell {classNames} localization={mergedLocalization} {passkey} {refetch} />
 				{/each}
 			</CardContent>
 		{/if}

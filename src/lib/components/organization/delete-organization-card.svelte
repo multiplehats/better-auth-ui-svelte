@@ -13,7 +13,7 @@
 		slug?: string;
 	}
 
-	interface Props extends DeleteOrganizationCardProps {}
+	type Props = DeleteOrganizationCardProps;
 
 	let { className, classNames, localization: propLocalization, slug }: Props = $props();
 

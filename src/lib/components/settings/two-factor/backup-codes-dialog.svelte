@@ -33,10 +33,7 @@
 </script>
 
 <Dialog.Root {open} onOpenChange={handleOpenChange}>
-	<Dialog.Content
-		onOpenAutoFocus={(e) => e.preventDefault()}
-		class={classNames?.dialog?.content}
-	>
+	<Dialog.Content onOpenAutoFocus={(e) => e.preventDefault()} class={classNames?.dialog?.content}>
 		<Dialog.Header class={classNames?.dialog?.header}>
 			<Dialog.Title class={cn('text-lg md:text-xl', classNames?.title)}>
 				{localization.BACKUP_CODES}

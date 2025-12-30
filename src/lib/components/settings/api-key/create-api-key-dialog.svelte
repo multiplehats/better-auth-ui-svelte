@@ -21,7 +21,6 @@
 	import PersonalAccountView from '$lib/components/organization/personal-account-view.svelte';
 
 	interface Props {
-		class?: string;
 		classNames?: SettingsCardClassNames;
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
@@ -32,7 +31,6 @@
 	}
 
 	let {
-		class: className,
 		classNames,
 		open = $bindable(false),
 		onOpenChange,
@@ -105,7 +103,19 @@
 					...(contextOrganization && selectedOrgId ? { organizationId: selectedOrgId } : {})
 				};
 
-				const result = await (authClient as any).apiKey.create({
+				const result = await (
+					authClient as {
+						apiKey: {
+							create: (params: {
+								name: string;
+								expiresIn?: number;
+								prefix?: string;
+								metadata?: Record<string, unknown>;
+								fetchOptions?: { throw: boolean };
+							}) => Promise<{ key: string }>;
+						};
+					}
+				).apiKey.create({
 					name: value.name,
 					expiresIn,
 					prefix: typeof apiKey === 'object' ? apiKey.prefix : undefined,
@@ -147,10 +157,7 @@
 </script>
 
 <Dialog.Root {open} onOpenChange={handleOpenChange}>
-	<Dialog.Content
-		class={classNames?.dialog?.content}
-		onOpenAutoFocus={(e) => e.preventDefault()}
-	>
+	<Dialog.Content class={classNames?.dialog?.content} onOpenAutoFocus={(e) => e.preventDefault()}>
 		<Dialog.Header class={classNames?.dialog?.header}>
 			<Dialog.Title class={cn('text-lg md:text-xl', classNames?.title)}>
 				{localization.CREATE_API_KEY}
@@ -188,31 +195,25 @@
 								disabled={isSubmitting}
 							>
 								<Select.Trigger id="organizationId" class={cn('w-full p-2', classNames?.input)}>
-									{#snippet children()}
-										{#if selectedOrganizationId === 'personal'}
-											<PersonalAccountView {user} {localization} size="sm" />
-										{:else}
-											{@const org = organizations?.find((o) => o.id === selectedOrganizationId)}
-											{#if org}
-												<OrganizationCellView organization={org} {localization} size="sm" />
-											{/if}
+									{#if selectedOrganizationId === 'personal'}
+										<PersonalAccountView {user} {localization} size="sm" />
+									{:else}
+										{@const org = organizations?.find((o) => o.id === selectedOrganizationId)}
+										{#if org}
+											<OrganizationCellView organization={org} {localization} size="sm" />
 										{/if}
-									{/snippet}
+									{/if}
 								</Select.Trigger>
 
 								<Select.Content class="w-[--radix-select-trigger-width]">
-									<Select.Item value="personal" label="">
-										{#snippet children()}
-											<PersonalAccountView {user} {localization} size="sm" />
-										{/snippet}
+									<Select.Item value="personal">
+										<PersonalAccountView {user} {localization} size="sm" />
 									</Select.Item>
 
 									{#if organizations}
 										{#each organizations as org (org.id)}
-											<Select.Item value={org.id} label="">
-												{#snippet children()}
-													<OrganizationCellView organization={org} {localization} size="sm" />
-												{/snippet}
+											<Select.Item value={org.id}>
+												<OrganizationCellView organization={org} {localization} size="sm" />
 											</Select.Item>
 										{/each}
 									{/if}
@@ -276,15 +277,13 @@
 								disabled={isSubmitting}
 							>
 								<Select.Trigger id="expiresInDays" class={classNames?.input}>
-									{#snippet children()}
-										{#if selectedExpiresInDays === 'none'}
-											{localization.NO_EXPIRATION}
-										{:else if selectedExpiresInDays === '365'}
-											{rtf.format(1, 'year')}
-										{:else}
-											{rtf.format(Number.parseInt(selectedExpiresInDays), 'day')}
-										{/if}
-									{/snippet}
+									{#if selectedExpiresInDays === 'none'}
+										{localization.NO_EXPIRATION}
+									{:else if selectedExpiresInDays === '365'}
+										{rtf.format(1, 'year')}
+									{:else}
+										{rtf.format(Number.parseInt(selectedExpiresInDays), 'day')}
+									{/if}
 								</Select.Trigger>
 
 								<Select.Content>

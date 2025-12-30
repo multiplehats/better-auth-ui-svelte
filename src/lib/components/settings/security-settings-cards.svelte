@@ -22,7 +22,7 @@
 	import SessionsCard from './security/sessions-card.svelte';
 	import TwoFactorCard from './two-factor/two-factor-card.svelte';
 
-	interface Props extends SecuritySettingsCardsProps {}
+	type Props = SecuritySettingsCardsProps;
 
 	let { className, classNames, localization: propLocalization }: Props = $props();
 
@@ -46,9 +46,7 @@
 	const refetchAccounts = listAccountsResult.refetch;
 
 	// Check if credentials are linked
-	const credentialsLinked = $derived(
-		accounts?.some((acc) => acc.providerId === 'credential')
-	);
+	const credentialsLinked = $derived(accounts?.some((acc) => acc.providerId === 'credential'));
 </script>
 
 <div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
@@ -74,17 +72,11 @@
 	{/if}
 
 	{#if twoFactor && credentialsLinked}
-		<TwoFactorCard
-			classNames={classNames?.card}
-			localization={mergedLocalization}
-		/>
+		<TwoFactorCard classNames={classNames?.card} localization={mergedLocalization} />
 	{/if}
 
 	{#if passkey}
-		<PasskeysCard
-			classNames={classNames?.card}
-			localization={mergedLocalization}
-		/>
+		<PasskeysCard classNames={classNames?.card} localization={mergedLocalization} />
 	{/if}
 
 	<SessionsCard classNames={classNames?.card} localization={mergedLocalization} />

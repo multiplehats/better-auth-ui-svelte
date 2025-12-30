@@ -4,7 +4,7 @@
 	import type { SettingsCardProps } from '../shared/settings-card.svelte';
 	import UpdateFieldCard from './update-field-card.svelte';
 
-	interface Props extends SettingsCardProps {}
+	type Props = SettingsCardProps;
 
 	let { className, classNames, localization: propLocalization, ...props }: Props = $props();
 

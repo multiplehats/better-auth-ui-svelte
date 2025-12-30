@@ -23,7 +23,8 @@ try {
 	}
 
 	// Revert back to development type
-	const buildPattern: RegExp = /export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' \| 'getSession'>;/;
+	const buildPattern: RegExp =
+		/export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' \| 'getSession'>;/;
 	const devReplacement: string = `export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;`;
 
 	if (buildPattern.test(content)) {
@@ -33,7 +34,8 @@ try {
 	}
 
 	// Revert AuthClient type back to development mode (without Omit)
-	const authClientBuildPattern: RegExp = /export type AuthClient = ReturnType<typeof createAuthClient>;/;
+	const authClientBuildPattern: RegExp =
+		/export type AuthClient = ReturnType<typeof createAuthClient>;/;
 	const authClientDevReplacement: string = `export type AuthClient = typeof authClient;`;
 
 	if (authClientBuildPattern.test(content)) {

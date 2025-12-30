@@ -1,5 +1,4 @@
 <script lang="ts" module>
-	import type { Snippet } from 'svelte';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { SettingsCardClassNames } from '../shared/settings-card.svelte';
 
@@ -24,14 +23,13 @@
 	// TODO: Import ChangeEmailCard when security directory is ported
 	// import ChangeEmailCard from '../security/change-email-card.svelte';
 
-	interface Props extends AccountSettingsCardsProps {}
+	type Props = AccountSettingsCardsProps;
 
 	let { className, classNames, localization }: Props = $props();
 
 	const {
 		additionalFields,
 		avatar,
-		changeEmail,
 		credentials,
 		hooks: { useSession },
 		multiSession,

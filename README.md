@@ -355,14 +355,18 @@ interface AuthUIProviderProps {
 	};
 
 	// Additional auth methods
-	magicLink?: boolean | {
-		resendCooldown?: number;
-		redirectToSentPage?: boolean;
-	};
-	emailVerification?: boolean | {
-		resendCooldown?: number;
-		redirectToVerifyPage?: boolean;
-	};
+	magicLink?:
+		| boolean
+		| {
+				resendCooldown?: number;
+				redirectToSentPage?: boolean;
+		  };
+	emailVerification?:
+		| boolean
+		| {
+				resendCooldown?: number;
+				redirectToVerifyPage?: boolean;
+		  };
 	passkey?: boolean;
 
 	// Two-factor authentication

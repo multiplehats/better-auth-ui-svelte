@@ -19,7 +19,7 @@
 		localization?: Partial<AuthLocalization>;
 	}
 
-	interface Props extends UpdateAvatarCardProps {}
+	type Props = UpdateAvatarCardProps;
 
 	let { className, classNames, localization: propLocalization }: Props = $props();
 

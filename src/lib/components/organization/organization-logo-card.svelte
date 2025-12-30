@@ -18,7 +18,7 @@
 		slug?: string;
 	}
 
-	interface Props extends OrganizationLogoCardProps {}
+	type Props = OrganizationLogoCardProps;
 
 	let {
 		class: className,

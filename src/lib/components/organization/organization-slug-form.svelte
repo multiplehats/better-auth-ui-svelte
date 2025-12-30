@@ -19,7 +19,7 @@
 		localization: AuthLocalization;
 	}
 
-	interface Props extends OrganizationSlugFormProps {}
+	type Props = OrganizationSlugFormProps;
 
 	let { organization, className, classNames, localization }: Props = $props();
 
@@ -41,7 +41,7 @@
 		permissions: {
 			organization: ['update']
 		}
-	} as any);
+	});
 
 	const hasPermissionData = $derived(permissionStore?.data);
 	const hasPermission = $derived(hasPermissionData?.success ?? false);

@@ -33,7 +33,6 @@
 	}
 
 	interface Props {
-		class?: string;
 		classNames?: SettingsCardClassNames;
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
@@ -41,7 +40,6 @@
 	}
 
 	let {
-		class: className,
 		classNames,
 		open = $bindable(false),
 		onOpenChange,

@@ -14,7 +14,6 @@
 		instructions?: Snippet | string;
 		isPending?: boolean;
 		isSubmitting?: boolean;
-		optimistic?: boolean;
 		variant?: 'default' | 'destructive';
 		action?: () => Promise<unknown> | unknown;
 	}

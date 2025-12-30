@@ -17,7 +17,7 @@
 	import SettingsCard from '../settings/shared/settings-card.svelte';
 	import UserInvitationRow from './user-invitation-row.svelte';
 
-	interface Props extends UserInvitationsCardProps {}
+	type Props = UserInvitationsCardProps;
 
 	let { className, classNames, localization: propLocalization }: Props = $props();
 

@@ -389,7 +389,7 @@ class QR8bitByte {
 		return this.parsedData.length;
 	}
 
-	public write(buffer: any) {
+	public write(buffer: { put: (value: number, length: number) => void }) {
 		for (let i = 0, l = this.parsedData.length; i < l; i++) {
 			buffer.put(this.parsedData[i], 8);
 		}
@@ -646,11 +646,11 @@ class QRCodeModel {
 	public setupTypeNumber(test: boolean) {
 		const bits = this.qrUtil.getBCHTypeNumber(this.typeNumber);
 		for (let i = 0; i < 18; i++) {
-			var mod = !test && ((bits >> i) & 1) == 1;
+			const mod = !test && ((bits >> i) & 1) == 1;
 			this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] = mod;
 		}
 		for (let i = 0; i < 18; i++) {
-			var mod = !test && ((bits >> i) & 1) == 1;
+			const mod = !test && ((bits >> i) & 1) == 1;
 			this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
 		}
 	}
@@ -659,7 +659,7 @@ class QRCodeModel {
 		const data = (this.errorCorrectLevel << 3) | maskPattern;
 		const bits = this.qrUtil.getBCHTypeInfo(data);
 		for (let i = 0; i < 15; i++) {
-			var mod = !test && ((bits >> i) & 1) == 1;
+			const mod = !test && ((bits >> i) & 1) == 1;
 			if (i < 6) {
 				this.modules[i][8] = mod;
 			} else if (i < 8) {
@@ -669,7 +669,7 @@ class QRCodeModel {
 			}
 		}
 		for (let i = 0; i < 15; i++) {
-			var mod = !test && ((bits >> i) & 1) == 1;
+			const mod = !test && ((bits >> i) & 1) == 1;
 			if (i < 8) {
 				this.modules[8][this.moduleCount - i - 1] = mod;
 			} else if (i < 9) {
@@ -769,7 +769,7 @@ class QRCodeModel {
 		let maxEcCount = 0;
 		const dcdata = new Array(rsBlocks.length);
 		const ecdata: number[][] = new Array(rsBlocks.length);
-		for (var r = 0; r < rsBlocks.length; r++) {
+		for (let r = 0; r < rsBlocks.length; r++) {
 			const dcCount = rsBlocks[r].dataCount;
 			const ecCount = rsBlocks[r].totalCount - dcCount;
 			maxDcCount = Math.max(maxDcCount, dcCount);
@@ -795,14 +795,14 @@ class QRCodeModel {
 		const data: number[] = new Array(totalCodeCount);
 		let index = 0;
 		for (let i = 0; i < maxDcCount; i++) {
-			for (var r = 0; r < rsBlocks.length; r++) {
+			for (let r = 0; r < rsBlocks.length; r++) {
 				if (i < dcdata[r].length) {
 					data[index++] = dcdata[r][i];
 				}
 			}
 		}
 		for (let i = 0; i < maxEcCount; i++) {
-			for (var r = 0; r < rsBlocks.length; r++) {
+			for (let r = 0; r < rsBlocks.length; r++) {
 				if (i < ecdata[r].length) {
 					data[index++] = ecdata[r][i];
 				}
@@ -877,7 +877,7 @@ class QRUtil {
 		return (data << 12) | d;
 	}
 
-	public getBCHDigit(data: any) {
+	public getBCHDigit(data: number) {
 		let digit = 0;
 		while (data != 0) {
 			digit++;
@@ -1055,7 +1055,7 @@ class QRCode {
 	private options: Options;
 	private qrCodeModel: QRCodeModel;
 
-	public constructor(userOptions: any) {
+	public constructor(userOptions: string | Partial<Options>) {
 		this.options = {
 			content: '',
 			padding: 8,
@@ -1072,7 +1072,7 @@ class QRCode {
 		if (typeof userOptions === 'string') userOptions = { content: userOptions };
 		if (userOptions) {
 			for (const i in userOptions as Options) {
-				// @ts-ignore
+				// @ts-expect-error - Dynamic property assignment from user options
 				this.options[i] = userOptions[i];
 			}
 		}
@@ -1160,7 +1160,7 @@ class QRCode {
 	public _getUTF8Length(content: string) {
 		const result = encodeURI(content)
 			.toString()
-			.replace(/\%[0-9a-fA-F]{2}/g, 'a');
+			.replace(/%[0-9a-fA-F]{2}/g, 'a');
 		return result.length + (result.length != content.length ? 3 : 0);
 	}
 

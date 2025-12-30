@@ -64,15 +64,12 @@
 	const config = getAuthUIConfig();
 
 	const {
-		basePath,
 		credentials,
 		localization: contextLocalization,
 		magicLink,
 		emailOTP,
 		signUp,
-		twoFactor: twoFactorEnabled,
-		viewPaths,
-		replace
+		viewPaths
 	} = config;
 
 	const signUpEnabled = !!signUp;

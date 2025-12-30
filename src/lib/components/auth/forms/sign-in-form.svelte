@@ -6,7 +6,7 @@
 	import { useCaptcha } from '$lib/hooks/use-captcha.svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
-	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import {
 		cn,
 		getLocalizedError,
@@ -51,7 +51,7 @@
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding
-	let captchaRef = $state<any>(null);
+	let captchaRef = $state<unknown>(null);
 
 	// Sync captchaRef with the hook
 	$effect(() => {

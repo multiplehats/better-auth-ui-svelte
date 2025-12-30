@@ -6,11 +6,7 @@
 	import SendIcon from '@lucide/svelte/icons/send';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
-	import {
-		getAuthUIConfig,
-		getAuthClient,
-		getLocalization
-	} from '$lib/context/auth-ui-config.svelte';
+	import { getAuthUIConfig, getAuthClient } from '$lib/context/auth-ui-config.svelte';
 	import { cn, getLocalizedError, getSearchParam, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import type { User } from '$lib/types/index.js';

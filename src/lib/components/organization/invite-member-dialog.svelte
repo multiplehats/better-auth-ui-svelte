@@ -19,7 +19,6 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 
 	interface Props {
-		class?: string;
 		classNames?: SettingsCardClassNames;
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
@@ -28,7 +27,6 @@
 	}
 
 	let {
-		class: className,
 		classNames,
 		open = $bindable(false),
 		onOpenChange,
@@ -194,11 +192,7 @@
 							}}
 							disabled={isSubmitting}
 						>
-							<Select.Trigger id="role" class="w-full">
-								{#snippet children()}
-									{availableRoles.find((r) => r.role === selectedRole)?.label || selectedRole}
-								{/snippet}
-							</Select.Trigger>
+							<Select.Trigger id="role" class="w-full"></Select.Trigger>
 
 							<Select.Content>
 								{#each availableRoles as role (role.role)}

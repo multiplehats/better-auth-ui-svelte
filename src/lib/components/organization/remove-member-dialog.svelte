@@ -16,7 +16,6 @@
 	import UserView from '../user-view.svelte';
 
 	interface Props {
-		class?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
 		member: Member & { user?: Partial<User> | null };
@@ -25,7 +24,6 @@
 	}
 
 	let {
-		class: className,
 		classNames,
 		localization: propLocalization,
 		member,

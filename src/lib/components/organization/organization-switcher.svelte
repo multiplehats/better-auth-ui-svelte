@@ -116,7 +116,7 @@
 
 	// Nanostores work directly with Svelte's $ syntax
 	const organizationsStore = useListOrganizations() as ReturnType<typeof useListOrganizations> & {
-		subscribe: Function;
+		subscribe: (fn: (value: unknown) => void) => () => void;
 	};
 	const organizationsResult = $derived($organizationsStore);
 

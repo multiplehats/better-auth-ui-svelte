@@ -15,7 +15,7 @@
 		localization?: Partial<AuthLocalization>;
 	}
 
-	interface Props extends ChangeEmailCardProps {}
+	type Props = ChangeEmailCardProps;
 
 	let { className, classNames, localization: propLocalization, ...restProps }: Props = $props();
 

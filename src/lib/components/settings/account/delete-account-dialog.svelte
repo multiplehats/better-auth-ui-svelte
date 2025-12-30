@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Account } from 'better-auth';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
-	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
@@ -55,14 +54,6 @@
 	);
 
 	const credentialsLinked = $derived(accounts?.some((acc) => acc.providerId === 'credential'));
-
-	const formSchema = $derived(
-		z.object({
-			password: credentialsLinked
-				? z.string().min(1, { message: mergedLocalization.PASSWORD_REQUIRED! })
-				: z.string().optional()
-		})
-	);
 
 	const form = createForm(() => ({
 		defaultValues: {

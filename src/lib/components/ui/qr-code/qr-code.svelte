@@ -40,4 +40,5 @@
 	let qrCode = new QRCode(opt);
 </script>
 
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 {@html qrCode.svg()}

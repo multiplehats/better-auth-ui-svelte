@@ -95,7 +95,8 @@ export const socialProviders = [
 export type Provider = {
 	provider: string;
 	name: string;
-	icon?: any; // Component type - will be added later
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	icon?: any; // Svelte component type - dynamic import
 };
 
 // Alias for compatibility with generic-oauth-options

@@ -1,6 +1,5 @@
 <script lang="ts" module>
 	import type { UserAvatarClassNames } from '$lib/components/user-avatar.svelte';
-	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { Snippet } from 'svelte';
 
 	export type SettingsCardClassNames = {
@@ -42,9 +41,7 @@
 		isSubmitting?: boolean;
 		disabled?: boolean;
 		isPending?: boolean;
-		optimistic?: boolean;
 		variant?: 'default' | 'destructive';
-		localization?: Partial<AuthLocalization>;
 		action?: () => Promise<unknown> | unknown;
 	}
 </script>
@@ -66,7 +63,6 @@
 		disabled,
 		isPending,
 		isSubmitting,
-		optimistic,
 		variant,
 		action
 	}: SettingsCardProps = $props();
@@ -95,7 +91,6 @@
 		{isPending}
 		{isSubmitting}
 		{instructions}
-		{optimistic}
 		{variant}
 		{action}
 	/>

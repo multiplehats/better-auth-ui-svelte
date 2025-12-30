@@ -55,7 +55,7 @@
 			</Dialog.Description>
 		</Dialog.Header>
 
-		<div class="break-all rounded-md bg-muted p-4 font-mono text-sm">
+		<div class="rounded-md bg-muted p-4 font-mono text-sm break-all">
 			{apiKey}
 		</div>
 

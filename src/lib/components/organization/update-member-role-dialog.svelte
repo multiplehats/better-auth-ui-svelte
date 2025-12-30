@@ -152,9 +152,7 @@
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{#snippet children()}
-						{availableRoles.find((r) => r.role === selectedRole)?.label || selectedRole}
-					{/snippet}
+					{availableRoles.find((r) => r.role === selectedRole)?.label || selectedRole}
 				</Select.Trigger>
 
 				<Select.Content>

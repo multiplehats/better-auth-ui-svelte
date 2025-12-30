@@ -13,7 +13,7 @@
 		localization?: Partial<AuthLocalization>;
 	}
 
-	interface Props extends AccountsCardProps {}
+	type Props = AccountsCardProps;
 
 	let { className, classNames, localization }: Props = $props();
 

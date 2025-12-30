@@ -15,7 +15,7 @@
 		organizationId?: string;
 	}
 
-	interface Props extends ApiKeysCardProps {}
+	type Props = ApiKeysCardProps;
 
 	let {
 		className,
@@ -39,9 +39,11 @@
 
 	// Filter API keys by organizationId
 	const filteredApiKeys = $derived(
-		!apiKeys ? null : !organizationId ? apiKeys : apiKeys.filter(
-			(apiKey) => organizationId === apiKey.metadata?.organizationId
-		)
+		!apiKeys
+			? null
+			: !organizationId
+				? apiKeys
+				: apiKeys.filter((apiKey) => organizationId === apiKey.metadata?.organizationId)
 	);
 
 	let createDialogOpen = $state(false);
@@ -68,12 +70,7 @@
 	{#if filteredApiKeys && filteredApiKeys.length > 0}
 		<CardContent class={cn('grid gap-4', classNames?.content)}>
 			{#each filteredApiKeys as apiKey (apiKey.id)}
-				<ApiKeyCell
-					{classNames}
-					{apiKey}
-					localization={mergedLocalization}
-					{refetch}
-				/>
+				<ApiKeyCell {classNames} {apiKey} localization={mergedLocalization} {refetch} />
 			{/each}
 		</CardContent>
 	{/if}

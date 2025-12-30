@@ -17,7 +17,6 @@
 	interface Props {
 		className?: string;
 		classNames?: AuthFormClassNames;
-		callbackURL?: string;
 		isSubmitting?: boolean;
 		localization?: Partial<AuthLocalization>;
 		otpSeparators?: 0 | 1 | 2;
@@ -28,7 +27,6 @@
 	let {
 		className,
 		classNames,
-		callbackURL,
 		isSubmitting: isSubmittingProp,
 		localization: localizationProp,
 		otpSeparators = 0,

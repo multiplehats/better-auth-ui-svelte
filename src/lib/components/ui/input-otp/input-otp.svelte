@@ -19,7 +19,6 @@
 		ref = $bindable(null),
 		class: className,
 		value = $bindable(''),
-		children,
 		...restProps
 	}: InputOTPPrimitive.RootProps & {
 		children?: Snippet<[PinInputRootSnippetProps]>;

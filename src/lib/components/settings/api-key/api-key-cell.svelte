@@ -17,15 +17,9 @@
 		refetch?: Refetch;
 	}
 
-	interface Props extends ApiKeyCellProps {}
+	type Props = ApiKeyCellProps;
 
-	let {
-		className,
-		classNames,
-		apiKey,
-		localization: propLocalization,
-		refetch
-	}: Props = $props();
+	let { className, classNames, apiKey, localization: propLocalization, refetch }: Props = $props();
 
 	const { localization: contextLocalization } = getAuthUIConfig();
 
@@ -40,14 +34,11 @@
 		if (!apiKey.expiresAt) return mergedLocalization.NEVER_EXPIRES;
 
 		const expiresDate = new Date(apiKey.expiresAt);
-		return `${mergedLocalization.EXPIRES} ${expiresDate.toLocaleDateString(
-			lang ?? 'en',
-			{
-				month: 'short',
-				day: 'numeric',
-				year: 'numeric'
-			}
-		)}`;
+		return `${mergedLocalization.EXPIRES} ${expiresDate.toLocaleDateString(lang ?? 'en', {
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric'
+		})}`;
 	};
 </script>
 
@@ -56,16 +47,16 @@
 
 	<div class="flex flex-col truncate">
 		<div class="flex items-center gap-2">
-			<span class="truncate font-semibold text-sm">
+			<span class="truncate text-sm font-semibold">
 				{apiKey.name}
 			</span>
 
-			<span class="flex-1 truncate text-muted-foreground text-sm">
-				{apiKey.start}{'******'}
+			<span class="flex-1 truncate text-sm text-muted-foreground">
+				{apiKey.start}******
 			</span>
 		</div>
 
-		<div class="truncate text-muted-foreground text-xs">
+		<div class="truncate text-xs text-muted-foreground">
 			{formatExpiration()}
 		</div>
 	</div>

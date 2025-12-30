@@ -2,7 +2,7 @@
 	import AuthView from '$lib/components/auth/auth-view.svelte';
 	import type { PageProps } from './$types.js';
 
-	let { data, params }: PageProps = $props();
+	let { params }: PageProps = $props();
 </script>
 
 <AuthView

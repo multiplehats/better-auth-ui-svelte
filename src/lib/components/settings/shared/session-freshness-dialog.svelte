@@ -22,7 +22,7 @@
 		description?: string;
 	}
 
-	interface Props extends SessionFreshnessDialogProps {}
+	type Props = SessionFreshnessDialogProps;
 
 	let {
 		open = false,

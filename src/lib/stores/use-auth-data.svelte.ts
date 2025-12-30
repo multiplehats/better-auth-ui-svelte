@@ -178,7 +178,7 @@ function getLocalizedError({
 	localization
 }: {
 	error: BetterFetchError;
-	localization: any;
+	localization: Record<string, string>;
 }) {
 	// This should match the logic from the React version
 	// For now, return a simple message

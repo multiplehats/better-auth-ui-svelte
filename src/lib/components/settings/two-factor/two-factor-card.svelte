@@ -11,7 +11,7 @@
 		localization?: Partial<AuthLocalization>;
 	}
 
-	interface Props extends TwoFactorCardProps {}
+	type Props = TwoFactorCardProps;
 
 	let { className, classNames, localization: propLocalization }: Props = $props();
 
@@ -24,11 +24,17 @@
 
 	let showPasswordDialog = $state(false);
 
-	const sessionResult = useSession() as ReturnType<typeof useSession> & { subscribe: Function };
+	const sessionResult = useSession() as ReturnType<typeof useSession> & {
+		subscribe: (fn: (value: unknown) => void) => () => void;
+	};
 	const sessionData = $derived($sessionResult);
-	const isPending = $derived(sessionData && 'isPending' in sessionData ? sessionData.isPending : false);
+	const isPending = $derived(
+		sessionData && 'isPending' in sessionData ? sessionData.isPending : false
+	);
 	const isTwoFactorEnabled = $derived(
-		sessionData && 'data' in sessionData ? (sessionData.data?.user as User)?.twoFactorEnabled : false
+		sessionData && 'data' in sessionData
+			? (sessionData.data?.user as User)?.twoFactorEnabled
+			: false
 	);
 </script>
 

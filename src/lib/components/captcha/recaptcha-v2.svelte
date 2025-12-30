@@ -1,25 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { useLang } from '$lib/hooks/use-lang.svelte';
-	import { useTheme } from '$lib/hooks/use-theme.svelte';
-	import { cn } from '$lib/utils/utils.js';
 
 	interface Props {
-		captchaRef?: any;
+		captchaRef?: unknown;
 	}
 
 	let { captchaRef = $bindable() }: Props = $props();
 
 	const config = getAuthUIConfig();
 	const { captcha } = config;
-	const { theme } = useTheme();
-	const { lang } = useLang();
 
 	onMount(() => {
 		// Set global recaptcha options
 		if (typeof window !== 'undefined') {
-			(window as any).recaptchaOptions = {
+			(window as unknown as Record<string, unknown>).recaptchaOptions = {
 				useRecaptchaNet: captcha?.recaptchaNet,
 				enterprise: captcha?.enterprise
 			};

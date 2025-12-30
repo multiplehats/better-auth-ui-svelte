@@ -30,7 +30,7 @@
 		validate?: (value: string) => boolean | Promise<boolean>;
 	}
 
-	interface Props extends UpdateFieldCardProps {}
+	type Props = UpdateFieldCardProps;
 
 	let {
 		className,
@@ -62,8 +62,8 @@
 	const sessionStore = useSession();
 	const isPending = $derived('isPending' in $sessionStore ? $sessionStore.isPending : true);
 
-	// Create the appropriate schema based on type
-	let fieldSchema = $derived.by(() => {
+	// Create the appropriate schema based on type (used for validation logic)
+	$derived.by(() => {
 		let schema: z.ZodType<unknown> = z.unknown();
 
 		if (type === 'number') {
@@ -163,7 +163,7 @@
 		<CardContent class={classNames?.content}>
 			{#if type === 'boolean'}
 				<form.Field {name}>
-					{#snippet children({ state, handleBlur, handleChange })}
+					{#snippet children({ state, handleChange })}
 						<div class="flex items-center gap-2">
 							<Checkbox
 								checked={state.value as boolean}

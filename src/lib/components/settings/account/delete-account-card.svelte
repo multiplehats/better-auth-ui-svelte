@@ -15,7 +15,7 @@
 		skipHook?: boolean;
 	}
 
-	interface Props extends DeleteAccountCardProps {}
+	type Props = DeleteAccountCardProps;
 
 	let {
 		className,

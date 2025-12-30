@@ -45,6 +45,6 @@
 	{:else}
 		<Mail class={classNames?.form?.icon} />
 	{/if}
-	{localization.SIGN_IN_WITH}{' '}
+	{localization.SIGN_IN_WITH}
 	{view === 'MAGIC_LINK' ? localization.PASSWORD : localization.MAGIC_LINK}
 </Button>

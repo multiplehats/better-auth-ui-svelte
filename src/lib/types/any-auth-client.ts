@@ -1,4 +1,4 @@
-import type { createAuthClient } from "better-auth/svelte";
+import type { createAuthClient } from 'better-auth/svelte';
 
 export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;
 

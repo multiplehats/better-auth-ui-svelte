@@ -26,6 +26,7 @@
 		class: className,
 		classNames,
 		account,
+		isPending,
 		localization,
 		other,
 		provider,
@@ -90,7 +91,9 @@
 </script>
 
 <Card class={cn('flex-row items-center gap-3 px-4 py-3', className, classNames?.cell)}>
-	{#if provider.icon}
+	{#if isPending}
+		<Skeleton class={cn('h-4 w-4', classNames?.skeleton)} />
+	{:else if provider.icon}
 		{@const IconComponent = provider.icon}
 		<IconComponent class={cn('size-4', classNames?.icon)} />
 	{/if}
@@ -119,7 +122,13 @@
 </Card>
 
 <!-- AccountInfo Component -->
-{#snippet AccountInfo({ account, classNames }: { account: { accountId: string }; classNames?: SettingsCardClassNames })}
+{#snippet AccountInfo({
+	account,
+	classNames
+}: {
+	account: { accountId: string };
+	classNames?: SettingsCardClassNames;
+})}
 	{@const {
 		hooks: { useAccountInfo }
 	} = getAuthUIConfig()}
@@ -128,7 +137,7 @@
 	{#if accountInfoQuery.isPending}
 		<Skeleton class={cn('my-0.5 h-3 w-28', classNames?.skeleton)} />
 	{:else if accountInfoQuery.data}
-		<div class="text-muted-foreground text-xs">
+		<div class="text-xs text-muted-foreground">
 			{accountInfoQuery.data.user.email}
 		</div>
 	{/if}

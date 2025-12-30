@@ -19,7 +19,7 @@
 		refetch?: Refetch;
 	}
 
-	interface Props extends SessionCellProps {}
+	type Props = SessionCellProps;
 
 	let { className, classNames, localization: propLocalization, session, refetch }: Props = $props();
 
@@ -71,11 +71,11 @@
 	{/if}
 
 	<div class="flex flex-col">
-		<span class="font-semibold text-sm">
+		<span class="text-sm font-semibold">
 			{isCurrentSession ? mergedLocalization.CURRENT_SESSION : session?.ipAddress}
 		</span>
 
-		<span class="text-muted-foreground text-xs">
+		<span class="text-xs text-muted-foreground">
 			{#if session.userAgent?.includes('tauri-plugin-http')}
 				{mergedLocalization.APP}
 			{:else if parser.os.name && parser.browser.name}

@@ -17,7 +17,7 @@
 	import OrganizationCellView from './organization-cell-view.svelte';
 	import { browser } from '$app/environment';
 
-	export interface AcceptInvitationCardClassNames extends SettingsCardClassNames {}
+	export type AcceptInvitationCardClassNames = SettingsCardClassNames;
 
 	interface Props {
 		class?: string;

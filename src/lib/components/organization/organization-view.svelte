@@ -37,7 +37,7 @@
 	// import ApiKeysCard from '../settings/api-key/api-keys-card.svelte';
 	import { browser } from '$app/environment';
 
-	interface Props extends OrganizationViewProps {}
+	type Props = OrganizationViewProps;
 
 	let {
 		className,

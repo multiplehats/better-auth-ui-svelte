@@ -5,7 +5,7 @@
 	import { createForm } from '@tanstack/svelte-form';
 	import { useCaptcha } from '$lib/hooks/use-captcha.svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
-	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn, getLocalizedError, getSearchParam, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
@@ -41,7 +41,7 @@
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding
-	let captchaRef = $state<any>(null);
+	let captchaRef = $state<unknown>(null);
 
 	// Sync captchaRef with the hook
 	$effect(() => {

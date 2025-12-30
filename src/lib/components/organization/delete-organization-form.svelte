@@ -27,7 +27,7 @@
 		permissions: {
 			organization: ['delete']
 		}
-	} as any); // Type assertion needed due to type mismatch in auth-hooks.ts
+	} as Parameters<typeof useHasPermission>[0]);
 
 	const hasPermission = $derived(permissionResult.data?.success ?? false);
 	const isPending = $derived(permissionResult.isPending ?? false);

@@ -77,7 +77,8 @@
 	<Dialog.Content class={classNames?.dialog?.content} onOpenAutoFocus={(e) => e.preventDefault()}>
 		<Dialog.Header class={classNames?.dialog?.header}>
 			<Dialog.Title class={cn('text-lg md:text-xl', classNames?.title)}>
-				{localization.DELETE} {localization.API_KEY}
+				{localization.DELETE}
+				{localization.API_KEY}
 			</Dialog.Title>
 
 			<Dialog.Description class={cn('text-xs md:text-sm', classNames?.description)}>
@@ -95,7 +96,7 @@
 					</span>
 
 					<span class="text-sm text-muted-foreground">
-						{apiKey.start}{'******'}
+						{apiKey.start}******
 					</span>
 				</div>
 

@@ -13,6 +13,7 @@
 <header class="border-b bg-background">
 	<nav class="container mx-auto flex h-16 items-center justify-between px-4">
 		<div class="flex items-center gap-8">
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 			<a href="/" class="flex items-center gap-2">
 				<svg
 					class="h-8 w-8 text-primary"

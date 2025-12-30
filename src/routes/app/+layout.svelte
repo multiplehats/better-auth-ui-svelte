@@ -4,9 +4,8 @@
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { SignedIn } from '$lib/index.js';
 
-	let { data, children }: LayoutProps = $props();
+	let { children }: LayoutProps = $props();
 </script>
 
 <Sidebar.Provider>

@@ -34,7 +34,7 @@
 	import { Label } from '../ui/label/index.js';
 	import { Menu } from '@lucide/svelte';
 
-	interface Props extends AccountViewProps {}
+	type Props = AccountViewProps;
 
 	let {
 		className,
@@ -101,9 +101,7 @@
 {#if !accountOptions}
 	<!-- Return nothing if account options not configured -->
 {:else}
-	<div
-		class={cn('flex w-full flex-col gap-4 md:flex-row md:gap-12', className, classNames?.base)}
-	>
+	<div class={cn('flex w-full flex-col gap-4 md:flex-row md:gap-12', className, classNames?.base)}>
 		{#if !hideNav}
 			<!-- Mobile Navigation (Drawer) -->
 			<div class="flex justify-between gap-2 md:hidden">

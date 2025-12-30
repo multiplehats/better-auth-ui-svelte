@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { useTheme } from '$lib/hooks/use-theme.svelte';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import RecaptchaBadge from './recaptcha-badge.svelte';
 	import RecaptchaV2 from './recaptcha-v2.svelte';
@@ -9,7 +8,7 @@
 	const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/forget-password'];
 
 	interface Props {
-		ref?: any;
+		ref?: unknown;
 		localization?: Partial<AuthLocalization>;
 		action?: string; // Optional action to check if it's in the endpoints list
 	}
@@ -18,7 +17,6 @@
 
 	const config = getAuthUIConfig();
 	const { captcha } = config;
-	const { theme } = useTheme();
 
 	// If action is provided, check if it's in the list of captcha-enabled endpoints
 	const shouldShowCaptcha = $derived(() => {

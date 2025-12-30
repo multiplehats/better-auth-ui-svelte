@@ -32,14 +32,13 @@
 		const baseUrl = captcha.recaptchaNet
 			? 'https://www.recaptcha.net/recaptcha/api.js'
 			: 'https://www.google.com/recaptcha/api.js';
-		const params = new URLSearchParams({
-			render: captcha.siteKey
-		});
+		const url = new URL(baseUrl);
+		url.searchParams.set('render', captcha.siteKey);
 		if (captcha.enterprise) {
-			params.set('onload', 'onRecaptchaLoadCallback');
-			params.set('render', 'explicit');
+			url.searchParams.set('onload', 'onRecaptchaLoadCallback');
+			url.searchParams.set('render', 'explicit');
 		}
-		script.src = `${baseUrl}?${params.toString()}`;
+		script.src = url.toString();
 		script.async = true;
 		script.defer = true;
 		document.head.appendChild(script);

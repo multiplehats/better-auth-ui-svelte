@@ -45,7 +45,7 @@
 	const captchaHook = $derived(useCaptcha({ localization }));
 
 	// Local state for captcha binding
-	let captchaRef = $state<any>(null);
+	let captchaRef = $state<unknown>(null);
 
 	// Sync captchaRef with the hook
 	$effect(() => {
@@ -75,7 +75,7 @@
 			const basePath = config.basePath || '/auth';
 			const resetPasswordPath = config.viewPaths.RESET_PASSWORD || 'reset-password';
 
-			const fetchOptions: any = {
+			const fetchOptions: Record<string, unknown> = {
 				throw: true,
 				headers: await captchaHook.getCaptchaHeaders('/forget-password')
 			};

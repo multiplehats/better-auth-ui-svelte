@@ -21,7 +21,7 @@
 	import OrganizationNameCard from './organization-name-card.svelte';
 	import OrganizationSlugCard from './organization-slug-card.svelte';
 
-	interface Props extends OrganizationSettingsCardsProps {}
+	type Props = OrganizationSettingsCardsProps;
 
 	let { className, classNames, localization, slug }: Props = $props();
 

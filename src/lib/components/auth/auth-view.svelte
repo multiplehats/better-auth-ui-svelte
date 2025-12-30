@@ -207,7 +207,7 @@
 								socialLayout === 'grid' && 'grid grid-cols-2'
 							)}
 						>
-							{#each social?.providers || [] as providerName}
+							{#each social?.providers || [] as providerName (providerName)}
 								{@const provider = socialProviders.find((p) => p.provider === providerName)}
 								{#if provider}
 									<ProviderButton
@@ -223,7 +223,7 @@
 								{/if}
 							{/each}
 
-							{#each genericOAuth?.providers || [] as provider}
+							{#each genericOAuth?.providers || [] as provider (provider.providerId)}
 								<ProviderButton
 									{classNames}
 									{callbackURL}

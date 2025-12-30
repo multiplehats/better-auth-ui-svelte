@@ -47,6 +47,7 @@
 									<Sidebar.MenuSubItem>
 										<Sidebar.MenuSubButton>
 											{#snippet child({ props })}
+												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 												<a href={subItem.url} {...props}>
 													<span>{subItem.title}</span>
 												</a>

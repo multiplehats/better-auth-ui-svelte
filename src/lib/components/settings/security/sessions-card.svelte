@@ -3,9 +3,7 @@
 	import { cn } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import { CardContent } from '$lib/components/ui/card/index.js';
-	import SettingsCard, {
-		type SettingsCardClassNames
-	} from '../shared/settings-card.svelte';
+	import SettingsCard, { type SettingsCardClassNames } from '../shared/settings-card.svelte';
 	import { SettingsCellSkeleton } from '../skeletons/index.js';
 	import SessionCell from './session-cell.svelte';
 
@@ -15,14 +13,9 @@
 		localization?: Partial<AuthLocalization>;
 	}
 
-	interface Props extends SessionsCardProps {}
+	type Props = SessionsCardProps;
 
-	let {
-		className,
-		classNames,
-		localization: propLocalization,
-		...restProps
-	}: Props = $props();
+	let { className, classNames, localization: propLocalization, ...restProps }: Props = $props();
 
 	const {
 		hooks: { useListSessions },

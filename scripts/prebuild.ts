@@ -23,7 +23,8 @@ try {
 	}
 
 	// Replace the development type with the build type
-	const devPattern: RegExp = /export type AnyAuthClient = Omit<typeof authClient, 'signUp' \| 'getSession'>;/;
+	const devPattern: RegExp =
+		/export type AnyAuthClient = Omit<typeof authClient, 'signUp' \| 'getSession'>;/;
 	const buildReplacement: string = `export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;`;
 
 	if (devPattern.test(content)) {

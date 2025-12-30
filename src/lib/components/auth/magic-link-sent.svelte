@@ -102,9 +102,6 @@
 
 		try {
 			// Build the callback URL - this should go to wherever the magic link takes users
-			const magicLinkSentPath = `${config.basePath}/${config.viewPaths.MAGIC_LINK_SENT}`;
-			const magicLinkConfig = typeof config.magicLink === 'object' ? config.magicLink : {};
-
 			await config.authClient.signIn.magicLink(
 				{
 					email,

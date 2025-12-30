@@ -46,7 +46,7 @@
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
 	const organizationsStore = useListOrganizations() as ReturnType<typeof useListOrganizations> & {
-		subscribe: Function;
+		subscribe: (fn: (value: unknown) => void) => () => void;
 	};
 	const organizationsResult = $derived($organizationsStore);
 	const refetchOrganizations = $derived(
@@ -72,7 +72,7 @@
 		defaultValues: {
 			slug: ''
 		},
-		onSubmit: async ({ value }) => {
+		onSubmit: async () => {
 			try {
 				await authClient.organization.delete({
 					organizationId: organization.id,

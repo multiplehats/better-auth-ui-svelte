@@ -16,7 +16,7 @@
 		slug?: string;
 	}
 
-	interface Props extends OrganizationSlugCardProps {}
+	type Props = OrganizationSlugCardProps;
 
 	let { className, classNames, localization: propLocalization, slug }: Props = $props();
 

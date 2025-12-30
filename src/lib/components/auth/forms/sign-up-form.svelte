@@ -90,7 +90,7 @@
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding
-	let captchaRef = $state<any>(null);
+	let captchaRef = $state<unknown>(null);
 
 	// Sync captchaRef with the hook
 	$effect(() => {
@@ -278,8 +278,7 @@
 
 	// Sign up function
 	async function signUp(values: z.infer<typeof formSchema>) {
-		const { email, password, name, username, confirmPassword, image, ...additionalFieldValues } =
-			values;
+		const { email, password, name, username, image, ...additionalFieldValues } = values;
 
 		try {
 			// Validate additional fields with custom validators if provided
@@ -288,7 +287,7 @@
 				if (!additionalField?.validate) continue;
 
 				if (typeof value === 'string' && !(await additionalField.validate(value))) {
-					form.setFieldMeta(field as any, (prev) => ({
+					form.setFieldMeta(field as never, (prev) => ({
 						...prev,
 						errorMap: {
 							...prev.errorMap,
@@ -300,7 +299,7 @@
 			}
 
 			// Prepare fetch options with captcha headers
-			const fetchOptions: any = {
+			const fetchOptions: Record<string, unknown> = {
 				throw: true,
 				headers: await getCaptchaHeaders('/sign-up/email')
 			};
@@ -343,9 +342,9 @@
 				// Note: This handles token-based email verification (default).
 				// If the server uses emailOTP with overrideDefaultEmailVerification,
 				// users receive OTP codes via email instead of verification links.
-				const searchParams = new URLSearchParams(window.location.search);
-				searchParams.set('email', email); // URLSearchParams handles encoding automatically
-				navigate(`${basePath}/${viewPaths.VERIFY_EMAIL}?${searchParams.toString()}`);
+				const url = new URL(window.location.href);
+				url.searchParams.set('email', email as string); // URLSearchParams handles encoding automatically
+				navigate(`${basePath}/${viewPaths.VERIFY_EMAIL}?${url.searchParams.toString()}`);
 				// Don't show a toast here since the verify-email view will show all needed info
 			}
 		} catch (error) {
@@ -383,7 +382,7 @@
 
 	// Create validators for additional fields dynamically
 	function getAdditionalFieldValidator(field: string) {
-		return (formSchema.shape as any)[field];
+		return (formSchema.shape as Record<string, z.ZodTypeAny>)[field];
 	}
 
 	// Combine isSubmitting states
@@ -633,11 +632,11 @@
 
 	<!-- Additional Fields -->
 	{#if signUpFields}
-		{#each signUpFields.filter((field) => field !== 'name' && field !== 'image') as field}
+		{#each signUpFields.filter((field) => field !== 'name' && field !== 'image') as field (field)}
 			{@const additionalField = additionalFields?.[field]}
 			{#if additionalField}
 				<form.Field
-					name={field as any}
+					name={field as never}
 					validators={{ onChange: getAdditionalFieldValidator(field) }}
 				>
 					{#snippet children(fieldState)}
@@ -649,7 +648,7 @@
 										id={field}
 										checked={fieldState.state.value as boolean}
 										onCheckedChange={(checked) => {
-											fieldState.handleChange(checked as any);
+											fieldState.handleChange(checked as never);
 										}}
 										disabled={isSubmitting}
 									/>

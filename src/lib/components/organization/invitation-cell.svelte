@@ -12,7 +12,7 @@
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { Invitation } from '$lib/types/invitation.js';
 	import type { SettingsCardClassNames } from '../settings/shared/settings-card.svelte';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import UserAvatar from '../user-avatar.svelte';

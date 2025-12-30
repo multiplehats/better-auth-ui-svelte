@@ -45,8 +45,23 @@ export function useCaptcha({
 				// For v3, we would need to integrate with the recaptcha script
 				// This requires window.grecaptcha to be available
 				const sanitizedAction = sanitizeActionName(action);
-				if (typeof window !== 'undefined' && (window as any).grecaptcha) {
-					response = await (window as any).grecaptcha.execute(captcha.siteKey, {
+				if (
+					typeof window !== 'undefined' &&
+					(
+						window as {
+							grecaptcha?: {
+								execute: (siteKey: string, params: { action: string }) => Promise<string>;
+							};
+						}
+					).grecaptcha
+				) {
+					response = await (
+						window as {
+							grecaptcha: {
+								execute: (siteKey: string, params: { action: string }) => Promise<string>;
+							};
+						}
+					).grecaptcha.execute(captcha.siteKey, {
 						action: sanitizedAction
 					});
 				}

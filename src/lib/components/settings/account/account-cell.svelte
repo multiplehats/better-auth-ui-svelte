@@ -8,7 +8,7 @@
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
 	import type { AuthLocalization, Refetch } from '$lib/types/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { Card } from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import UserView from '$lib/components/user-view.svelte';

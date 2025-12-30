@@ -20,17 +20,10 @@
 		refetch?: Refetch;
 	}
 
-	interface Props extends ProvidersCardProps {}
+	type Props = ProvidersCardProps;
 
-	let {
-		className,
-		classNames,
-		accounts,
-		isPending,
-		localization,
-		skipHook,
-		refetch
-	}: Props = $props();
+	let { className, classNames, accounts, isPending, localization, skipHook, refetch }: Props =
+		$props();
 
 	const {
 		hooks: { useListAccounts },

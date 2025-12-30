@@ -17,15 +17,9 @@
 		refetch?: Refetch;
 	}
 
-	interface Props extends PasskeyCellProps {}
+	type Props = PasskeyCellProps;
 
-	let {
-		className,
-		classNames,
-		localization: propLocalization,
-		passkey,
-		refetch
-	}: Props = $props();
+	let { className, classNames, localization: propLocalization, passkey, refetch }: Props = $props();
 
 	const {
 		freshAge,

@@ -28,8 +28,8 @@ export function getLocalizedError({
 	error,
 	localization
 }: {
-	// biome-ignore lint/suspicious/noExplicitAny: ignore
-	error: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	error: any; // Error type can be anything from different sources
 	localization?: Partial<AuthLocalization>;
 }) {
 	if (typeof error === 'string') {

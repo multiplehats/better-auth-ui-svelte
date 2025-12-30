@@ -4,7 +4,8 @@ import type { AnyAuthClient } from './any-auth-client.js';
 export type Provider = {
 	provider: string;
 	name: string;
-	icon?: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	icon?: any; // Svelte component type - dynamic import
 };
 
 export type GenericOAuthOptions = {

@@ -21,10 +21,15 @@
 	const organizationRefetching = $derived(organizationResult.isRefetching);
 	const refetchOrganization = $derived(organizationResult.refetch);
 
-	const listOrganizationsStore = useListOrganizations() as ReturnType<typeof useListOrganizations> & { subscribe: Function };
+	const listOrganizationsStore = useListOrganizations() as ReturnType<
+		typeof useListOrganizations
+	> & { subscribe: () => void };
 	const listOrganizationsResult = $derived($listOrganizationsStore);
-	const organizations = $derived(listOrganizationsResult && 'data' in listOrganizationsResult ? listOrganizationsResult.data : undefined);
-	const refetchListOrganizations = $derived(listOrganizationsResult && 'refetch' in listOrganizationsResult ? listOrganizationsResult.refetch : undefined);
+	const refetchListOrganizations = $derived(
+		listOrganizationsResult && 'refetch' in listOrganizationsResult
+			? listOrganizationsResult.refetch
+			: undefined
+	);
 
 	// Refetch organizations when user changes
 	let previousUserId = $state<string | undefined>(undefined);

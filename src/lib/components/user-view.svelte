@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import { getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import { cn } from '$lib/utils/ui.js';
 	import type { AuthLocalization, Profile } from '$lib/types/index.js';
 	import { Skeleton } from './ui/skeleton/index.js';

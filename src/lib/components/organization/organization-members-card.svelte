@@ -16,7 +16,7 @@
 		slug?: string;
 	}
 
-	interface Props extends OrganizationMembersCardProps {}
+	type Props = OrganizationMembersCardProps;
 
 	let { className, classNames, localization: propLocalization, slug: slugProp }: Props = $props();
 
@@ -42,7 +42,7 @@
 					permissions: {
 						invitation: ['create']
 					}
-				} as any)
+				})
 			: null
 	);
 	const hasPermissionUpdateMemberHook = $derived(
@@ -52,7 +52,7 @@
 					permission: {
 						member: ['update']
 					}
-				} as any)
+				})
 			: null
 	);
 	const hasPermissionInvite = $derived(hasPermissionInviteHook?.data);
