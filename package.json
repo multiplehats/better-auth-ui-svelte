@@ -48,6 +48,7 @@
 	"peerDependencies": {
 		"@better-auth/passkey": "^1.4.9",
 		"@lucide/svelte": "^0.554.0",
+		"@sveltejs/kit": "^2.0.0",
 		"better-auth": "^1.3.0",
 		"bits-ui": "^2.14.4",
 		"svelte": "^5.0.0",
@@ -117,7 +118,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/multiplehats/better-auth-ui-svelte"
+		"url": "git+https://github.com/multiplehats/better-auth-ui-svelte.git"
 	},
 	"bugs": {
 		"url": "https://github.com/multiplehats/better-auth-ui-svelte/issues"
