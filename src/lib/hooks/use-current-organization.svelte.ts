@@ -44,21 +44,37 @@ export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {
 			const slug = slugProp || contextSlug;
 			const orgsResult = organizations.value;
 
-			data =
-				orgsResult && 'data' in orgsResult
-					? (orgsResult.data?.find((org: Organization) => org.slug === slug) ?? null)
+			if (orgsResult && typeof orgsResult === 'object' && 'data' in orgsResult) {
+				const orgsData = orgsResult.data;
+				data = Array.isArray(orgsData)
+					? (orgsData.find((org: Organization) => org.slug === slug) ?? null)
 					: null;
-			isPending = orgsResult && 'isPending' in orgsResult ? orgsResult.isPending : false;
-			isRefetching = orgsResult && 'isRefetching' in orgsResult ? orgsResult.isRefetching : false;
+				isPending = 'isPending' in orgsResult ? (orgsResult.isPending as boolean) : false;
+				isRefetching = 'isRefetching' in orgsResult ? (orgsResult.isRefetching as boolean) : false;
+			} else {
+				data = null;
+				isPending = false;
+				isRefetching = false;
+			}
 		} else {
 			const activeResult = activeOrg.value;
 
 			data =
-				activeResult && 'data' in activeResult ? (activeResult.data as Organization | null) : null;
-			isPending = activeResult && 'isPending' in activeResult ? activeResult.isPending : false;
+				activeResult && typeof activeResult === 'object' && 'data' in activeResult
+					? (activeResult.data as Organization | null)
+					: null;
+			isPending =
+				activeResult && typeof activeResult === 'object' && 'isPending' in activeResult
+					? (activeResult.isPending as boolean)
+					: false;
 			isRefetching =
-				activeResult && 'isRefetching' in activeResult ? activeResult.isRefetching : false;
-			refetch = activeResult && 'refetch' in activeResult ? activeResult.refetch : undefined;
+				activeResult && typeof activeResult === 'object' && 'isRefetching' in activeResult
+					? (activeResult.isRefetching as boolean)
+					: false;
+			refetch =
+				activeResult && typeof activeResult === 'object' && 'refetch' in activeResult
+					? (activeResult.refetch as (() => void) | undefined)
+					: undefined;
 		}
 
 		return { data, isPending, isRefetching, refetch };

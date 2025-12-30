@@ -33,7 +33,9 @@ export { default as TwoFactorForm } from './components/auth/forms/two-factor-for
 
 // Form Utilities
 export { default as FormError } from './components/form-error.svelte';
-export type { FormErrorProps } from './components/form-error.svelte';
+import type { ComponentProps } from 'svelte';
+import FormErrorComponent from './components/form-error.svelte';
+export type FormErrorProps = ComponentProps<typeof FormErrorComponent>;
 
 // Organization Components
 // export { default as AcceptInvitationCard } from './components/organization/accept-invitation-card.svelte';
@@ -73,14 +75,16 @@ export { default as AccountSettingsCards } from './components/settings/account/a
 
 // Settings Components - API Key
 export { default as ApiKeysCard } from './components/settings/api-key/api-keys-card.svelte';
-export type { ApiKeysCardProps } from './components/settings/api-key/api-keys-card.svelte';
+import ApiKeysCardComponent from './components/settings/api-key/api-keys-card.svelte';
+export type ApiKeysCardProps = ComponentProps<typeof ApiKeysCardComponent>;
 
 // Settings Components - Passkey
 export { default as PasskeysCard } from './components/settings/passkey/passkeys-card.svelte';
 
 // Settings Components - Providers
 export { default as ProvidersCard } from './components/settings/providers/providers-card.svelte';
-export type { ProvidersCardProps } from './components/settings/providers/providers-card.svelte';
+import ProvidersCardComponent from './components/settings/providers/providers-card.svelte';
+export type ProvidersCardProps = ComponentProps<typeof ProvidersCardComponent>;
 
 // Settings Components - Security
 export { default as ChangeEmailCard } from './components/settings/security/change-email-card.svelte';
@@ -125,23 +129,45 @@ export { authLocalization } from './localization/auth-localization.js';
 
 // Types
 export type { AuthUIConfig, User, Session, AuthLocalization } from './types/index.js';
-export type { AuthFormClassNames } from './components/auth/auth-form.svelte';
-export type { UserButtonClassNames } from './components/user-button.svelte';
-export type { UserViewClassNames } from './components/user-view.svelte';
-export type { UserAvatarClassNames } from './components/user-avatar.svelte';
-export type { OrganizationSwitcherClassNames } from './components/organization/organization-switcher.svelte';
-export type { OrganizationViewClassNames } from './components/organization/organization-cell-view.svelte';
-export type { OrganizationLogoClassNames } from './components/organization/organization-logo.svelte';
-export type { OrganizationLogoCardProps } from './components/organization/organization-logo-card.svelte';
-export type { DeleteOrganizationCardProps } from './components/organization/delete-organization-card.svelte';
-export type { OrganizationInvitationsCardProps } from './components/organization/organization-invitations-card.svelte';
-export type { OrganizationMembersCardProps } from './components/organization/organization-members-card.svelte';
-export type { OrganizationNameCardProps } from './components/organization/organization-name-card.svelte';
-export type { OrganizationSettingsCardsProps } from './components/organization/organization-settings-cards.svelte';
-export type { OrganizationSlugCardProps } from './components/organization/organization-slug-card.svelte';
-export type { OrganizationViewProps } from './components/organization/organization-view.svelte';
-export type { OrganizationsCardProps } from './components/organization/organizations-card.svelte';
-export type { UserInvitationsCardProps } from './components/organization/user-invitations-card.svelte';
-export type { SettingsCardClassNames } from './components/settings/shared/settings-card.svelte';
+import AuthFormComponent from './components/auth/auth-form.svelte';
+import UserButtonComponent from './components/user-button.svelte';
+import UserViewComponent from './components/user-view.svelte';
+import UserAvatarComponent from './components/user-avatar.svelte';
+import OrganizationSwitcherComponent from './components/organization/organization-switcher.svelte';
+import OrganizationCellViewComponent from './components/organization/organization-cell-view.svelte';
+import OrganizationLogoComponent from './components/organization/organization-logo.svelte';
+import OrganizationLogoCardComponent from './components/organization/organization-logo-card.svelte';
+import DeleteOrganizationCardComponent from './components/organization/delete-organization-card.svelte';
+import OrganizationInvitationsCardComponent from './components/organization/organization-invitations-card.svelte';
+import OrganizationMembersCardComponent from './components/organization/organization-members-card.svelte';
+import OrganizationNameCardComponent from './components/organization/organization-name-card.svelte';
+import OrganizationSettingsCardsComponent from './components/organization/organization-settings-cards.svelte';
+import OrganizationSlugCardComponent from './components/organization/organization-slug-card.svelte';
+import OrganizationViewComponent from './components/organization/organization-view.svelte';
+import OrganizationsCardComponent from './components/organization/organizations-card.svelte';
+import UserInvitationsCardComponent from './components/organization/user-invitations-card.svelte';
+import SettingsCardComponent from './components/settings/shared/settings-card.svelte';
+export type AuthFormClassNames = ComponentProps<typeof AuthFormComponent>;
+export type UserButtonClassNames = ComponentProps<typeof UserButtonComponent>;
+export type UserViewClassNames = ComponentProps<typeof UserViewComponent>;
+export type UserAvatarClassNames = ComponentProps<typeof UserAvatarComponent>;
+export type OrganizationSwitcherClassNames = ComponentProps<typeof OrganizationSwitcherComponent>;
+export type OrganizationViewClassNames = ComponentProps<typeof OrganizationCellViewComponent>;
+export type OrganizationLogoClassNames = ComponentProps<typeof OrganizationLogoComponent>;
+export type OrganizationLogoCardProps = ComponentProps<typeof OrganizationLogoCardComponent>;
+export type DeleteOrganizationCardProps = ComponentProps<typeof DeleteOrganizationCardComponent>;
+export type OrganizationInvitationsCardProps = ComponentProps<
+	typeof OrganizationInvitationsCardComponent
+>;
+export type OrganizationMembersCardProps = ComponentProps<typeof OrganizationMembersCardComponent>;
+export type OrganizationNameCardProps = ComponentProps<typeof OrganizationNameCardComponent>;
+export type OrganizationSettingsCardsProps = ComponentProps<
+	typeof OrganizationSettingsCardsComponent
+>;
+export type OrganizationSlugCardProps = ComponentProps<typeof OrganizationSlugCardComponent>;
+export type OrganizationViewProps = ComponentProps<typeof OrganizationViewComponent>;
+export type OrganizationsCardProps = ComponentProps<typeof OrganizationsCardComponent>;
+export type UserInvitationsCardProps = ComponentProps<typeof UserInvitationsCardComponent>;
+export type SettingsCardClassNames = ComponentProps<typeof SettingsCardComponent>;
 export * from './types/auth-hooks.js';
 export * from './types/auth-mutators.js';

@@ -1,7 +1,7 @@
 import { auth } from '$lib/server/auth.js';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
-import { redirect } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 import { getAuthPath } from '$lib/index.js';
 import {
 	authPathConfig,
@@ -10,7 +10,7 @@ import {
 	DEFAULT_AUTH_REDIRECT
 } from '$lib/config/auth-config.js';
 
-export async function handle({ event, resolve }) {
+export const handle: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;
 
 	// Initialize locals
@@ -47,4 +47,4 @@ export async function handle({ event, resolve }) {
 
 	// Let Better Auth handle the request
 	return svelteKitHandler({ event, resolve, auth, building });
-}
+};

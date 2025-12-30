@@ -52,7 +52,6 @@
 		hooks: { useSession },
 		mutators: { updateUser },
 		localization: contextLocalization,
-		optimistic,
 		toast,
 		onSessionChange
 	} = getAuthUIConfig();
@@ -63,7 +62,7 @@
 	const isPending = $derived('isPending' in $sessionStore ? $sessionStore.isPending : true);
 
 	// Create the appropriate schema based on type (used for validation logic)
-	$derived.by(() => {
+	const fieldSchema = $derived.by(() => {
 		let schema: z.ZodType<unknown> = z.unknown();
 
 		if (type === 'number') {
@@ -158,11 +157,10 @@
 		{isPending}
 		title={label}
 		actionLabel={mergedLocalization.SAVE}
-		{optimistic}
 	>
 		<CardContent class={classNames?.content}>
 			{#if type === 'boolean'}
-				<form.Field {name}>
+				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] }}>
 					{#snippet children({ state, handleChange })}
 						<div class="flex items-center gap-2">
 							<Checkbox
@@ -191,7 +189,7 @@
 			{:else if isPending}
 				<Skeleton class={cn('h-9 w-full', classNames?.skeleton)} />
 			{:else}
-				<form.Field {name}>
+				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] }}>
 					{#snippet children({ state, handleBlur, handleChange })}
 						<div class="grid w-full items-center gap-1.5">
 							{#if type === 'number'}

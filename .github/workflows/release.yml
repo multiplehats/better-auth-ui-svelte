@@ -13,7 +13,7 @@ permissions:
   contents: write
   pull-requests: write
   packages: write
-  id-token: write  # Required for trusted publishing with OIDC
+  id-token: write # Required for trusted publishing with OIDC
 
 jobs:
   release:

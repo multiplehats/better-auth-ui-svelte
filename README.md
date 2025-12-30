@@ -480,16 +480,19 @@ Then use it everywhere:
 ```svelte
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
-  import { AuthUIProvider } from 'better-auth-ui-svelte';
-  import { authPathConfig } from '$lib/config/auth-config';
-
-  // Provider will use your custom paths
-  <AuthUIProvider
-    {authClient}
-    basePath={authPathConfig.basePath}
-    viewPaths={authPathConfig.viewPaths}
-  />
+	import { AuthUIProvider } from 'better-auth-ui-svelte';
+	import { authClient } from '$lib/auth-client';
+	import { authPathConfig } from '$lib/config/auth-config';
 </script>
+
+<!-- Provider will use your custom paths -->
+<AuthUIProvider
+	{authClient}
+	basePath={authPathConfig.basePath}
+	viewPaths={authPathConfig.viewPaths}
+>
+	<slot />
+</AuthUIProvider>
 ```
 
 ```typescript

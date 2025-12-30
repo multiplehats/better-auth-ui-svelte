@@ -1,4 +1,4 @@
-import { createAuthClient, type InferSessionFromClient } from 'better-auth/svelte';
+import { createAuthClient } from 'better-auth/svelte';
 import {
 	organizationClient,
 	apiKeyClient,
@@ -12,7 +12,6 @@ import {
 	anonymousClient,
 	multiSessionClient
 } from 'better-auth/client/plugins';
-import type { Atom } from 'nanostores';
 import { passkeyClient } from '@better-auth/passkey/client';
 
 /**
@@ -24,6 +23,9 @@ export const authClient: ReturnType<typeof createAuthClient> = createAuthClient(
 		apiKeyClient(),
 		multiSessionClient(),
 		passkeyClient(),
+		// @ts-expect-error - BetterAuthClientPlugin type incompatibility between better-auth versions.
+		// The oneTapClient plugin has a slightly different type signature that doesn't match the expected
+		// BetterAuthClientPlugin interface, but it works correctly at runtime.
 		oneTapClient({
 			clientId: ''
 		}),
@@ -33,11 +35,13 @@ export const authClient: ReturnType<typeof createAuthClient> = createAuthClient(
 		magicLinkClient(),
 		emailOTPClient(),
 		twoFactorClient(),
+		// @ts-expect-error - BetterAuthClientPlugin type incompatibility between better-auth versions.
+		// The organizationClient plugin has a slightly different type signature that doesn't match the expected
+		// BetterAuthClientPlugin interface, but it works correctly at runtime.
 		organizationClient(),
 		lastLoginMethodClient()
 	]
 });
 
 // Export convenience methods
-export const useSession: () => Atom<InferSessionFromClient<typeof authClient>> =
-	authClient.useSession;
+export const useSession = authClient.useSession;

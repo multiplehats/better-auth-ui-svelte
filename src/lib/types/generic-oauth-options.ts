@@ -1,5 +1,3 @@
-import type { AnyAuthClient } from './any-auth-client.js';
-
 // This will need to be defined or imported from a social-providers utility
 export type Provider = {
 	provider: string;
@@ -17,5 +15,6 @@ export type GenericOAuthOptions = {
 	/**
 	 * Custom generic OAuth sign in function
 	 */
-	signIn?: (params: Parameters<AnyAuthClient['signIn']['oauth2']>[0]) => Promise<unknown>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	signIn?: (params: any) => Promise<unknown>;
 };

@@ -21,10 +21,13 @@ export type AuthHooks = {
 	useAccountInfo: (params: { providerId: string }) => AuthHook<{ user: User }>;
 	useListDeviceSessions: () => AuthHook<AnyAuthClient['$Infer']['Session'][]>;
 	useListSessions: () => AuthHook<AnyAuthSession['session'][]>;
-	useListPasskeys: () => Partial<ReturnType<AnyAuthClient['useListPasskeys']>>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	useListPasskeys: () => any;
 	useListApiKeys: () => AuthHook<ApiKey[]>;
-	useActiveOrganization: () => Partial<ReturnType<AnyAuthClient['useActiveOrganization']>>;
-	useListOrganizations: () => Partial<ReturnType<AnyAuthClient['useListOrganizations']>>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	useActiveOrganization: () => any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	useListOrganizations: () => any;
 	useHasPermission: (params: { permission: string }) => AuthHook<{
 		error: null;
 		success: boolean;

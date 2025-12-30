@@ -48,7 +48,7 @@ export function useCaptcha({
 				if (
 					typeof window !== 'undefined' &&
 					(
-						window as {
+						window as unknown as {
 							grecaptcha?: {
 								execute: (siteKey: string, params: { action: string }) => Promise<string>;
 							};
@@ -56,7 +56,7 @@ export function useCaptcha({
 					).grecaptcha
 				) {
 					response = await (
-						window as {
+						window as unknown as {
 							grecaptcha: {
 								execute: (siteKey: string, params: { action: string }) => Promise<string>;
 							};
