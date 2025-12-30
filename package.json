@@ -115,6 +115,14 @@
 	],
 	"author": "Better Auth UI Contributors",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/multiplehats/better-auth-ui-svelte"
+	},
+	"bugs": {
+		"url": "https://github.com/multiplehats/better-auth-ui-svelte/issues"
+	},
+	"homepage": "https://github.com/multiplehats/better-auth-ui-svelte#readme",
 	"dependencies": {
 		"@better-fetch/fetch": "^1.1.18",
 		"@tanstack/svelte-form": "^1.23.8",
