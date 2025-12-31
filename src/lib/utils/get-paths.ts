@@ -2,11 +2,18 @@ import {
 	authViewPaths,
 	accountViewPaths,
 	organizationViewPaths,
+	adminViewPaths,
 	type AuthViewPath,
 	type AccountViewPath,
-	type OrganizationViewPath
+	type OrganizationViewPath,
+	type AdminViewPath
 } from './view-paths.js';
-import type { AuthViewPaths, AccountViewPaths, OrganizationViewPaths } from './view-paths.js';
+import type {
+	AuthViewPaths,
+	AccountViewPaths,
+	OrganizationViewPaths,
+	AdminViewPaths
+} from './view-paths.js';
 
 /**
  * Configuration for path generation
@@ -60,10 +67,27 @@ export interface OrganizationPathConfig {
 	viewPaths?: Partial<OrganizationViewPaths>;
 }
 
+export interface AdminPathConfig {
+	/**
+	 * Base path for admin views
+	 * @default "/admin"
+	 */
+	basePath?: string;
+	/**
+	 * Base URL for generating full URLs (optional)
+	 */
+	baseURL?: string;
+	/**
+	 * Custom view paths (merged with defaults)
+	 */
+	viewPaths?: Partial<AdminViewPaths>;
+}
+
 // Default configurations
 const DEFAULT_AUTH_BASE_PATH = '/auth';
 const DEFAULT_ACCOUNT_BASE_PATH = '/account';
 const DEFAULT_ORGANIZATION_BASE_PATH = '/organization';
+const DEFAULT_ADMIN_BASE_PATH = '/admin';
 
 /**
  * Get the full path for an auth view
@@ -236,5 +260,54 @@ export function getAllOrganizationPaths(
 			return acc;
 		},
 		{} as Record<OrganizationViewPath, string>
+	);
+}
+
+/**
+ * Get the full path for an admin view
+ *
+ * @example
+ * ```ts
+ * getAdminPath('DASHBOARD') // '/admin/dashboard'
+ * getAdminPath('USERS') // '/admin/users'
+ * ```
+ */
+export function getAdminPath(view: AdminViewPath, config: AdminPathConfig = {}): string {
+	const basePath = config.basePath ?? DEFAULT_ADMIN_BASE_PATH;
+	const viewPaths = { ...adminViewPaths, ...config.viewPaths };
+	const viewPath = viewPaths[view];
+
+	const normalizedBase = basePath === '/' ? '' : basePath.replace(/\/$/, '');
+	const normalizedView = viewPath.replace(/^\//, '');
+
+	return `${normalizedBase}/${normalizedView}`;
+}
+
+/**
+ * Get the full URL for an admin view (includes baseURL)
+ *
+ * @example
+ * ```ts
+ * getAdminUrl('DASHBOARD', {
+ *   baseURL: 'https://example.com'
+ * }) // 'https://example.com/admin/dashboard'
+ * ```
+ */
+export function getAdminUrl(view: AdminViewPath, config: AdminPathConfig = {}): string {
+	const path = getAdminPath(view, config);
+	const baseURL = config.baseURL?.replace(/\/$/, '') ?? '';
+	return baseURL ? `${baseURL}${path}` : path;
+}
+
+/**
+ * Helper to get all admin paths as an object
+ */
+export function getAllAdminPaths(config: AdminPathConfig = {}): Record<AdminViewPath, string> {
+	return Object.keys(adminViewPaths).reduce(
+		(acc, key) => {
+			acc[key as AdminViewPath] = getAdminPath(key as AdminViewPath, config);
+			return acc;
+		},
+		{} as Record<AdminViewPath, string>
 	);
 }

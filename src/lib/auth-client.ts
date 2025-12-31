@@ -10,7 +10,8 @@ import {
 	oneTapClient,
 	genericOAuthClient,
 	anonymousClient,
-	multiSessionClient
+	multiSessionClient,
+	adminClient
 } from 'better-auth/client/plugins';
 import { passkeyClient } from '@better-auth/passkey/client';
 
@@ -18,14 +19,12 @@ import { passkeyClient } from '@better-auth/passkey/client';
  * Better Auth Svelte client
  * This provides reactive stores for authentication state
  */
-export const authClient: ReturnType<typeof createAuthClient> = createAuthClient({
+export const authClient = createAuthClient({
 	plugins: [
+		organizationClient(),
 		apiKeyClient(),
 		multiSessionClient(),
 		passkeyClient(),
-		// @ts-expect-error - BetterAuthClientPlugin type incompatibility between better-auth versions.
-		// The oneTapClient plugin has a slightly different type signature that doesn't match the expected
-		// BetterAuthClientPlugin interface, but it works correctly at runtime.
 		oneTapClient({
 			clientId: ''
 		}),
@@ -35,11 +34,8 @@ export const authClient: ReturnType<typeof createAuthClient> = createAuthClient(
 		magicLinkClient(),
 		emailOTPClient(),
 		twoFactorClient(),
-		// @ts-expect-error - BetterAuthClientPlugin type incompatibility between better-auth versions.
-		// The organizationClient plugin has a slightly different type signature that doesn't match the expected
-		// BetterAuthClientPlugin interface, but it works correctly at runtime.
-		organizationClient(),
-		lastLoginMethodClient()
+		lastLoginMethodClient(),
+		adminClient()
 	]
 });
 

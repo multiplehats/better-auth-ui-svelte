@@ -103,19 +103,7 @@
 					...(contextOrganization && selectedOrgId ? { organizationId: selectedOrgId } : {})
 				};
 
-				const result = await (
-					authClient as {
-						apiKey: {
-							create: (params: {
-								name: string;
-								expiresIn?: number;
-								prefix?: string;
-								metadata?: Record<string, unknown>;
-								fetchOptions?: { throw: boolean };
-							}) => Promise<{ key: string }>;
-						};
-					}
-				).apiKey.create({
+				const result = await authClient.apiKey.create({
 					name: value.name,
 					expiresIn,
 					prefix: typeof apiKey === 'object' ? apiKey.prefix : undefined,

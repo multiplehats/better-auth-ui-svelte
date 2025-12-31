@@ -13,7 +13,8 @@ import {
 	oneTap,
 	anonymous,
 	multiSession,
-	genericOAuth
+	genericOAuth,
+	admin
 } from 'better-auth/plugins';
 import { passkey } from '@better-auth/passkey';
 import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
@@ -62,6 +63,7 @@ export const auth = betterAuth({
 		}
 	},
 	plugins: [
+		admin(),
 		organization({
 			teams: {
 				enabled: true

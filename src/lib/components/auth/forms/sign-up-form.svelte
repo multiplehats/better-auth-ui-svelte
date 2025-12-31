@@ -457,7 +457,7 @@
 
 							<DropdownMenu.Content align="start">
 								<DropdownMenu.Item onclick={openFileDialog} disabled={uploadingAvatar}>
-									<UploadCloud class="mr-2 h-4 w-4" />
+									<UploadCloud class="h-4 w-4" />
 									{localization.UPLOAD_AVATAR}
 								</DropdownMenu.Item>
 
@@ -467,7 +467,7 @@
 										disabled={uploadingAvatar}
 										class="text-destructive focus:text-destructive"
 									>
-										<Trash2 class="mr-2 h-4 w-4" />
+										<Trash2 class="h-4 w-4" />
 										{localization.DELETE_AVATAR}
 									</DropdownMenu.Item>
 								{/if}
@@ -481,7 +481,7 @@
 							disabled={uploadingAvatar}
 						>
 							{#if uploadingAvatar}
-								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+								<Loader2 class="h-4 w-4 animate-spin" />
 							{/if}
 							{localization.UPLOAD}
 						</Button>
@@ -750,7 +750,7 @@
 		class={cn('w-full', classNames?.button, classNames?.primaryButton)}
 	>
 		{#if isSubmitting}
-			<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+			<Loader2 class="h-4 w-4 animate-spin" />
 		{/if}
 		{localization.SIGN_UP_ACTION}
 	</Button>

@@ -192,7 +192,17 @@
 							}}
 							disabled={isSubmitting}
 						>
-							<Select.Trigger id="role" class="w-full"></Select.Trigger>
+							<Select.Trigger id="role" class="w-full">
+								{#if selectedRole}
+									{#each availableRoles as role (role.role)}
+										{#if role.role === selectedRole}
+											<span>{role.label}</span>
+										{/if}
+									{/each}
+								{:else}
+									<span>{localization.SELECT_ROLE}</span>
+								{/if}
+							</Select.Trigger>
 
 							<Select.Content>
 								{#each availableRoles as role (role.role)}

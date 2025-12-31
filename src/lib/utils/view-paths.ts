@@ -54,8 +54,21 @@ export const organizationViewPaths = {
 };
 
 export type OrganizationViewPaths = typeof organizationViewPaths;
+
+// Admin-scoped views
+export const adminViewPaths = {
+	/** @default "dashboard" */
+	DASHBOARD: 'dashboard',
+	/** @default "users" */
+	USERS: 'users',
+	/** @default "organizations" */
+	ORGANIZATIONS: 'organizations'
+} as const;
+
+export type AdminViewPaths = typeof adminViewPaths;
 export type AuthViewPath = keyof AuthViewPaths;
 export type AccountViewPath = keyof AccountViewPaths;
 export type OrganizationViewPath = keyof OrganizationViewPaths;
+export type AdminViewPath = keyof AdminViewPaths;
 
 export type AuthViewPathValues = AuthViewPaths[AuthViewPath];

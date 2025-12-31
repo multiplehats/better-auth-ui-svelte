@@ -220,6 +220,43 @@ Display a user button with avatar and dropdown menu:
 <UserButton align="end" />
 ```
 
+### Admin Dashboard
+
+For applications using the Better Auth admin plugin, create an admin interface with dynamic routes:
+
+```svelte
+<!-- src/routes/app/admin/[path]/+page.svelte -->
+<script lang=\"ts\">
+	import { AdminView } from 'better-auth-ui-svelte';
+	import type { PageProps } from './$types.js';
+
+	let { params }: PageProps = $props();
+</script>
+
+<AdminView path={params.path} />
+```
+
+This creates admin routes at:
+- `/app/admin/dashboard` - Overview with stats and charts
+- `/app/admin/users` - User management table
+- `/app/admin/organizations` - Organization management table
+
+Or use the dashboard component directly with custom configuration:
+
+```svelte
+<script lang=\"ts\">
+	import { AdminDashboard } from 'better-auth-ui-svelte';
+</script>
+
+<AdminDashboard
+	usersTableLimit={10}
+	orgsTableLimit={10}
+	showViewAllActions={true}
+	usersViewAllHref=\"/admin/users\"
+	orgsViewAllHref=\"/admin/organizations\"
+/>
+```
+
 ## Available Components
 
 ### Core Components
@@ -277,6 +314,26 @@ Display a user button with avatar and dropdown menu:
 - **`<OrganizationMembersCard />`** - Member management
 - **`<OrganizationInvitationsCard />`** - Invitation management
 - **`<UserInvitationsCard />`** - User's received invitations
+
+### Admin Components
+
+> **Note:** Admin components require the Better Auth [admin plugin](https://www.better-auth.com/docs/plugins/admin) to be configured in your auth setup.
+
+- **`<AdminView />`** - Main admin interface with tabbed navigation (Dashboard, Users, Organizations)
+- **`<AdminDashboard />`** - Admin dashboard with stats, charts, and table previews
+- **`<UsersAdminTable />`** - User management table with actions (ban, impersonate, delete, etc.)
+- **`<OrganizationsAdminTable />`** - Organization management table
+- **`<OrganizationMembersDetail />`** - Organization member details dialog
+- **`<BanUserDialog />`** - Ban user with reason and expiration
+- **`<UpdateRoleDialog />`** - Update user role
+- **`<ImpersonateUserDialog />`** - Impersonate user confirmation
+- **`<ResetPasswordDialog />`** - Admin password reset
+- **`<RevokeSessionsDialog />`** - Revoke user sessions
+- **`<DeleteUserDialog />`** - Delete user confirmation
+- **`<DeleteOrganizationDialogAdmin />`** - Delete organization (admin)
+- **`<RemoveMemberDialogAdmin />`** - Remove organization member (admin)
+- **`<BulkDeleteDialog />`** - Bulk delete confirmation
+- **`<CreateUserDialog />`** - Create new user
 
 ### Utility Components
 
@@ -429,6 +486,11 @@ getAuthUrl('RESET_PASSWORD', {
 // Account and organization paths
 getAccountPath('SETTINGS'); // '/account/settings'
 getOrganizationPath('MEMBERS'); // '/organization/members'
+
+// Admin paths
+getAdminPath('DASHBOARD'); // '/admin/dashboard'
+getAdminPath('USERS'); // '/admin/users'
+getAdminPath('ORGANIZATIONS'); // '/admin/organizations'
 ```
 
 ### Server-Side Redirects
@@ -521,6 +583,11 @@ getAllAccountPaths(config?)
 getOrganizationPath(view, config?)
 getOrganizationUrl(view, config?)
 getAllOrganizationPaths(config?)
+
+// Admin paths
+getAdminPath(view, config?)
+getAdminUrl(view, config?)
+getAllAdminPaths(config?)
 ```
 
 ## Exports
@@ -532,7 +599,7 @@ The library exports the following utilities:
 export { AuthView, AuthUIProvider, SignInForm, SignUpForm, UserButton, UserAvatar, ... };
 
 // Path constants
-export { authViewPaths, accountViewPaths, organizationViewPaths };
+export { authViewPaths, accountViewPaths, organizationViewPaths, adminViewPaths };
 
 // Path helpers (unique to Svelte port)
 export {
@@ -542,9 +609,12 @@ export {
   getAccountUrl,
   getOrganizationPath,
   getOrganizationUrl,
+  getAdminPath,
+  getAdminUrl,
   getAllAuthPaths,
   getAllAccountPaths,
-  getAllOrganizationPaths
+  getAllOrganizationPaths,
+  getAllAdminPaths
 };
 
 // Utilities
@@ -564,7 +634,16 @@ export type {
   AuthLocalization,
   PathConfig,
   AccountPathConfig,
-  OrganizationPathConfig
+  OrganizationPathConfig,
+  AdminPathConfig,
+  UserWithRole,
+  Organization,
+  OrganizationMember,
+  OrganizationWithMembers,
+  OrganizationInvitation,
+  UsersAdminTableProps,
+  OrganizationsAdminTableProps,
+  AdminViewProps
 };
 ```
 

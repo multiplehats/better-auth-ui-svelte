@@ -37,6 +37,23 @@ import type { ComponentProps } from 'svelte';
 import FormErrorComponent from './components/form-error.svelte';
 export type FormErrorProps = ComponentProps<typeof FormErrorComponent>;
 
+// Admin Components
+export { default as AdminDashboard } from './components/admin/admin-dashboard.svelte';
+export { default as AdminView } from './components/admin/admin-view.svelte';
+export { default as UsersAdminTable } from './components/admin/users-admin-table.svelte';
+export { default as OrganizationsAdminTable } from './components/admin/organizations-admin-table.svelte';
+export { default as OrganizationMembersDetail } from './components/admin/organization-members-detail.svelte';
+export { default as BanUserDialog } from './components/admin/ban-user-dialog.svelte';
+export { default as UpdateRoleDialog } from './components/admin/update-role-dialog.svelte';
+export { default as ImpersonateUserDialog } from './components/admin/impersonate-user-dialog.svelte';
+export { default as ResetPasswordDialog } from './components/admin/reset-password-dialog.svelte';
+export { default as RevokeSessionsDialog } from './components/admin/revoke-sessions-dialog.svelte';
+export { default as DeleteUserDialog } from './components/admin/delete-user-dialog.svelte';
+export { default as DeleteOrganizationDialogAdmin } from './components/admin/delete-organization-dialog.svelte';
+export { default as RemoveMemberDialogAdmin } from './components/admin/remove-member-dialog.svelte';
+export { default as BulkDeleteDialog } from './components/admin/bulk-delete-dialog.svelte';
+export { default as CreateUserDialog } from './components/admin/create-user-dialog.svelte';
+
 // Organization Components
 // export { default as AcceptInvitationCard } from './components/organization/accept-invitation-card.svelte';
 export { default as CreateOrganizationDialog } from './components/organization/create-organization-dialog.svelte';
@@ -129,6 +146,20 @@ export { authLocalization } from './localization/auth-localization.js';
 
 // Types
 export type { AuthUIConfig, User, Session, AuthLocalization } from './types/index.js';
+export type {
+	UserWithRole,
+	Organization,
+	OrganizationMember,
+	OrganizationWithMembers,
+	OrganizationInvitation,
+	UsersAdminTableProps,
+	OrganizationsAdminTableProps,
+	OrganizationMembersDetailProps,
+	BanUserDialogProps,
+	UpdateRoleDialogProps,
+	ImpersonateUserDialogProps,
+	AdminViewProps
+} from './types/admin.js';
 import AuthFormComponent from './components/auth/auth-form.svelte';
 import UserButtonComponent from './components/user-button.svelte';
 import UserViewComponent from './components/user-view.svelte';
