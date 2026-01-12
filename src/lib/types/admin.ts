@@ -84,6 +84,22 @@ export interface OrganizationInvitation {
 }
 
 /**
+ * Custom action for admin table dropdown menus
+ */
+export interface AdminTableAction<T> {
+	/** Display label for the action */
+	label: string;
+	/** Optional Lucide icon component */
+	icon?: typeof import('@lucide/svelte').Icon;
+	/** Click handler receiving the item */
+	onClick: (item: T) => void | Promise<void>;
+	/** Optional variant for styling (e.g., 'destructive') */
+	variant?: 'default' | 'destructive';
+	/** Optional condition to show/hide the action */
+	show?: (item: T) => boolean;
+}
+
+/**
  * Props for users admin table
  */
 export interface UsersAdminTableProps {

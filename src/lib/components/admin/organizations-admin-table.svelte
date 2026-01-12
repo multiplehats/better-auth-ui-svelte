@@ -17,7 +17,7 @@
 		SortingState
 	} from '@tanstack/table-core';
 	import { getCoreRowModel, getPaginationRowModel, getSortedRowModel } from '@tanstack/table-core';
-	import type { Organization } from '$lib/types/admin.js';
+	import type { Organization, AdminTableAction } from '$lib/types/admin.js';
 	import { createRawSnippet } from 'svelte';
 	import {
 		getAuthClient,
@@ -45,11 +45,14 @@
 	let {
 		initialPageSize = 10,
 		syncWithUrl = false,
-		onViewMembers
+		onViewMembers,
+		customActions = []
 	}: {
 		initialPageSize?: number;
 		syncWithUrl?: boolean;
 		onViewMembers?: (organizationId: string) => void | Promise<void>;
+		/** Custom actions to add to the dropdown menu */
+		customActions?: AdminTableAction<Organization>[];
 	} = $props();
 
 	// Get Better Auth client and config
@@ -393,6 +396,23 @@
 			<DropdownMenu.Item onclick={() => navigator.clipboard.writeText(org.id)}>
 				Copy Organization ID
 			</DropdownMenu.Item>
+
+			{#if customActions.length > 0}
+				<DropdownMenu.Separator />
+				{#each customActions as action}
+					{#if !action.show || action.show(org)}
+						<DropdownMenu.Item
+							onclick={() => action.onClick(org)}
+							class={action.variant === 'destructive' ? 'text-destructive' : ''}
+						>
+							{#if action.icon}
+								<svelte:component this={action.icon} class="h-4 w-4" />
+							{/if}
+							{action.label}
+						</DropdownMenu.Item>
+					{/if}
+				{/each}
+			{/if}
 
 			<DropdownMenu.Separator />
 
