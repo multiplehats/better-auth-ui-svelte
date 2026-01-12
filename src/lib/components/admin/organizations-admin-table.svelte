@@ -40,6 +40,7 @@
 	import OrganizationMembersDetail from './organization-members-detail.svelte';
 	import DeleteOrganizationDialog from './delete-organization-dialog.svelte';
 	import BulkDeleteDialog from './bulk-delete-dialog.svelte';
+	import EditOrganizationDialog from './edit-organization-dialog.svelte';
 
 	let {
 		initialPageSize = 10,
@@ -149,6 +150,7 @@
 	// Dialog states
 	let membersDialogOpen = $state(false);
 	let deleteOrganizationDialogOpen = $state(false);
+	let editOrganizationDialogOpen = $state(false);
 	let bulkDeleteDialogOpen = $state(false);
 	let selectedOrganization = $state<Organization | null>(null);
 
@@ -294,6 +296,17 @@
 		deleteOrganizationDialogOpen = true;
 	}
 
+	function handleEdit(org: Organization) {
+		selectedOrganization = org;
+		editOrganizationDialogOpen = true;
+	}
+
+	async function executeUpdate() {
+		editOrganizationDialogOpen = false;
+		selectedOrganization = null;
+		await fetchOrganizations();
+	}
+
 	async function executeDelete() {
 		if (!selectedOrganization) return;
 
@@ -368,6 +381,11 @@
 			<DropdownMenu.Item onclick={() => handleViewMembers(org)}>
 				<Users class="h-4 w-4" />
 				View Members
+			</DropdownMenu.Item>
+
+			<DropdownMenu.Item onclick={() => handleEdit(org)}>
+				<Edit class="h-4 w-4" />
+				Edit Organization
 			</DropdownMenu.Item>
 
 			<DropdownMenu.Separator />
@@ -540,6 +558,16 @@
 		}}
 	/>
 {/if}
+
+<EditOrganizationDialog
+	bind:open={editOrganizationDialogOpen}
+	organization={selectedOrganization}
+	onUpdate={executeUpdate}
+	onCancel={() => {
+		editOrganizationDialogOpen = false;
+		selectedOrganization = null;
+	}}
+/>
 
 <DeleteOrganizationDialog
 	bind:open={deleteOrganizationDialogOpen}
