@@ -1,5 +1,54 @@
 # better-auth-ui-svelte
 
+## 0.5.0
+
+### Minor Changes
+
+- Add "Edit Organization" feature and custom actions support to admin organizations table. ([`f41f77c`](https://github.com/multiplehats/better-auth-ui-svelte/commit/f41f77cf1d7866b836052ab91ce84fc18c997c99))
+
+  **Edit Organization:**
+  Admins can now edit organizations directly from the admin dashboard, including:
+  - Organization name
+  - Organization slug
+  - Organization logo (with image upload support)
+
+  **Custom Actions:**
+  The organizations table now supports a `customActions` prop to add your own dropdown menu items:
+
+  ```svelte
+  <OrganizationsAdminTable
+  	customActions={[
+  		{
+  			label: 'View Analytics',
+  			icon: BarChart,
+  			onClick: (org) => goto(`/analytics/${org.id}`)
+  		},
+  		{
+  			label: 'Archive',
+  			variant: 'destructive',
+  			onClick: (org) => archiveOrg(org.id),
+  			show: (org) => !org.metadata?.archived
+  		}
+  	]}
+  />
+  ```
+
+  Each action supports: `label`, `icon` (Lucide icon), `onClick`, `variant` ('default' | 'destructive'), and `show` (conditional visibility).
+
+### Patch Changes
+
+- Add configurable `adminBasePath` option to AuthUIProvider for customizing admin route paths. ([`096c4c8`](https://github.com/multiplehats/better-auth-ui-svelte/commit/096c4c807d63471db0dad4fa37b7f50c51d8dde5))
+
+  Previously, admin navigation links were hardcoded to `/app/admin/*`. Now you can configure where your admin routes live:
+
+  ```svelte
+  <AuthUIProvider {authClient} adminBasePath="/admin">
+  	<!-- your app -->
+  </AuthUIProvider>
+  ```
+
+  This allows apps that host admin at different paths (e.g., `/admin` instead of `/app/admin`) to have correct navigation links in the admin dashboard and admin view components.
+
 ## 0.4.0
 
 ### Minor Changes
