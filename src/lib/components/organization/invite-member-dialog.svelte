@@ -42,16 +42,23 @@
 
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
+	// Reactive organization ID
+	const organizationId = $derived(organization.id);
+
 	// Fetch members to determine current user's role
 	const membersHook = hooks.useListMembers({
-		query: { organizationId: organization.id }
+		get query() {
+			return { organizationId };
+		}
 	});
 	const membersData = $derived(membersHook?.data);
 	const members = $derived(membersData?.members);
 
 	// Fetch invitations for refetch
 	const invitationsHook = hooks.useListInvitations({
-		query: { organizationId: organization.id }
+		get query() {
+			return { organizationId };
+		}
 	});
 	const refetchInvitations = invitationsHook?.refetch;
 

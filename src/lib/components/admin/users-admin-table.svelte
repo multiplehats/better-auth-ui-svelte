@@ -85,8 +85,9 @@
 	// Update pagination when URL changes (if sync enabled)
 	$effect(() => {
 		if (syncWithUrl && typeof window !== 'undefined') {
+			const defaultPageSize = initialPageSize;
 			const urlPage = Number($page.url.searchParams.get('page') ?? '1');
-			const urlLimit = Number($page.url.searchParams.get('limit') ?? String(initialPageSize));
+			const urlLimit = Number($page.url.searchParams.get('limit') ?? String(defaultPageSize));
 			pagination = {
 				pageIndex: urlPage - 1,
 				pageSize: urlLimit
@@ -301,7 +302,9 @@
 			return data;
 		},
 		columns,
-		pageCount,
+		get pageCount() {
+			return pageCount;
+		},
 		state: {
 			get pagination() {
 				return pagination;

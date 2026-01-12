@@ -41,6 +41,11 @@ export interface AuthUIConfig {
 	 */
 	additionalFields?: AdditionalFields;
 	/**
+	 * Base path for the admin views
+	 * @default "/admin"
+	 */
+	adminBasePath?: string;
+	/**
 	 * API Key plugin configuration
 	 */
 	apiKey?:

@@ -64,8 +64,8 @@
 		usersTableLimit = 5,
 		orgsTableLimit = 5,
 		showViewAllActions = true,
-		usersViewAllHref = '/app/admin/users',
-		orgsViewAllHref = '/app/admin/organizations'
+		usersViewAllHref: usersViewAllHrefProp,
+		orgsViewAllHref: orgsViewAllHrefProp
 	}: {
 		showStats?: boolean;
 		showChart?: boolean;
@@ -95,6 +95,11 @@
 	const authClient = getAuthClient();
 	const config = getAuthUIConfig();
 	const Link = config.Link;
+
+	// Use adminBasePath from config, default to '/admin'
+	const adminBasePath = $derived(config.adminBasePath ?? '/admin');
+	const usersViewAllHref = $derived(usersViewAllHrefProp ?? `${adminBasePath}/users`);
+	const orgsViewAllHref = $derived(orgsViewAllHrefProp ?? `${adminBasePath}/organizations`);
 
 	// State
 	let internalIsLoading = $state(true);

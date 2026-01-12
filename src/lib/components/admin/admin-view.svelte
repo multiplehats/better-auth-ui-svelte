@@ -26,7 +26,7 @@
 		hideNav
 	}: Props = $props();
 
-	const { localization: contextLocalization, Link } = getAuthUIConfig();
+	const { localization: contextLocalization, Link, adminBasePath } = getAuthUIConfig();
 
 	// Authenticate the user (redirect if not authenticated)
 	useAuthenticate();
@@ -38,6 +38,9 @@
 	const view = $derived(
 		viewProp || getViewByPath(adminViewPaths, path!) || 'DASHBOARD'
 	);
+
+	// Use adminBasePath from config, default to '/admin'
+	const basePath = $derived(adminBasePath ?? '/admin');
 
 	const navItems = $derived([
 		{ view: 'DASHBOARD', label: localization.DASHBOARD || 'Dashboard', value: 'dashboard' },
@@ -55,7 +58,7 @@
 			<Tabs.List class={cn('grid w-full grid-cols-3', classNames?.tabs?.list)}>
 				{#each navItems as item (item.view)}
 					{@const LinkComponent = Link}
-					<LinkComponent href={`/app/admin/${adminViewPaths[item.view]}`}>
+					<LinkComponent href={`${basePath}/${adminViewPaths[item.view]}`}>
 						<Tabs.Trigger value={item.value} class={cn('w-full', classNames?.tabs?.trigger)}>
 							{item.label}
 						</Tabs.Trigger>

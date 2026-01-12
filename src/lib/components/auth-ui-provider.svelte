@@ -177,6 +177,11 @@
 		 */
 		signUp?: SignUpOptions | boolean;
 		/**
+		 * Base path for the admin views
+		 * @default "/admin"
+		 */
+		adminBasePath?: string;
+		/**
 		 * Base path for the auth views
 		 * @default "/auth"
 		 */
@@ -249,6 +254,7 @@
 		authClient: authClientProp,
 		account: accountProp,
 		additionalFields,
+		adminBasePath: adminBasePathProp = '/admin',
 		apiKey,
 		avatar: avatarProp,
 		deleteUser: deleteUserProp,
@@ -605,7 +611,10 @@
 		};
 	});
 
-	// Process basePath and baseURL (remove trailing slashes)
+	// Process basePath, adminBasePath, and baseURL (remove trailing slashes)
+	const adminBasePath = $derived(
+		adminBasePathProp.endsWith('/') ? adminBasePathProp.slice(0, -1) : adminBasePathProp
+	);
 	const basePath = $derived(
 		(basePathProp.endsWith('/') ? basePathProp.slice(0, -1) : basePathProp) === '/'
 			? ''
@@ -627,6 +636,9 @@
 		},
 		get additionalFields() {
 			return additionalFields;
+		},
+		get adminBasePath() {
+			return adminBasePath;
 		},
 		get apiKey() {
 			return apiKey;

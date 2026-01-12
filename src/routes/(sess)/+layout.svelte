@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LayoutProps } from './$types.js';
-	import AppSidebar from './_components/app-sidebar.svelte';
+	import AppSidebar from './app/_components/app-sidebar.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
