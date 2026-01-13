@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.5.1
+
+### Patch Changes
+
+- Remove padding from admin dashboard chart and tables sections for more flexible layout control. ([`4b43a8a`](https://github.com/multiplehats/better-auth-ui-svelte/commit/4b43a8a944de4fe1a634001a4e3b98644e398ac7))
+
 ## 0.5.0
 
 ### Minor Changes
