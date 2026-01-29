@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.6.2
+
+### Patch Changes
+
+- Add `default` export condition to fix Rollup resolution errors during SSR builds on Vercel ([`0f174f5`](https://github.com/multiplehats/better-auth-ui-svelte/commit/0f174f59c51cd48594507c667ddec7f6b67dab23))
+
 ## 0.6.1
 
 ### Patch Changes
