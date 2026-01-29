@@ -152,6 +152,7 @@ export type {
 	OrganizationMember,
 	OrganizationWithMembers,
 	OrganizationInvitation,
+	AdminTableAction,
 	UsersAdminTableProps,
 	OrganizationsAdminTableProps,
 	OrganizationMembersDetailProps,

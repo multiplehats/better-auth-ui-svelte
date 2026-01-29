@@ -40,7 +40,7 @@
 	const gravatar = config.gravatar;
 	const avatar = config.avatar;
 
-	const localization = { ...contextLocalization, ...propLocalization };
+	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
 	// Get user name from various possible fields
 	const name = $derived(

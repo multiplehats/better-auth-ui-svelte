@@ -65,7 +65,7 @@
 	}
 
 	// Form validation schema
-	const mergedLocalization = { ...contextLocalization, ...propLocalization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 	const formSchema = z.object({
 		logo: z.string().optional(),
 		name: z.string().min(1, {

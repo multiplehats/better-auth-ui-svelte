@@ -37,7 +37,12 @@
 
 	const sessionStore = useSession();
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
-	const isCurrentSession = $derived(session.id === sessionData?.session?.id);
+	const isCurrentSession = $derived(
+		(() => {
+			const currentSession = session;
+			return currentSession.id === sessionData?.session?.id;
+		})()
+	);
 
 	let isLoading = $state(false);
 

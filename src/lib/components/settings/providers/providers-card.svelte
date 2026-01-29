@@ -32,18 +32,19 @@
 		genericOAuth
 	} = getAuthUIConfig();
 
-	const mergedLocalization = { ...contextLocalization, ...localization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...localization });
 
 	// Use hook if skipHook is false
 	let listAccountsResult: ReturnType<typeof useListAccounts> | undefined = undefined;
-	if (!skipHook) {
+	const shouldSkipHook = $derived(skipHook);
+	if (!shouldSkipHook) {
 		listAccountsResult = useListAccounts();
 	}
 
 	// Derive accounts, isPending, and refetch from hook if needed
-	const derivedAccounts = $derived(skipHook ? accounts : listAccountsResult?.data);
-	const derivedIsPending = $derived(skipHook ? isPending : listAccountsResult?.isPending);
-	const derivedRefetch = $derived(skipHook ? refetch : listAccountsResult?.refetch);
+	const derivedAccounts = $derived(shouldSkipHook ? accounts : listAccountsResult?.data);
+	const derivedIsPending = $derived(shouldSkipHook ? isPending : listAccountsResult?.isPending);
+	const derivedRefetch = $derived(shouldSkipHook ? refetch : listAccountsResult?.refetch);
 </script>
 
 <SettingsCard

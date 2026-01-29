@@ -24,7 +24,7 @@
 		errorCorrection = 'M'
 	} = $props();
 
-	let opt: Options = {
+	let opt: Options = $derived({
 		content: content,
 		padding: parseInt(padding),
 		width: parseInt(size),
@@ -35,9 +35,9 @@
 		ecl: errorCorrection,
 		container: responsive.toLowerCase() == 'true' ? 'svg-viewbox' : 'svg',
 		join: true
-	};
+	});
 
-	let qrCode = new QRCode(opt);
+	let qrCode = $derived(new QRCode(opt));
 </script>
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->

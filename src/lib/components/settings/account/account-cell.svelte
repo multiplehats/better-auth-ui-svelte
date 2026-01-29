@@ -34,7 +34,7 @@
 		navigate
 	} = getAuthUIConfig();
 
-	const mergedLocalization = { ...contextLocalization, ...localization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...localization });
 
 	const session = useSession();
 	let isLoading = $state(false);

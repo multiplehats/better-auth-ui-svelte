@@ -20,7 +20,7 @@
 		hooks: { useSession }
 	} = getAuthUIConfig();
 
-	const mergedLocalization = { ...contextLocalization, ...propLocalization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
 	let showPasswordDialog = $state(false);
 

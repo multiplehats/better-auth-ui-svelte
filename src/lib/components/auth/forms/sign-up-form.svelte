@@ -54,11 +54,11 @@
 	const hydrated = useIsHydrated();
 
 	// Merge configurations
-	const localization = { ...contextLocalization, ...propLocalization };
-	const passwordValidation = {
+	const localization = $derived({ ...contextLocalization, ...propLocalization });
+	const passwordValidation = $derived({
 		...config.credentials?.passwordValidation,
 		...propPasswordValidation
-	};
+	});
 
 	// Configuration from context
 	const authClient = config.authClient;
@@ -98,7 +98,10 @@
 	});
 
 	// Success transition for navigation
-	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({ redirectTo });
+	const redirectToValue = $derived(redirectTo);
+	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
+		redirectTo: redirectToValue
+	});
 
 	// Helper functions
 	function getRedirectTo() {

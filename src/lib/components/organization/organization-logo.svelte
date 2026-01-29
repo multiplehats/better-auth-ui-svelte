@@ -38,7 +38,7 @@
 	const contextLocalization = getLocalization();
 	const avatar = config.avatar;
 
-	const localization = { ...contextLocalization, ...propLocalization };
+	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
 	const name = $derived(organization?.name);
 	const src = $derived(organization?.logo);

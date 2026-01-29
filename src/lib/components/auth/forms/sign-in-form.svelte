@@ -45,8 +45,9 @@
 	}: Props = $props();
 
 	const isHydrated = useIsHydrated();
+	const mergedLocalization = $derived({ ...contextLocalization, ...localizationProp });
 	const captchaHook = useCaptcha({
-		localization: localizationProp
+		localization: mergedLocalization
 	});
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
@@ -74,14 +75,15 @@
 	const usernameEnabled = credentials?.username;
 	const contextPasswordValidation = credentials?.passwordValidation;
 
-	const localization = $derived({ ...contextLocalization, ...localizationProp });
+	const localization = mergedLocalization;
 	const passwordValidation = $derived({
 		...contextPasswordValidation,
 		...passwordValidationProp
 	});
 
+	const redirectToValue = $derived(redirectTo);
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo
+		redirectTo: redirectToValue
 	});
 
 	// Form schema

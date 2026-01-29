@@ -33,7 +33,7 @@
 	}: Props = $props();
 
 	const contextLocalization = getLocalization();
-	const localization = { ...contextLocalization, ...propLocalization };
+	const localization = $derived({ ...contextLocalization, ...propLocalization });
 </script>
 
 <div class={cn('flex items-center gap-2', className, classNames?.base)}>

@@ -46,10 +46,11 @@
 		}
 	},
 	"peerDependencies": {
-		"@better-auth/passkey": "^1.4.9",
+		"@better-auth/passkey": "^1.4.18",
 		"@lucide/svelte": "^0.554.0",
+		"@noble/hashes": "^2.0.1",
 		"@sveltejs/kit": "^2.0.0",
-		"better-auth": "^1.4.9",
+		"better-auth": "^1.4.18",
 		"bits-ui": "^2.14.4",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
@@ -59,7 +60,7 @@
 		"zod": "^4.0.0"
 	},
 	"devDependencies": {
-		"@better-auth/passkey": "^1.4.9",
+		"@better-auth/passkey": "^1.4.18",
 		"@changesets/cli": "^2.29.8",
 		"@dnd-kit-svelte/svelte": "^0.1.5",
 		"@dnd-kit/abstract": "^0.1.21",
@@ -68,6 +69,7 @@
 		"@eslint/js": "^9.39.2",
 		"@internationalized/date": "^3.10.1",
 		"@lucide/svelte": "^0.561.0",
+		"@noble/hashes": "^2.0.1",
 		"@playwright/test": "^1.57.0",
 		"@sveltejs/adapter-vercel": "^6.2.0",
 		"@sveltejs/kit": "^2.49.2",
@@ -84,7 +86,7 @@
 		"@types/node": "^22.19.3",
 		"@types/nodemailer": "^7.0.4",
 		"@vitest/browser": "^3.2.4",
-		"better-auth": "^1.4.9",
+		"better-auth": "^1.4.18",
 		"bits-ui": "^2.14.4",
 		"clsx": "^2.1.1",
 		"d3-scale": "^4.0.2",

@@ -25,7 +25,7 @@
 		localization: contextLocalization
 	} = getAuthUIConfig();
 
-	const mergedLocalization = { ...contextLocalization, ...localization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...localization });
 
 	const organizationsStore = useListOrganizations();
 	const organizationsResult = fromStore(organizationsStore);

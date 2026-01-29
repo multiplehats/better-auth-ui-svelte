@@ -87,7 +87,7 @@
 	} = config;
 
 	const contextLocalization = getLocalization();
-	const localization = { ...contextLocalization, ...propLocalization };
+	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
 	// Check hydration state
 	const isHydratedState = useIsHydrated();

@@ -130,6 +130,8 @@ export interface OrganizationsAdminTableProps {
 	onImpersonateMember?: (organizationId: string) => void | Promise<void>;
 	onUpdateOrganization?: (organizationId: string, data: Partial<Organization>) => void | Promise<void>;
 	onDeleteOrganization?: (organizationId: string) => void | Promise<void>;
+	/** Custom actions to add to the dropdown menu */
+	customActions?: AdminTableAction<Organization>[];
 }
 
 /**
@@ -191,4 +193,6 @@ export interface AdminViewProps {
 	pathname?: string;
 	view?: AdminViewPath;
 	hideNav?: boolean;
+	/** Custom actions for organizations table */
+	organizationCustomActions?: AdminTableAction<Organization>[];
 }

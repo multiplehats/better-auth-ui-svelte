@@ -15,7 +15,7 @@
 	const config = getAuthUIConfig();
 	const { captcha } = config;
 	const contextLocalization = getLocalization();
-	const localization = { ...contextLocalization, ...propLocalization };
+	const localization = $derived({ ...contextLocalization, ...propLocalization });
 </script>
 
 {#if captcha}

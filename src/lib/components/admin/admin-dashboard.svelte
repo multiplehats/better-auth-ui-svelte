@@ -445,7 +445,7 @@
 			{#if customChart}
 				{@render customChart()}
 			{:else}
-				<div class="px-4 lg:px-6">
+
 					<Card.Root class="@container/card">
 						<Card.Header>
 							<Card.Title>User Growth</Card.Title>
@@ -549,7 +549,7 @@
 							{/if}
 						</Card.Content>
 					</Card.Root>
-				</div>
+
 			{/if}
 		{/if}
 
@@ -560,7 +560,7 @@
 
 		<!-- Tables with Tabs -->
 		{#if showUsersTable || showOrgsTable}
-			<div class="px-4 lg:px-6">
+
 				<Tabs.Root value="users">
 					<Tabs.List class="grid w-full max-w-md grid-cols-2">
 						{#if showUsersTable}
@@ -629,7 +629,7 @@
 						</Tabs.Content>
 					{/if}
 				</Tabs.Root>
-			</div>
+
 		{/if}
 
 		<!-- Children Extension Point -->

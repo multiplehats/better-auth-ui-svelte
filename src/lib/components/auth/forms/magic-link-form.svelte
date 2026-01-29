@@ -35,8 +35,9 @@
 	}: Props = $props();
 
 	const isHydrated = useIsHydrated();
+	const mergedLocalization = $derived({ ...contextLocalization, ...localizationProp });
 	const captchaHook = useCaptcha({
-		localization: localizationProp
+		localization: mergedLocalization
 	});
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
@@ -62,7 +63,7 @@
 		magicLink: magicLinkConfig
 	} = config;
 
-	const localization = $derived({ ...contextLocalization, ...localizationProp });
+	const localization = mergedLocalization;
 
 	const getRedirectTo = () =>
 		redirectToProp || getSearchParam('redirectTo') || contextRedirectTo || '';

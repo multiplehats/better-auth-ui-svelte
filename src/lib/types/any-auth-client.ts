@@ -1,8 +1,8 @@
 import type { authClient } from '$lib/auth-client';
 
-export type AnyAuthClient = Omit<typeof authClient, 'signUp' | 'getSession'>;
+export type AnyAuthClient = Omit<ReturnType<typeof createAuthClient>, 'signUp' | 'getSession'>;
 
-export type AuthClient = typeof authClient;
+export type AuthClient = ReturnType<typeof createAuthClient>;
 
 export type Session = AuthClient['$Infer']['Session']['session'];
 export type User = AuthClient['$Infer']['Session']['user'];

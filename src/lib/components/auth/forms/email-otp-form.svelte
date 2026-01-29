@@ -44,7 +44,10 @@
 	let verifiedEmail = $state<string | undefined>(undefined);
 
 	// Transition for OTP verification success
-	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({ redirectTo });
+	const redirectToValue = $derived(redirectTo);
+	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
+		redirectTo: redirectToValue
+	});
 
 	// Reactive validation schemas
 	const emailFormSchema = $derived(

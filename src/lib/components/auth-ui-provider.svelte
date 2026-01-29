@@ -293,7 +293,7 @@
 		...props
 	}: Props = $props();
 
-	const authClient = authClientProp;
+	const authClient = $derived(authClientProp);
 
 	// Default navigation functions
 	const defaultNavigate = (href: string) => {

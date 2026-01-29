@@ -56,8 +56,9 @@
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
+	const redirectToValue = $derived(redirectTo);
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo
+		redirectTo: redirectToValue
 	});
 
 	// Get session data to check if 2FA is being enabled

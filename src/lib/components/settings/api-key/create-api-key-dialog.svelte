@@ -79,14 +79,15 @@
 
 	// Track selected values for Select components
 	let selectedExpiresInDays = $state('none');
-	let selectedOrganizationId = $state(organizationId ?? 'personal');
+	const initialOrganizationId = $derived(organizationId ?? 'personal');
+	let selectedOrganizationId = $state(initialOrganizationId);
 
 	// Create form
 	const form = createForm(() => ({
 		defaultValues: {
 			name: '',
 			expiresInDays: 'none',
-			organizationId: organizationId ?? 'personal'
+			organizationId: initialOrganizationId
 		},
 		onSubmit: async ({ value }) => {
 			try {
@@ -116,7 +117,7 @@
 				handleOpenChange(false);
 				form.reset();
 				selectedExpiresInDays = 'none';
-				selectedOrganizationId = organizationId ?? 'personal';
+				selectedOrganizationId = initialOrganizationId;
 			} catch (error) {
 				toast.error(getLocalizedError({ error, localization }));
 			}
@@ -133,7 +134,7 @@
 		if (!newOpen) {
 			form.reset();
 			selectedExpiresInDays = 'none';
-			selectedOrganizationId = organizationId ?? 'personal';
+			selectedOrganizationId = initialOrganizationId;
 		}
 	}
 

@@ -25,7 +25,7 @@
 		navigate
 	} = getAuthUIConfig();
 
-	const mergedLocalization = { ...contextLocalization, ...localization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...localization });
 
 	const deviceSessionsResult = useListDeviceSessions();
 	const sessionStore = useSession();

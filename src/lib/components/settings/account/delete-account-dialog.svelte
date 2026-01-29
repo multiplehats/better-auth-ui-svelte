@@ -42,7 +42,7 @@
 		toast
 	} = getAuthUIConfig();
 
-	const mergedLocalization = { ...contextLocalization, ...propLocalization };
+	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
 	const sessionStore = useSession();
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);

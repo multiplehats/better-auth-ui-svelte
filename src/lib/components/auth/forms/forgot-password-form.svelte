@@ -38,10 +38,10 @@
 	const config = getAuthUIConfig();
 	const isHydrated = useIsHydrated();
 
-	// Merge localizations
+	// Merge localizations - reactive for template use
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
-	// Initialize captcha
+	// Initialize captcha with reactive localization
 	const captchaHook = $derived(useCaptcha({ localization }));
 
 	// Local state for captcha binding
@@ -53,16 +53,16 @@
 	});
 
 	// Form validation schema - created once at initialization
-	// Note: Localization is captured at initialization time
-	const mergedLocalization = { ...contextLocalization, ...propLocalization };
+	// Note: Localization is captured at initialization time (intentional for form schema)
+	const initLocalization = { ...contextLocalization, ...propLocalization };
 	const formSchema = z.object({
 		email: z
 			.string()
 			.min(1, {
-				message: `${mergedLocalization.EMAIL} ${mergedLocalization.IS_REQUIRED}`
+				message: `${initLocalization.EMAIL} ${initLocalization.IS_REQUIRED}`
 			})
 			.email({
-				message: `${mergedLocalization.EMAIL} ${mergedLocalization.IS_INVALID}`
+				message: `${initLocalization.EMAIL} ${initLocalization.IS_INVALID}`
 			})
 	});
 
