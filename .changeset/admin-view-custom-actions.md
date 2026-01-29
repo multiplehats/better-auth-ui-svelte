@@ -1,5 +1,5 @@
 ---
-"better-auth-ui-svelte": minor
+"better-auth-ui-svelte": patch
 ---
 
 feat: add organizationCustomActions prop to AdminView
