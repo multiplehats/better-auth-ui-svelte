@@ -1,5 +1,29 @@
 # better-auth-ui-svelte
 
+## 0.6.0
+
+### Minor Changes
+
+- feat: add organizationCustomActions prop to AdminView ([`331fcb7`](https://github.com/multiplehats/better-auth-ui-svelte/commit/331fcb72c4f68b06f39e9a83f4b2c3a5220c844a))
+  - Added `organizationCustomActions` prop to `AdminViewProps` type to allow passing custom dropdown menu actions for the organizations table
+  - Updated `AdminView` component to pass through custom actions to `OrganizationsAdminTable`
+  - Custom actions can now be passed via `AdminView` (using `organizationCustomActions` prop) or `AdminDashboard` (using `orgsTableProps.customActions`)
+
+### Patch Changes
+
+- fix: resolve state_referenced_locally warnings in Svelte 5 components ([`331fcb7`](https://github.com/multiplehats/better-auth-ui-svelte/commit/331fcb72c4f68b06f39e9a83f4b2c3a5220c844a))
+
+  Fixed reactivity warnings across multiple components by using `$derived` for merged localization objects and other reactive values that were being captured at initialization time instead of staying reactive.
+
+  Affected components:
+  - Auth forms (sign-in, sign-up, forgot-password, magic-link, two-factor, email-otp)
+  - User components (user-avatar, user-button, user-view)
+  - Organization components (organization-cell-view, organization-logo, organizations-card, create-organization-dialog, personal-account-view)
+  - Settings components (accounts-card, account-cell, update-avatar-card, update-name-card, update-username-card, delete-account-card, delete-account-dialog, providers-card, provider-cell, change-password-card, session-cell, two-factor-card, create-api-key-dialog)
+  - Other components (auth-ui-provider, recaptcha-badge, qr-code)
+
+- Remove padding from admin dashboard chart and tables sections for more flexible layout control. ([`4b43a8a`](https://github.com/multiplehats/better-auth-ui-svelte/commit/4b43a8a944de4fe1a634001a4e3b98644e398ac7))
+
 ## 0.5.0
 
 ### Minor Changes
