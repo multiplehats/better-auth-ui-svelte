@@ -10,6 +10,7 @@
 	let { teams }: { teams: { name: string; logo: any; plan: string }[] } = $props();
 	const sidebar = useSidebar();
 
+	// svelte-ignore state_referenced_locally -- teams prop initializes active team state
 	let activeTeam = $state(teams[0]);
 </script>
 

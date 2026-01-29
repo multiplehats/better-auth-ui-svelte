@@ -40,6 +40,7 @@
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
 	// Get the refetch function from the useListMembers hook
+	// svelte-ignore state_referenced_locally -- member prop initializes members hook
 	const membersStore = config.hooks.useListMembers({
 		query: { organizationId: member.organizationId }
 	});

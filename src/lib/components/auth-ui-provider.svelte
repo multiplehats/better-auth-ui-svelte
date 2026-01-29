@@ -625,6 +625,7 @@
 	const baseURL = $derived(baseURLProp.endsWith('/') ? baseURLProp.slice(0, -1) : baseURLProp);
 
 	// Get session data
+	// svelte-ignore state_referenced_locally -- authClient is stable and the session store is created once at initialization
 	const sessionStore = authClient.useSession();
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 

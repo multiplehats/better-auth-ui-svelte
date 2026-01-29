@@ -39,8 +39,10 @@
 	const config = getAuthUIConfig();
 
 	// Merge localization from context and props
+	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	const localization = { ...contextLocalization, ...localizationProp };
 
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
 		redirectTo
 	});

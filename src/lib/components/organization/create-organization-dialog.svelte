@@ -64,20 +64,21 @@
 		fileInputRef?.click();
 	}
 
-	// Form validation schema
-	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
+	// Form validation schema - localization captured at init for validation messages
+	// svelte-ignore state_referenced_locally -- form schema is created once with initial localization values
+	const initLocalization = { ...contextLocalization, ...propLocalization };
 	const formSchema = z.object({
 		logo: z.string().optional(),
 		name: z.string().min(1, {
-			message: `${mergedLocalization.ORGANIZATION_NAME} ${mergedLocalization.IS_REQUIRED}`
+			message: `${initLocalization.ORGANIZATION_NAME} ${initLocalization.IS_REQUIRED}`
 		}),
 		slug: z
 			.string()
 			.min(1, {
-				message: `${mergedLocalization.ORGANIZATION_SLUG} ${mergedLocalization.IS_REQUIRED}`
+				message: `${initLocalization.ORGANIZATION_SLUG} ${initLocalization.IS_REQUIRED}`
 			})
 			.regex(/^[a-z0-9-]+$/, {
-				message: `${mergedLocalization.ORGANIZATION_SLUG} ${mergedLocalization.IS_INVALID}`
+				message: `${initLocalization.ORGANIZATION_SLUG} ${initLocalization.IS_INVALID}`
 			})
 	});
 

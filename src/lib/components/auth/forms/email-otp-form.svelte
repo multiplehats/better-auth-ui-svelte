@@ -44,9 +44,9 @@
 	let verifiedEmail = $state<string | undefined>(undefined);
 
 	// Transition for OTP verification success
-	const redirectToValue = $derived(redirectTo);
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo: redirectToValue
+		redirectTo
 	});
 
 	// Reactive validation schemas

@@ -32,6 +32,7 @@
 		...restProps
 	}: ToggleGroupPrimitive.RootProps & ToggleVariants & { spacing?: number } = $props();
 
+	// svelte-ignore state_referenced_locally -- context is set once with initial variant/size/spacing
 	setToggleGroupCtx({
 		variant,
 		size,

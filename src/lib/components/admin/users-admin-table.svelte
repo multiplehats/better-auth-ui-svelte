@@ -67,12 +67,14 @@
 	let data = $state<UserWithRole[]>([]);
 	let isLoading = $state(false);
 	let pageCount = $state(0);
+	// svelte-ignore state_referenced_locally -- initialPageSize sets the initial pagination state
 	let pagination = $state<PaginationState>({
 		pageIndex: 0,
 		pageSize: initialPageSize
 	});
 
 	// URL sync - read initial values from URL if enabled
+	// svelte-ignore state_referenced_locally -- syncWithUrl and initialPageSize are checked once at mount
 	if (syncWithUrl && typeof window !== 'undefined') {
 		const urlPage = Number($page.url.searchParams.get('page') ?? '1');
 		const urlLimit = Number($page.url.searchParams.get('limit') ?? String(initialPageSize));

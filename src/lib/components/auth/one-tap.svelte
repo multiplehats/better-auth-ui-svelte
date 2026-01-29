@@ -24,6 +24,7 @@
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
 	// Use the success transition hook to handle session refetch and navigation
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess } = useOnSuccessTransition({ redirectTo });
 
 	let oneTapFetched = $state(false);

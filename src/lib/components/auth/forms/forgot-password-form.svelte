@@ -53,7 +53,7 @@
 	});
 
 	// Form validation schema - created once at initialization
-	// Note: Localization is captured at initialization time (intentional for form schema)
+	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	const initLocalization = { ...contextLocalization, ...propLocalization };
 	const formSchema = z.object({
 		email: z

@@ -86,6 +86,7 @@
 	let uploadingAvatar = $state(false);
 
 	// Captcha integration
+	// svelte-ignore state_referenced_locally -- hooks are initialized once with current localization
 	const captchaHook = useCaptcha({ localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
@@ -98,9 +99,9 @@
 	});
 
 	// Success transition for navigation
-	const redirectToValue = $derived(redirectTo);
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo: redirectToValue
+		redirectTo
 	});
 
 	// Helper functions
@@ -117,7 +118,8 @@
 		}`;
 	}
 
-	// Build form schema
+	// Build form schema - localization and passwordValidation are intentionally captured at init
+	// svelte-ignore state_referenced_locally -- form validation schema uses initial localization values
 	const defaultFields = {
 		email: z.email({
 			error: `${localization.EMAIL} ${localization.IS_INVALID}`
@@ -148,6 +150,7 @@
 	const schemaFields = {} as Record<string, z.ZodTypeAny>;
 
 	// Add additional fields from signUpFields
+	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	if (signUpFields) {
 		for (const field of signUpFields) {
 			if (field === 'name' || field === 'image') continue;
@@ -195,6 +198,7 @@
 		}
 	}
 
+	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	const formSchema = z
 		.object({
 			...defaultFields,

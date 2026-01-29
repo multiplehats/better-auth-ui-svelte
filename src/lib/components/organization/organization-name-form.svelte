@@ -30,10 +30,12 @@
 		toast
 	} = getAuthUIConfig();
 
+	// svelte-ignore state_referenced_locally -- organization prop initializes hooks
 	const { refetch: refetchOrganization } = useCurrentOrganization({
 		slug: organization.slug
 	});
 
+	// svelte-ignore state_referenced_locally
 	const permissionStore = useHasPermission({
 		organizationId: organization.id,
 		permissions: {

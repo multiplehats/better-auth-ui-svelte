@@ -100,6 +100,7 @@
 
 	const { pathMode, slug: contextSlug, personalPath } = organizationOptions || {};
 
+	// svelte-ignore state_referenced_locally -- slug prop combined with context value
 	const slug = slugProp || contextSlug;
 
 	const contextLocalization = getLocalization();

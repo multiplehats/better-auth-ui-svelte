@@ -56,9 +56,9 @@
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
-	const redirectToValue = $derived(redirectTo);
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo: redirectToValue
+		redirectTo
 	});
 
 	// Get session data to check if 2FA is being enabled

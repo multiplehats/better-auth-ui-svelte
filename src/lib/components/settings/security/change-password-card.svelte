@@ -59,14 +59,14 @@
 
 	// Use hook if skipHook is false
 	let listAccountsResult: ReturnType<typeof useListAccounts> | undefined = undefined;
-	const shouldSkipHook = $derived(skipHook);
-	if (!shouldSkipHook) {
+	// svelte-ignore state_referenced_locally -- skipHook is checked once at initialization to determine data source
+	if (!skipHook) {
 		listAccountsResult = useListAccounts();
 	}
 
 	// Derive accounts and isPending from hook if needed
-	const derivedAccounts = $derived(shouldSkipHook ? accounts : listAccountsResult?.data);
-	const derivedIsPending = $derived(shouldSkipHook ? isPending : listAccountsResult?.isPending);
+	const derivedAccounts = $derived(skipHook ? accounts : listAccountsResult?.data);
+	const derivedIsPending = $derived(skipHook ? isPending : listAccountsResult?.isPending);
 
 	// Check if credentials are linked
 	const credentialsLinked = $derived(

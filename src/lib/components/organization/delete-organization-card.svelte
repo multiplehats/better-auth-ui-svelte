@@ -20,6 +20,7 @@
 	const contextLocalization = getLocalization();
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
+	// svelte-ignore state_referenced_locally -- slug prop initializes the organization hook
 	const currentOrg = useCurrentOrganization({ slug });
 	const organization = $derived(currentOrg.data);
 	const isPending = $derived(currentOrg.isPending);

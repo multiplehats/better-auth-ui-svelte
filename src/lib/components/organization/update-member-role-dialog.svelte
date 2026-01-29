@@ -43,6 +43,7 @@
 
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
+	// svelte-ignore state_referenced_locally -- member prop initializes members hook
 	const membersHook = useListMembers({
 		query: { organizationId: member.organizationId }
 	});
@@ -54,6 +55,7 @@
 	const sessionData = $derived($sessionHook.data);
 
 	let isUpdating = $state(false);
+	// svelte-ignore state_referenced_locally -- member prop initializes selected role state
 	let selectedRole = $state(member.role);
 
 	const builtInRoles = $derived([

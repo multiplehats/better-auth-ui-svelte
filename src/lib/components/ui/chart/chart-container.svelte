@@ -17,6 +17,7 @@
 		config: ChartConfig;
 	} = $props();
 
+	// svelte-ignore state_referenced_locally -- chart ID is generated once at initialization
 	const chartId = `chart-${id || uid.replace(/:/g, "")}`;
 
 	setChartContext({

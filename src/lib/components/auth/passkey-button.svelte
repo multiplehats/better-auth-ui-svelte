@@ -29,6 +29,7 @@
 	// Merge context and prop localization (prop takes precedence)
 	const loc = $derived({ ...contextLocalization, ...localization });
 
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess } = useOnSuccessTransition({ redirectTo });
 
 	async function signInPasskey() {

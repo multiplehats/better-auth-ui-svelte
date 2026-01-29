@@ -22,6 +22,7 @@
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
 	// Check if user has permission to delete the organization
+	// svelte-ignore state_referenced_locally -- organization prop initializes permission check
 	const permissionResult = useHasPermission({
 		organizationId: organization.id,
 		permissions: {

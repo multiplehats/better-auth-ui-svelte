@@ -55,6 +55,7 @@
 		{ role: 'member', label: localization.MEMBER }
 	]);
 
+	// svelte-ignore state_referenced_locally -- member prop initializes hooks
 	const membersHook = useListMembers({
 		query: { organizationId: member.organizationId }
 	});
@@ -81,6 +82,7 @@
 		organizations?.find((org: Organization) => org.id === member.organizationId)
 	);
 
+	// svelte-ignore state_referenced_locally -- member prop initializes permission hook
 	const hasPermissionHook = useHasPermission({
 		organizationId: member.organizationId,
 		permission: { member: ['update'] }

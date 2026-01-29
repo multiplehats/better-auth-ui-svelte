@@ -37,12 +37,7 @@
 
 	const sessionStore = useSession();
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
-	const isCurrentSession = $derived(
-		(() => {
-			const currentSession = session;
-			return currentSession.id === sessionData?.session?.id;
-		})()
-	);
+	const isCurrentSession = $derived(session.id === sessionData?.session?.id);
 
 	let isLoading = $state(false);
 
@@ -64,6 +59,7 @@
 		}
 	};
 
+	// svelte-ignore state_referenced_locally -- session prop represents a specific session and doesn't change
 	const parser = UAParser(session.userAgent as string);
 	const isMobile = parser.device.type === 'mobile';
 </script>

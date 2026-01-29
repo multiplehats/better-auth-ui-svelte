@@ -38,8 +38,11 @@
 
 	let { item }: { item: Schema } = $props();
 
+	// svelte-ignore state_referenced_locally -- item props initialize form state
 	let type = $state(item.type);
+	// svelte-ignore state_referenced_locally
 	let status = $state(item.status);
+	// svelte-ignore state_referenced_locally
 	let reviewer = $state(item.reviewer);
 </script>
 

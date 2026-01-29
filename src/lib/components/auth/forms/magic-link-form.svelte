@@ -35,19 +35,6 @@
 	}: Props = $props();
 
 	const isHydrated = useIsHydrated();
-	const mergedLocalization = $derived({ ...contextLocalization, ...localizationProp });
-	const captchaHook = useCaptcha({
-		localization: mergedLocalization
-	});
-	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
-
-	// Local state for captcha binding
-	let captchaRef = $state<unknown>(null);
-
-	// Sync captchaRef with the hook
-	$effect(() => {
-		captchaHook.captchaRef = captchaRef;
-	});
 
 	const config = getAuthUIConfig();
 	const {
@@ -63,7 +50,19 @@
 		magicLink: magicLinkConfig
 	} = config;
 
-	const localization = mergedLocalization;
+	const localization = $derived({ ...contextLocalization, ...localizationProp });
+
+	// svelte-ignore state_referenced_locally -- hooks are initialized once with current localization
+	const captchaHook = useCaptcha({ localization });
+	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
+
+	// Local state for captcha binding
+	let captchaRef = $state<unknown>(null);
+
+	// Sync captchaRef with the hook
+	$effect(() => {
+		captchaHook.captchaRef = captchaRef;
+	});
 
 	const getRedirectTo = () =>
 		redirectToProp || getSearchParam('redirectTo') || contextRedirectTo || '';

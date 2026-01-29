@@ -79,15 +79,16 @@
 
 	// Track selected values for Select components
 	let selectedExpiresInDays = $state('none');
-	const initialOrganizationId = $derived(organizationId ?? 'personal');
-	let selectedOrganizationId = $state(initialOrganizationId);
+	// svelte-ignore state_referenced_locally -- initial value is intentionally captured for form state
+	const initialOrgId = organizationId ?? 'personal';
+	let selectedOrganizationId = $state(initialOrgId);
 
 	// Create form
 	const form = createForm(() => ({
 		defaultValues: {
 			name: '',
 			expiresInDays: 'none',
-			organizationId: initialOrganizationId
+			organizationId: initialOrgId
 		},
 		onSubmit: async ({ value }) => {
 			try {

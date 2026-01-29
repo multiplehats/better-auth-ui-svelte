@@ -45,19 +45,6 @@
 	}: Props = $props();
 
 	const isHydrated = useIsHydrated();
-	const mergedLocalization = $derived({ ...contextLocalization, ...localizationProp });
-	const captchaHook = useCaptcha({
-		localization: mergedLocalization
-	});
-	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
-
-	// Local state for captcha binding
-	let captchaRef = $state<unknown>(null);
-
-	// Sync captchaRef with the hook
-	$effect(() => {
-		captchaHook.captchaRef = captchaRef;
-	});
 
 	const config = getAuthUIConfig();
 	const {
@@ -75,15 +62,27 @@
 	const usernameEnabled = credentials?.username;
 	const contextPasswordValidation = credentials?.passwordValidation;
 
-	const localization = mergedLocalization;
+	const localization = $derived({ ...contextLocalization, ...localizationProp });
 	const passwordValidation = $derived({
 		...contextPasswordValidation,
 		...passwordValidationProp
 	});
 
-	const redirectToValue = $derived(redirectTo);
+	// svelte-ignore state_referenced_locally -- hooks are initialized once with current localization
+	const captchaHook = useCaptcha({ localization });
+	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
+
+	// Local state for captcha binding
+	let captchaRef = $state<unknown>(null);
+
+	// Sync captchaRef with the hook
+	$effect(() => {
+		captchaHook.captchaRef = captchaRef;
+	});
+
+	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo: redirectToValue
+		redirectTo
 	});
 
 	// Form schema
