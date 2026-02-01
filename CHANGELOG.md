@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.6.3
+
+### Patch Changes
+
+- Add `fromStore` utility ([`6e82386`](https://github.com/multiplehats/better-auth-ui-svelte/commit/6e82386cbe152c123f1d6308947e9c42fa875848))
+
 ## 0.6.2
 
 ### Patch Changes
