@@ -203,3 +203,5 @@ export type UserInvitationsCardProps = ComponentProps<typeof UserInvitationsCard
 export type SettingsCardClassNames = ComponentProps<typeof SettingsCardComponent>;
 export * from './types/auth-hooks.js';
 export * from './types/auth-mutators.js';
+
+export { fromStore } from './utils/store-to-rune.svelte.js';
