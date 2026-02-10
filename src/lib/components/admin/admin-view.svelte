@@ -24,7 +24,8 @@
 		pathname,
 		view: viewProp,
 		hideNav,
-		organizationCustomActions
+		organizationCustomActions,
+		fetchOrganizations
 	}: Props = $props();
 
 	const { localization: contextLocalization, Link, adminBasePath } = getAuthUIConfig();
@@ -76,7 +77,7 @@
 		{:else if view === 'USERS'}
 			<UsersAdminTable syncWithUrl={true} />
 		{:else if view === 'ORGANIZATIONS'}
-			<OrganizationsAdminTable syncWithUrl={true} customActions={organizationCustomActions} />
+			<OrganizationsAdminTable syncWithUrl={true} customActions={organizationCustomActions} {fetchOrganizations} />
 		{/if}
 	</div>
 </div>

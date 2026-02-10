@@ -118,6 +118,14 @@ export interface UsersAdminTableProps {
 }
 
 /**
+ * Response type for the fetchOrganizations callback
+ */
+export interface FetchOrganizationsResponse {
+	organizations: Organization[];
+	total: number;
+}
+
+/**
  * Props for organizations admin table
  */
 export interface OrganizationsAdminTableProps {
@@ -132,6 +140,16 @@ export interface OrganizationsAdminTableProps {
 	onDeleteOrganization?: (organizationId: string) => void | Promise<void>;
 	/** Custom actions to add to the dropdown menu */
 	customActions?: AdminTableAction<Organization>[];
+	/**
+	 * Custom function to fetch organizations. Use this to provide admin-level
+	 * access to all organizations (e.g., via a custom API route that queries
+	 * the database directly), since Better Auth's `organization.list()` only
+	 * returns organizations the current user belongs to.
+	 */
+	fetchOrganizations?: (params: {
+		limit: number;
+		offset: number;
+	}) => Promise<FetchOrganizationsResponse>;
 }
 
 /**
@@ -195,4 +213,14 @@ export interface AdminViewProps {
 	hideNav?: boolean;
 	/** Custom actions for organizations table */
 	organizationCustomActions?: AdminTableAction<Organization>[];
+	/**
+	 * Custom function to fetch organizations. Use this to provide admin-level
+	 * access to all organizations (e.g., via a custom API route that queries
+	 * the database directly), since Better Auth's `organization.list()` only
+	 * returns organizations the current user belongs to.
+	 */
+	fetchOrganizations?: (params: {
+		limit: number;
+		offset: number;
+	}) => Promise<FetchOrganizationsResponse>;
 }

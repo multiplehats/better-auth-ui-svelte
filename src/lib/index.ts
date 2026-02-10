@@ -155,6 +155,7 @@ export type {
 	AdminTableAction,
 	UsersAdminTableProps,
 	OrganizationsAdminTableProps,
+	FetchOrganizationsResponse,
 	OrganizationMembersDetailProps,
 	BanUserDialogProps,
 	UpdateRoleDialogProps,

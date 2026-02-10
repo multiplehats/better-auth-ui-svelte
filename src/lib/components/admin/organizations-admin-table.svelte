@@ -17,7 +17,7 @@
 		SortingState
 	} from '@tanstack/table-core';
 	import { getCoreRowModel, getPaginationRowModel, getSortedRowModel } from '@tanstack/table-core';
-	import type { Organization, AdminTableAction } from '$lib/types/admin.js';
+	import type { Organization, AdminTableAction, FetchOrganizationsResponse } from '$lib/types/admin.js';
 	import { createRawSnippet } from 'svelte';
 	import {
 		getAuthClient,
@@ -46,13 +46,24 @@
 		initialPageSize = 10,
 		syncWithUrl = false,
 		onViewMembers,
-		customActions = []
+		customActions = [],
+		fetchOrganizations: fetchOrganizationsProp
 	}: {
 		initialPageSize?: number;
 		syncWithUrl?: boolean;
 		onViewMembers?: (organizationId: string) => void | Promise<void>;
 		/** Custom actions to add to the dropdown menu */
 		customActions?: AdminTableAction<Organization>[];
+		/**
+		 * Custom function to fetch organizations. Use this to provide admin-level
+		 * access to all organizations (e.g., via a custom API route that queries
+		 * the database directly), since Better Auth's `organization.list()` only
+		 * returns organizations the current user belongs to.
+		 */
+		fetchOrganizations?: (params: {
+			limit: number;
+			offset: number;
+		}) => Promise<FetchOrganizationsResponse>;
 	} = $props();
 
 	// Get Better Auth client and config
@@ -95,34 +106,51 @@
 		}
 	});
 
-	// Fetch organizations from Better Auth
+	// Fetch organizations
 	async function fetchOrganizations() {
 		isLoading = true;
 		try {
-			const { data: response, error } = await authClient.organization.list({});
+			if (fetchOrganizationsProp) {
+				// Use custom fetch function (recommended for admin access to all orgs)
+				const response = await fetchOrganizationsProp({
+					limit: pagination.pageSize,
+					offset: pagination.pageIndex * pagination.pageSize
+				});
 
-			if (error) {
-				toast.error(error.message ?? 'Failed to fetch organizations');
-				return;
-			}
-
-			if (response) {
-				// Better Auth organization.list doesn't support pagination params yet
-				// so we'll do client-side pagination for now
-				const allOrgs = (response as any[]).map((org) => ({
+				data = response.organizations.map((org) => ({
 					id: org.id,
 					name: org.name,
 					slug: org.slug,
 					logo: org.logo,
-					createdAt: org.createdAt ? new Date(org.createdAt) : null,
+					createdAt: org.createdAt ? new Date(org.createdAt as string) : null,
 					metadata: org.metadata
 				}));
+				pageCount = Math.ceil(response.total / pagination.pageSize);
+			} else {
+				// Fallback: Better Auth organization.list only returns orgs the user belongs to
+				const { data: response, error } = await authClient.organization.list({});
 
-				// Client-side pagination
-				const start = pagination.pageIndex * pagination.pageSize;
-				const end = start + pagination.pageSize;
-				data = allOrgs.slice(start, end);
-				pageCount = Math.ceil(allOrgs.length / pagination.pageSize);
+				if (error) {
+					toast.error(error.message ?? 'Failed to fetch organizations');
+					return;
+				}
+
+				if (response) {
+					const allOrgs = (response as any[]).map((org) => ({
+						id: org.id,
+						name: org.name,
+						slug: org.slug,
+						logo: org.logo,
+						createdAt: org.createdAt ? new Date(org.createdAt) : null,
+						metadata: org.metadata
+					}));
+
+					// Client-side pagination (organization.list doesn't support pagination)
+					const start = pagination.pageIndex * pagination.pageSize;
+					const end = start + pagination.pageSize;
+					data = allOrgs.slice(start, end);
+					pageCount = Math.ceil(allOrgs.length / pagination.pageSize);
+				}
 			}
 		} catch (err) {
 			toast.error('Failed to fetch organizations');
