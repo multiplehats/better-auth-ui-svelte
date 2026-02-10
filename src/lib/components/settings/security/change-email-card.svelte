@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { createForm } from '@tanstack/svelte-form';
 	import * as z from 'zod';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
@@ -113,9 +114,12 @@
 	}));
 
 	// Update form values when session data changes
+	// Use untrack to prevent infinite loop from form state updates
 	$effect(() => {
 		if (sessionData?.user.email !== undefined) {
-			form.setFieldValue('email', sessionData.user.email || '');
+			untrack(() => {
+				form.setFieldValue('email', sessionData.user.email || '');
+			});
 		}
 	});
 </script>

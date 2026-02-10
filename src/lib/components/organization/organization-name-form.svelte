@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Organization } from 'better-auth/plugins/organization';
+	import { untrack } from 'svelte';
 	import { createForm } from '@tanstack/svelte-form';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
@@ -92,9 +93,12 @@
 	const isSubmitting = $derived(form.state.isSubmitting);
 
 	// Update form values when organization changes
+	// Use untrack to prevent infinite loop from form state updates
 	$effect(() => {
 		if (organization?.name !== undefined) {
-			form.setFieldValue('name', organization.name || '');
+			untrack(() => {
+				form.setFieldValue('name', organization.name || '');
+			});
 		}
 	});
 </script>
