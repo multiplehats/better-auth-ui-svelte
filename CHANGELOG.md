@@ -1,5 +1,15 @@
 # better-auth-ui-svelte
 
+## 0.7.0
+
+### Minor Changes
+
+- Add custom fetch support for admin organizations ([`b3b65a3`](https://github.com/multiplehats/better-auth-ui-svelte/commit/b3b65a3c772868d8e0297987edb5eab79e59cbd6))
+
+### Patch Changes
+
+- Fix infinite reactive loops in organization name form and change email card by wrapping `form.setFieldValue()` calls in `untrack()` within `$effect` blocks ([`b3b65a3`](https://github.com/multiplehats/better-auth-ui-svelte/commit/b3b65a3c772868d8e0297987edb5eab79e59cbd6))
+
 ## 0.6.3
 
 ### Patch Changes
