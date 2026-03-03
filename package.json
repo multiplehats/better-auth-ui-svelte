@@ -1,6 +1,6 @@
 {
 	"name": "better-auth-ui-svelte",
-	"version": "0.7.0",
+	"version": "0.8.0",
 	"description": "Pre-built authentication UI components for Better Auth in Svelte 5",
 	"scripts": {
 		"dev": "vite dev",
