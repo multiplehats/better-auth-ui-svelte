@@ -99,17 +99,17 @@ export const nlLocalization: AuthLocalization = {
 
 	LINK: 'Koppelen',
 
-	MAGIC_LINK: 'Magische link',
-	MAGIC_LINK_ACTION: 'Magische link versturen',
-	MAGIC_LINK_DESCRIPTION: 'Vul je e-mailadres in om een magische link te ontvangen',
-	MAGIC_LINK_EMAIL: 'Controleer je e-mail voor de magische link',
-	MAGIC_LINK_SENT: 'Magische link verstuurd!',
-	MAGIC_LINK_SENT_TO: 'We hebben een magische link verstuurd naar',
+	MAGIC_LINK: 'Inloglink',
+	MAGIC_LINK_ACTION: 'Inloglink versturen',
+	MAGIC_LINK_DESCRIPTION: 'Vul je e-mailadres in om een inloglink te ontvangen',
+	MAGIC_LINK_EMAIL: 'Controleer je e-mail voor de inloglink',
+	MAGIC_LINK_SENT: 'Inloglink verstuurd!',
+	MAGIC_LINK_SENT_TO: 'We hebben een inloglink verstuurd naar',
 	MAGIC_LINK_CHECK_INBOX:
-		'Controleer je e-mail en klik op de magische link om in te loggen op je account.',
+		'Controleer je e-mail en klik op de inloglink om in te loggen op je account.',
 	MAGIC_LINK_EXPIRES: 'De link verloopt over 5 minuten om veiligheidsredenen.',
 	MAGIC_LINK_NO_EMAIL: 'Geen e-mail ontvangen?',
-	RESEND_MAGIC_LINK: 'Magische link opnieuw versturen',
+	RESEND_MAGIC_LINK: 'Inloglink opnieuw versturen',
 
 	EMAIL_OTP: 'E-mailcode',
 	EMAIL_OTP_SEND_ACTION: 'Code versturen',
