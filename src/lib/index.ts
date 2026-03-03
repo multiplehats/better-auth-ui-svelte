@@ -143,6 +143,7 @@ export {
 
 // Localization
 export { authLocalization } from './localization/auth-localization.js';
+export { nlLocalization } from './localization/nl.js';
 
 // Types
 export type { AuthUIConfig, User, Session, AuthLocalization } from './types/index.js';
