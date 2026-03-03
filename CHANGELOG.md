@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.8.0
+
+### Minor Changes
+
+- Add Dutch (Nederlands) localization (`nlLocalization`) ([`ebc7ad6`](https://github.com/multiplehats/better-auth-ui-svelte/commit/ebc7ad6e5234b189b93af289912b8e414ecdaf7f))
+
 ## 0.7.0
 
 ### Minor Changes
