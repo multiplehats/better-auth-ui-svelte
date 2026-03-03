@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.8.1
+
+### Patch Changes
+
+- fix(nl): replace "magische link" with "inloglink" for more natural Dutch UX ([`d8c726c`](https://github.com/multiplehats/better-auth-ui-svelte/commit/d8c726c22698fb2cfd642f314416da387cc4c207))
+
 ## 0.8.0
 
 ### Minor Changes
