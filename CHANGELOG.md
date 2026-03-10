@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.8.2
+
+### Patch Changes
+
+- fix(organization): invitations not loading until tab switch due to $effect inside $derived ([`fc1de6e`](https://github.com/multiplehats/better-auth-ui-svelte/commit/fc1de6eda3a55e1e733fe808fbb7556e09a3f002))
+
 ## 0.8.1
 
 ### Patch Changes
