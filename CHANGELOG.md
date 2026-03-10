@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.8.3
+
+### Patch Changes
+
+- fix(organization): members and accept-invitation not loading due to hooks called inside $derived ([`f264758`](https://github.com/multiplehats/better-auth-ui-svelte/commit/f2647581d21f13f5281474279ec70ed031718e53))
+
 ## 0.8.2
 
 ### Patch Changes
