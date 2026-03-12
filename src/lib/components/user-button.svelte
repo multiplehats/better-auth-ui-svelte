@@ -53,6 +53,7 @@
 		sideOffset?: DropdownMenuContentProps['sideOffset'];
 		additionalLinks?: AdditionalLink[];
 		trigger?: Snippet<[{ props: DropdownMenuTriggerProps }]>;
+		menuItems?: Snippet;
 		disableDefaultLinks?: boolean;
 		size?: ButtonSize;
 		localization?: Partial<AuthLocalization>;
@@ -67,6 +68,7 @@
 		sideOffset,
 		trigger,
 		additionalLinks,
+		menuItems,
 		disableDefaultLinks,
 		size = 'icon',
 		localization: propLocalization
@@ -238,6 +240,11 @@
 						{localization.SETTINGS}
 					</DropdownMenu.Item>
 				</Link>
+			{/if}
+
+			{#if menuItems}
+				<DropdownMenu.Separator class={classNames?.content?.separator} />
+				{@render menuItems()}
 			{/if}
 
 			<Link href={`${basePath}/${viewPaths.SIGN_OUT}`}>
