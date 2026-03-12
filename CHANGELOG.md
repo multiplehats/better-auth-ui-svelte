@@ -1,5 +1,21 @@
 # better-auth-ui-svelte
 
+## 0.9.0
+
+### Minor Changes
+
+- Add `menuItems` snippet prop to `UserButton` ([`b597efe`](https://github.com/multiplehats/better-auth-ui-svelte/commit/b597efe3b55d6668302ffbff445041b8a0771e07))
+
+  Renders custom `DropdownMenu` items (preceded by a separator) above the sign-out entry, enabling callers to inject any non-link content — e.g. a language switcher, theme toggle, or other action items — directly inside the user dropdown.
+
+  ```svelte
+  <UserButton>
+  	{#snippet menuItems()}
+  		<DropdownMenu.Item onclick={toggleLanguage}>🌐 Language</DropdownMenu.Item>
+  	{/snippet}
+  </UserButton>
+  ```
+
 ## 0.8.3
 
 ### Patch Changes
