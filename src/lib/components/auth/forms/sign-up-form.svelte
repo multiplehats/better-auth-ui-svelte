@@ -344,7 +344,7 @@
 			if ('token' in data && data.token) {
 				// User is signed in immediately
 				await onSuccess();
-			} else {
+			} else if (emailVerification) {
 				// Email verification required - redirect to verify-email view
 				// Note: This handles token-based email verification (default).
 				// If the server uses emailOTP with overrideDefaultEmailVerification,
@@ -353,6 +353,9 @@
 				url.searchParams.set('email', email as string); // URLSearchParams handles encoding automatically
 				navigate(`${basePath}/${viewPaths.VERIFY_EMAIL}?${url.searchParams.toString()}`);
 				// Don't show a toast here since the verify-email view will show all needed info
+			} else {
+				// No email verification configured - treat as success
+				await onSuccess();
 			}
 		} catch (error) {
 			toast.error(getLocalizedError({ error, localization }));
