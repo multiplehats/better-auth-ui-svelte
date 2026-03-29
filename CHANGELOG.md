@@ -1,5 +1,13 @@
 # better-auth-ui-svelte
 
+## 0.9.1
+
+### Patch Changes
+
+- fix: don't redirect to verify-email view when `emailVerification` is disabled ([`7602e36`](https://github.com/multiplehats/better-auth-ui-svelte/commit/7602e361a62f0fb33b2d9e31d36556b7af2c719a))
+
+  Previously, after sign-up the UI would always redirect to the verify-email view when the server response didn't contain a token, regardless of the `emailVerification` config. Now, when `emailVerification` is falsy, the sign-up is treated as successful instead.
+
 ## 0.9.0
 
 ### Minor Changes
