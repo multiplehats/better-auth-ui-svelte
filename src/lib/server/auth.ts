@@ -17,7 +17,7 @@ import {
 	admin
 } from 'better-auth/plugins';
 import { passkey } from '@better-auth/passkey';
-import { sendMagicLinkEmail, sendOTPEmail } from './email.js';
+import { sendEmail, sendMagicLinkEmail, sendOTPEmail } from './email.js';
 import { BETTER_AUTH_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 
 export const auth = betterAuth({
@@ -25,8 +25,7 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
-		sendResetPassword(data) {
-			// Implement your email sending logic here
+		async sendResetPassword(data) {
 			console.log('\n┌─────────────────────────────────────────┐');
 			console.log('│  🔐 PASSWORD RESET EMAIL                │');
 			console.log('├─────────────────────────────────────────┤');
@@ -35,13 +34,16 @@ export const auth = betterAuth({
 			console.log(`│  ${data.url}`);
 			console.log('└─────────────────────────────────────────┘\n');
 
-			return Promise.resolve();
+			await sendEmail({
+				to: data.user.email,
+				subject: 'Reset Your Password',
+				html: `<div><h2>Reset your password</h2><p>Click the link below to reset your password.</p><a href="${data.url}">Reset Password</a><p>${data.url}</p></div>`
+			});
 		}
 	},
 	emailVerification: {
 		autoSignInAfterVerification: false,
-		sendVerificationEmail(data) {
-			// Implement your email sending logic here
+		async sendVerificationEmail(data) {
 			console.log('\n┌─────────────────────────────────────────┐');
 			console.log('│  ✉️  EMAIL VERIFICATION                 │');
 			console.log('├─────────────────────────────────────────┤');
@@ -50,7 +52,11 @@ export const auth = betterAuth({
 			console.log(`│  ${data.url}`);
 			console.log('└─────────────────────────────────────────┘\n');
 
-			return Promise.resolve();
+			await sendEmail({
+				to: data.user.email,
+				subject: 'Verify Your Email',
+				html: `<div><h2>Verify your email</h2><p>Click the link below to verify your email address.</p><a href="${data.url}">Verify Email</a><p>${data.url}</p></div>`
+			});
 		}
 	},
 	database: drizzleAdapter(db, {

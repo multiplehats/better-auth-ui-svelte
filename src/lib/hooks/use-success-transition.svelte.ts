@@ -18,12 +18,6 @@ export function useOnSuccessTransition({ redirectTo: redirectToProp }: { redirec
 
 		isPending = true;
 		navigate(getRedirectTo());
-		// In Svelte, we don't have React transitions, but we can track pending state
-		// The navigate function will handle the actual navigation
-		// Reset after a tick to allow navigation to complete
-		setTimeout(() => {
-			isPending = false;
-		}, 0);
 	});
 
 	async function onSuccess() {
