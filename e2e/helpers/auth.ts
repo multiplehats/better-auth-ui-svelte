@@ -37,7 +37,7 @@ export async function signUp(
 	user: { name: string; email: string; password: string }
 ): Promise<void> {
 	await page.goto('/auth/sign-up');
-	await page.waitForTimeout(1000);
+	await page.waitForTimeout(2000);
 	await fillField(page, 'input#name', user.name);
 	await fillField(page, 'input#email', user.email);
 	await fillField(page, 'input#password', user.password);
@@ -69,7 +69,7 @@ export async function signIn(
 	user: { email: string; password: string }
 ): Promise<void> {
 	await page.goto('/auth/sign-in');
-	await page.waitForTimeout(1000);
+	await page.waitForTimeout(2000);
 	await fillField(page, 'input#email', user.email);
 	await fillField(page, 'input#password', user.password);
 	await page.getByRole('button', { name: 'Login' }).click();

@@ -28,7 +28,7 @@ test.describe('Sign In', () => {
 		await signUpAndVerify(page, user);
 
 		await page.goto('/auth/sign-in');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await fillField(page, 'input#password', user.password);
 		await page.getByRole('button', { name: 'Login' }).click();
@@ -39,7 +39,7 @@ test.describe('Sign In', () => {
 
 	test('shows error for wrong password', async ({ page }) => {
 		await page.goto('/auth/sign-in');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', 'testuser@example.com');
 		await fillField(page, 'input#password', 'WrongPassword999!');
 		await page.getByRole('button', { name: 'Login' }).click();
@@ -51,7 +51,7 @@ test.describe('Sign In', () => {
 
 	test('shows error for non-existent email', async ({ page }) => {
 		await page.goto('/auth/sign-in');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', 'nobody-ever@example.com');
 		await fillField(page, 'input#password', 'SomePassword123!');
 		await page.getByRole('button', { name: 'Login' }).click();

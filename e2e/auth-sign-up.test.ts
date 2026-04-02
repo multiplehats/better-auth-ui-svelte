@@ -27,7 +27,7 @@ test.describe('Sign Up', () => {
 	test('creates account and redirects to email verification', async ({ page }) => {
 		const user = generateTestUser();
 		await page.goto('/auth/sign-up');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 
 		await fillField(page, 'input#name', user.name);
 		await fillField(page, 'input#email', user.email);
@@ -42,7 +42,7 @@ test.describe('Sign Up', () => {
 		await deleteAllMessages();
 		const user = generateTestUser();
 		await page.goto('/auth/sign-up');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 
 		await fillField(page, 'input#name', user.name);
 		await fillField(page, 'input#email', user.email);
@@ -59,7 +59,7 @@ test.describe('Sign Up', () => {
 		await deleteAllMessages();
 		const user = generateTestUser();
 		await page.goto('/auth/sign-up');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 
 		await fillField(page, 'input#name', user.name);
 		await fillField(page, 'input#email', user.email);
@@ -92,7 +92,7 @@ test.describe('Sign Up', () => {
 
 		// Sign up first time
 		await page.goto('/auth/sign-up');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#name', user.name);
 		await fillField(page, 'input#email', user.email);
 		await fillField(page, 'input#password', user.password);
@@ -101,7 +101,7 @@ test.describe('Sign Up', () => {
 
 		// Try to sign up again with same email
 		await page.goto('/auth/sign-up');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#name', 'Another Name');
 		await fillField(page, 'input#email', user.email);
 		await fillField(page, 'input#password', user.password);

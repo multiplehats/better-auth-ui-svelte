@@ -23,16 +23,18 @@ test.describe('Auth Layout & UI', () => {
 
 	test('sign-in form has password visibility toggle', async ({ page }) => {
 		await page.goto('/auth/sign-in');
+		await page.waitForTimeout(2000); // Wait for hydration
 		const passwordInput = page.locator('input#password');
 		await expect(passwordInput).toHaveAttribute('type', 'password');
 
 		// Type something to enable the toggle button (it's disabled when empty)
 		await passwordInput.click();
-		await passwordInput.pressSequentially('test', { delay: 50 });
-		// Dispatch input event to trigger oninput handler
+		await passwordInput.pressSequentially('testpass', { delay: 50 });
+		// Dispatch input event to ensure oninput handler fires
 		await passwordInput.evaluate((el) =>
 			el.dispatchEvent(new Event('input', { bubbles: true }))
 		);
+		await page.waitForTimeout(500);
 
 		// Click the toggle button inside the password container
 		const toggleBtn = page.locator('.relative button[type="button"]').first();

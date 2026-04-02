@@ -21,7 +21,7 @@ test.describe('Magic Link', () => {
 	test('sends magic link email and shows sent page', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/magic-link');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 
@@ -36,7 +36,7 @@ test.describe('Magic Link', () => {
 	test('magic link email contains valid sign-in URL', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/magic-link');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 
@@ -49,7 +49,7 @@ test.describe('Magic Link', () => {
 	test('clicking magic link signs user in', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/magic-link');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 
@@ -65,7 +65,7 @@ test.describe('Magic Link', () => {
 	test('magic link sent page shows resend button', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/magic-link');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 
@@ -77,7 +77,7 @@ test.describe('Magic Link', () => {
 	test('magic link sent page has back to sign in button', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/magic-link');
-		await page.waitForTimeout(1000);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 

@@ -28,7 +28,7 @@ test.describe('Email OTP', () => {
 	test('sends OTP code to email', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/email-otp');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send code' }).click();
 
@@ -43,7 +43,7 @@ test.describe('Email OTP', () => {
 	test('OTP email contains 6-digit code', async ({ page }) => {
 		await deleteAllMessages();
 		await page.goto('/auth/email-otp');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send code' }).click();
 
@@ -60,7 +60,7 @@ test.describe('Email OTP', () => {
 		// Skip: OTP input component interaction needs custom handling for Playwright
 		await deleteAllMessages();
 		await page.goto('/auth/email-otp');
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send code' }).click();
 
