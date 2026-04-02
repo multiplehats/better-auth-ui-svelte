@@ -55,7 +55,8 @@ jobs:
 
       - run: pnpm lint
 
-  Test:
+  Unit-Test:
+    name: Unit Tests
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,5 +69,74 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run unit tests
+        run: pnpm test:unit -- --run
+
+  E2E-Test:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: local
+        ports:
+          - 5440:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mailpit:
+        image: axllent/mailpit
+        ports:
+          - 1025:1025
+          - 8025:8025
+        env:
+          MP_MAX_MESSAGES: 5000
+          MP_SMTP_AUTH_ACCEPT_ANY: 1
+          MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium
+
+      - name: Create .env file
+        run: |
+          cat > .env << 'ENVEOF'
+          DATABASE_URL="postgres://root:secret@localhost:5440/local"
+          BETTER_AUTH_SECRET="ci-test-secret-key"
+          BETTER_AUTH_URL=http://localhost:5173
+          SMTP_HOST=localhost
+          SMTP_PORT=1025
+          SMTP_FROM="Better Auth Demo <noreply@example.com>"
+          SMTP_USER=
+          SMTP_PASS=
+          GOOGLE_CLIENT_ID=dummy-google-client-id
+          GOOGLE_CLIENT_SECRET=dummy-google-client-secret
+          ENVEOF
+
+      - name: Push database schema
+        run: pnpm drizzle-kit push --force
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: test-results/
+          retention-days: 7
