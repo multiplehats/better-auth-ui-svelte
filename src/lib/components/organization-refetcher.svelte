@@ -35,7 +35,7 @@
 	let previousUserId = $state<string | undefined>(undefined);
 
 	$effect(() => {
-		const currentUserId = sessionData?.user.id;
+		const currentUserId = sessionData?.user?.id;
 
 		// Only refetch if user ID actually changed (not on initial load)
 		if (currentUserId && previousUserId && currentUserId !== previousUserId) {
