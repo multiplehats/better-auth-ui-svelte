@@ -1,5 +1,13 @@
 # better-auth-ui-svelte
 
+## 0.9.2
+
+### Patch Changes
+
+- Fix crash in organization-refetcher when session data lacks user property ([`dedfbf0`](https://github.com/multiplehats/better-auth-ui-svelte/commit/dedfbf08ae93b685345ffc9805803451095cc95b))
+
+  The onboarding plugin can replace the session response with `{ onboardingRedirect: true }`, which has no `user` property. `sessionData?.user.id` crashes with "Cannot read properties of undefined (reading 'id')". Added optional chaining: `sessionData?.user?.id`.
+
 ## 0.9.1
 
 ### Patch Changes
