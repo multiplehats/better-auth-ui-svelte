@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { Row } from "@tanstack/table-core";
-	import type { Schema } from "./schemas.js";
-	import { Label } from "$lib/components/ui/label/index.js";
-	import * as Select from "$lib/components/ui/select/index.js";
+	import type { Row } from '@tanstack/table-core';
+	import type { Schema } from './schemas.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 
 	let { row }: { row: Row<Schema> } = $props();
 
-	const isAssigned = $derived(row.original.reviewer !== "Assign reviewer");
-	let reviewer = $state("");
+	const isAssigned = $derived(row.original.reviewer !== 'Assign reviewer');
+	let reviewer = $state('');
 </script>
 
 {#if isAssigned}
@@ -21,7 +21,7 @@
 			id="{row.original.id}-reviewer"
 		>
 			<span data-slot="select-value">
-				{reviewer ?? "Assign reviewer"}
+				{reviewer ?? 'Assign reviewer'}
 			</span>
 		</Select.Trigger>
 		<Select.Content align="end">

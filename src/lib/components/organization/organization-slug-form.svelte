@@ -32,24 +32,21 @@
 		replace
 	} = getAuthUIConfig();
 
-	// svelte-ignore state_referenced_locally -- organization prop initializes hooks
 	const { refetch: refetchOrganization } = useCurrentOrganization({
 		slug: organization.slug
 	});
 
-	// svelte-ignore state_referenced_locally
 	const permissionStore = useHasPermission({
 		organizationId: organization.id,
 		permissions: {
 			organization: ['update']
 		}
-	});
+	} as unknown as Parameters<typeof useHasPermission>[0]);
 
 	const hasPermissionData = $derived(permissionStore?.data);
 	const hasPermission = $derived(hasPermissionData?.success ?? false);
 	const permissionPending = $derived(permissionStore?.isPending ?? false);
 
-	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	const formSchema = z.object({
 		slug: z
 			.string()

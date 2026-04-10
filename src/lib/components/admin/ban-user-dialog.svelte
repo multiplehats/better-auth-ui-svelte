@@ -90,7 +90,7 @@
 							bind:checked={isPermanent}
 							class="h-4 w-4 rounded border-gray-300"
 						/>
-						<Label for="permanent" class="font-normal cursor-pointer">Permanent ban</Label>
+						<Label for="permanent" class="cursor-pointer font-normal">Permanent ban</Label>
 					</div>
 				</div>
 

@@ -31,8 +31,6 @@ test.describe('Account Settings', () => {
 
 	test('can navigate to API keys page', async ({ page }) => {
 		await page.goto('/app/account/api-keys');
-		await expect(
-			page.getByText(/api key/i).first()
-		).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByText(/api key/i).first()).toBeVisible({ timeout: 10_000 });
 	});
 });

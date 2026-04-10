@@ -79,7 +79,6 @@
 
 	// Track selected values for Select components
 	let selectedExpiresInDays = $state('none');
-	// svelte-ignore state_referenced_locally -- initial value is intentionally captured for form state
 	const initialOrgId = organizationId ?? 'personal';
 	let selectedOrganizationId = $state(initialOrgId);
 
@@ -118,7 +117,7 @@
 				handleOpenChange(false);
 				form.reset();
 				selectedExpiresInDays = 'none';
-				selectedOrganizationId = initialOrganizationId;
+				selectedOrganizationId = initialOrgId;
 			} catch (error) {
 				toast.error(getLocalizedError({ error, localization }));
 			}
@@ -135,7 +134,7 @@
 		if (!newOpen) {
 			form.reset();
 			selectedExpiresInDays = 'none';
-			selectedOrganizationId = initialOrganizationId;
+			selectedOrganizationId = initialOrgId;
 		}
 	}
 

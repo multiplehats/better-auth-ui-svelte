@@ -27,13 +27,13 @@
 	const sessionResult = useSession() as ReturnType<typeof useSession> & {
 		subscribe: (fn: (value: unknown) => void) => () => void;
 	};
-	const sessionData = $derived($sessionResult);
+	const sessionData = $derived($sessionResult) as Record<string, unknown> | null | undefined;
 	const isPending = $derived(
-		sessionData && 'isPending' in sessionData ? sessionData.isPending : false
+		sessionData && 'isPending' in sessionData ? (sessionData.isPending as boolean) : false
 	);
 	const isTwoFactorEnabled = $derived(
 		sessionData && 'data' in sessionData
-			? (sessionData.data?.user as User)?.twoFactorEnabled
+			? ((sessionData.data as { user?: User })?.user as User)?.twoFactorEnabled
 			: false
 	);
 </script>

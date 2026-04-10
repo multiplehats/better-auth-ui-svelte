@@ -17,11 +17,7 @@ export function generateTestUser() {
  * Fill a form field by clicking, clearing, then typing character by character.
  * This ensures TanStack form's oninput/onchange handlers fire properly.
  */
-export async function fillField(
-	page: Page,
-	selector: string,
-	value: string
-): Promise<void> {
+export async function fillField(page: Page, selector: string, value: string): Promise<void> {
 	const field = page.locator(selector);
 	await field.click();
 	// Clear existing value
@@ -64,10 +60,7 @@ export async function signUpAndVerify(
 	await page.waitForTimeout(2000);
 }
 
-export async function signIn(
-	page: Page,
-	user: { email: string; password: string }
-): Promise<void> {
+export async function signIn(page: Page, user: { email: string; password: string }): Promise<void> {
 	await page.goto('/auth/sign-in');
 	await page.waitForTimeout(2000);
 	await fillField(page, 'input#email', user.email);

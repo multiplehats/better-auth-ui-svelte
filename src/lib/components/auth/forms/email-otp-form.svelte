@@ -17,6 +17,7 @@
 	interface Props {
 		className?: string;
 		classNames?: AuthFormClassNames;
+		callbackURL?: string;
 		isSubmitting?: boolean;
 		localization?: Partial<AuthLocalization>;
 		otpSeparators?: 0 | 1 | 2;
@@ -44,7 +45,6 @@
 	let verifiedEmail = $state<string | undefined>(undefined);
 
 	// Transition for OTP verification success
-	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
 		redirectTo
 	});

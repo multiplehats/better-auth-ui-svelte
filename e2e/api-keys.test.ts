@@ -16,7 +16,10 @@ test.describe('API Keys', () => {
 		await signIn(page, user);
 		await page.goto('/app/account/api-keys');
 		await expect(
-			page.getByText(/api key/i).first().or(page.getByText(/API/i).first())
+			page
+				.getByText(/api key/i)
+				.first()
+				.or(page.getByText(/API/i).first())
 		).toBeVisible({ timeout: 10_000 });
 	});
 });

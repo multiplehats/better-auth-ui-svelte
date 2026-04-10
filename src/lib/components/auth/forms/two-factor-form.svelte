@@ -56,7 +56,6 @@
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
-	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
 		redirectTo
 	});

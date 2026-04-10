@@ -43,6 +43,8 @@
 		isPending?: boolean;
 		variant?: 'default' | 'destructive';
 		action?: () => Promise<unknown> | unknown;
+		localization?: Partial<Record<string, string>>;
+		optimistic?: boolean;
 	}
 </script>
 

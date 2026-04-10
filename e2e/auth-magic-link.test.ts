@@ -69,9 +69,9 @@ test.describe('Magic Link', () => {
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 
-		await expect(
-			page.getByRole('button', { name: /resend magic link/i })
-		).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByRole('button', { name: /resend magic link/i })).toBeVisible({
+			timeout: 10_000
+		});
 	});
 
 	test('magic link sent page has back to sign in button', async ({ page }) => {
@@ -81,8 +81,8 @@ test.describe('Magic Link', () => {
 		await fillField(page, 'input#email', user.email);
 		await page.getByRole('button', { name: 'Send magic link' }).click();
 
-		await expect(
-			page.getByRole('button', { name: /back to sign in/i })
-		).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByRole('button', { name: /back to sign in/i })).toBeVisible({
+			timeout: 10_000
+		});
 	});
 });

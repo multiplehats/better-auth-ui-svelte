@@ -23,6 +23,7 @@
 		updatedAt: Date;
 	}
 
+	/* eslint-disable @typescript-eslint/no-explicit-any */
 	interface Props {
 		class?: string;
 		classNames?: SettingsCardClassNames;
@@ -36,6 +37,8 @@
 		onUpdated?: () => void;
 		onDeleted?: () => void;
 	}
+
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 
 	let {
 		class: className,

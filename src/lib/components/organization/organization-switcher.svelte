@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import type { DropdownMenuContentProps } from '$lib/components/ui/dropdown-menu/index.js';
+	import type { ComponentProps } from 'svelte';
+	type DropdownMenuContentProps = ComponentProps<typeof DropdownMenu.Content>;
 	import { Button, type ButtonSize } from '$lib/components/ui/button/index.js';
 	import {
 		getAuthClient,
@@ -100,7 +101,6 @@
 
 	const { pathMode, slug: contextSlug, personalPath } = organizationOptions || {};
 
-	// svelte-ignore state_referenced_locally -- slug prop combined with context value
 	const slug = slugProp || contextSlug;
 
 	const contextLocalization = getLocalization();

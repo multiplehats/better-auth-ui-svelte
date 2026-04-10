@@ -59,7 +59,6 @@
 		}
 	};
 
-	// svelte-ignore state_referenced_locally -- session prop represents a specific session and doesn't change
 	const parser = UAParser(session.userAgent as string);
 	const isMobile = parser.device.type === 'mobile';
 </script>

@@ -13,7 +13,6 @@
 		Users,
 		Building2,
 		ShieldBan,
-		UserPlus,
 		TrendingUp,
 		TrendingDown,
 		ArrowRight
@@ -174,7 +173,7 @@
 			});
 
 			if (usersResponse.data) {
-				const users = usersResponse.data.users as any[];
+				const users = usersResponse.data.users as Record<string, unknown>[];
 				const total = usersResponse.data.total ?? users.length;
 
 				// Calculate date ranges
@@ -184,20 +183,20 @@
 				const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
 
 				// Count new users in different periods
-				const newUsers30d = users.filter((u: any) => {
+				const newUsers30d = users.filter((u: Record<string, unknown>) => {
 					if (!u.createdAt) return false;
-					const created = new Date(u.createdAt);
+					const created = new Date(u.createdAt as string | number);
 					return created >= thirtyDaysAgo;
 				}).length;
 
-				const newUsersPrevious30d = users.filter((u: any) => {
+				const newUsersPrevious30d = users.filter((u: Record<string, unknown>) => {
 					if (!u.createdAt) return false;
-					const created = new Date(u.createdAt);
+					const created = new Date(u.createdAt as string | number);
 					return created >= sixtyDaysAgo && created < thirtyDaysAgo;
 				}).length;
 
 				// Count banned users
-				const bannedCount = users.filter((u: any) => u.banned).length;
+				const bannedCount = users.filter((u: Record<string, unknown>) => u.banned).length;
 
 				// Calculate growth percentages
 				const newUsersGrowth =
@@ -220,9 +219,9 @@
 				}
 
 				// Count users by creation date
-				users.forEach((user: any) => {
+				users.forEach((user: Record<string, unknown>) => {
 					if (user.createdAt) {
-						const createdDate = new Date(user.createdAt);
+						const createdDate = new Date(user.createdAt as string | number);
 						if (createdDate >= ninetyDaysAgo) {
 							const dateStr = createdDate.toISOString().split('T')[0];
 							dailyCounts.set(dateStr, (dailyCounts.get(dateStr) ?? 0) + 1);
@@ -445,111 +444,109 @@
 			{#if customChart}
 				{@render customChart()}
 			{:else}
-
-					<Card.Root class="@container/card">
-						<Card.Header>
-							<Card.Title>User Growth</Card.Title>
-							<Card.Description>
-								<span class="hidden @[540px]/card:block"> New user registrations over time </span>
-								<span class="@[540px]/card:hidden">New registrations</span>
-							</Card.Description>
-							<Card.Action>
-								<ToggleGroup.Root
-									type="single"
-									bind:value={timeRange}
-									variant="outline"
-									class="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
+				<Card.Root class="@container/card">
+					<Card.Header>
+						<Card.Title>User Growth</Card.Title>
+						<Card.Description>
+							<span class="hidden @[540px]/card:block"> New user registrations over time </span>
+							<span class="@[540px]/card:hidden">New registrations</span>
+						</Card.Description>
+						<Card.Action>
+							<ToggleGroup.Root
+								type="single"
+								bind:value={timeRange}
+								variant="outline"
+								class="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
+							>
+								<ToggleGroup.Item value="90d">Last 3 months</ToggleGroup.Item>
+								<ToggleGroup.Item value="30d">Last 30 days</ToggleGroup.Item>
+								<ToggleGroup.Item value="7d">Last 7 days</ToggleGroup.Item>
+							</ToggleGroup.Root>
+							<Select.Root type="single" bind:value={timeRange}>
+								<Select.Trigger
+									size="sm"
+									class="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
+									aria-label="Select a value"
 								>
-									<ToggleGroup.Item value="90d">Last 3 months</ToggleGroup.Item>
-									<ToggleGroup.Item value="30d">Last 30 days</ToggleGroup.Item>
-									<ToggleGroup.Item value="7d">Last 7 days</ToggleGroup.Item>
-								</ToggleGroup.Root>
-								<Select.Root type="single" bind:value={timeRange}>
-									<Select.Trigger
-										size="sm"
-										class="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
-										aria-label="Select a value"
-									>
-										<span data-slot="select-value">
-											{selectedLabel}
-										</span>
-									</Select.Trigger>
-									<Select.Content class="rounded-xl">
-										<Select.Item value="90d" class="rounded-lg">Last 3 months</Select.Item>
-										<Select.Item value="30d" class="rounded-lg">Last 30 days</Select.Item>
-										<Select.Item value="7d" class="rounded-lg">Last 7 days</Select.Item>
-									</Select.Content>
-								</Select.Root>
-							</Card.Action>
-						</Card.Header>
-						<Card.Content class="px-2 pt-4 sm:px-6 sm:pt-6">
-							{#if isLoading}
-								<Skeleton class="h-[250px] w-full" />
-							{:else if hasUserGrowthData}
-								<Chart.Container config={chartConfig} class="aspect-auto h-[250px] w-full">
-									<AreaChart
-										data={filteredChartData}
-										x="date"
-										xScale={scaleUtc()}
-										series={[
-											{
-												key: 'users',
-												label: 'New Users',
-												color: chartConfig.users.color
+									<span data-slot="select-value">
+										{selectedLabel}
+									</span>
+								</Select.Trigger>
+								<Select.Content class="rounded-xl">
+									<Select.Item value="90d" class="rounded-lg">Last 3 months</Select.Item>
+									<Select.Item value="30d" class="rounded-lg">Last 30 days</Select.Item>
+									<Select.Item value="7d" class="rounded-lg">Last 7 days</Select.Item>
+								</Select.Content>
+							</Select.Root>
+						</Card.Action>
+					</Card.Header>
+					<Card.Content class="px-2 pt-4 sm:px-6 sm:pt-6">
+						{#if isLoading}
+							<Skeleton class="h-[250px] w-full" />
+						{:else if hasUserGrowthData}
+							<Chart.Container config={chartConfig} class="aspect-auto h-[250px] w-full">
+								<AreaChart
+									data={filteredChartData}
+									x="date"
+									xScale={scaleUtc()}
+									series={[
+										{
+											key: 'users',
+											label: 'New Users',
+											color: chartConfig.users.color
+										}
+									]}
+									axis="x"
+									props={{
+										area: {
+											curve: curveNatural,
+											'fill-opacity': 0.4,
+											line: { class: 'stroke-1' },
+											motion: 'tween'
+										},
+										xAxis: {
+											ticks: timeRange === '7d' ? 7 : undefined,
+											format: (v) => {
+												return v.toLocaleDateString('en-US', {
+													month: 'short',
+													day: 'numeric'
+												});
 											}
-										]}
-										axis="x"
-										props={{
-											area: {
-												curve: curveNatural,
-												'fill-opacity': 0.4,
-												line: { class: 'stroke-1' },
-												motion: 'tween'
-											},
-											xAxis: {
-												ticks: timeRange === '7d' ? 7 : undefined,
-												format: (v) => {
-													return v.toLocaleDateString('en-US', {
-														month: 'short',
-														day: 'numeric'
-													});
-												}
-											},
-											yAxis: { format: () => '' }
-										}}
-									>
-										{#snippet marks({ series, getAreaProps })}
-											<defs>
-												<linearGradient id="fillUsers" x1="0" y1="0" x2="0" y2="1">
-													<stop offset="5%" stop-color="var(--color-users)" stop-opacity={1.0} />
-													<stop offset="95%" stop-color="var(--color-users)" stop-opacity={0.1} />
-												</linearGradient>
-											</defs>
-											{#each series as s, i (s.key)}
-												<Area {...getAreaProps(s, i)} fill="url(#fillUsers)" />
-											{/each}
-										{/snippet}
-										{#snippet tooltip()}
-											<Chart.Tooltip
-												labelFormatter={(v: Date) => {
-													return v.toLocaleDateString('en-US', {
-														month: 'short',
-														day: 'numeric'
-													});
-												}}
-												indicator="line"
-											/>
-										{/snippet}
-									</AreaChart>
-								</Chart.Container>
-							{:else}
-								<div class="flex h-[250px] items-center justify-center">
-									<p class="text-muted-foreground">No data available</p>
-								</div>
-							{/if}
-						</Card.Content>
-					</Card.Root>
-
+										},
+										yAxis: { format: () => '' }
+									}}
+								>
+									{#snippet marks({ series, getAreaProps })}
+										<defs>
+											<linearGradient id="fillUsers" x1="0" y1="0" x2="0" y2="1">
+												<stop offset="5%" stop-color="var(--color-users)" stop-opacity={1.0} />
+												<stop offset="95%" stop-color="var(--color-users)" stop-opacity={0.1} />
+											</linearGradient>
+										</defs>
+										{#each series as s, i (s.key)}
+											<Area {...getAreaProps(s, i)} fill="url(#fillUsers)" />
+										{/each}
+									{/snippet}
+									{#snippet tooltip()}
+										<Chart.Tooltip
+											labelFormatter={(v: Date) => {
+												return v.toLocaleDateString('en-US', {
+													month: 'short',
+													day: 'numeric'
+												});
+											}}
+											indicator="line"
+										/>
+									{/snippet}
+								</AreaChart>
+							</Chart.Container>
+						{:else}
+							<div class="flex h-[250px] items-center justify-center">
+								<p class="text-muted-foreground">No data available</p>
+							</div>
+						{/if}
+					</Card.Content>
+				</Card.Root>
 			{/if}
 		{/if}
 
@@ -560,76 +557,74 @@
 
 		<!-- Tables with Tabs -->
 		{#if showUsersTable || showOrgsTable}
-
-				<Tabs.Root value="users">
-					<Tabs.List class="grid w-full max-w-md grid-cols-2">
-						{#if showUsersTable}
-							<Tabs.Trigger value="users">Users</Tabs.Trigger>
-						{/if}
-						{#if showOrgsTable}
-							<Tabs.Trigger value="organizations">Organizations</Tabs.Trigger>
-						{/if}
-					</Tabs.List>
-
+			<Tabs.Root value="users">
+				<Tabs.List class="grid w-full max-w-md grid-cols-2">
 					{#if showUsersTable}
-						<Tabs.Content value="users" class="mt-6">
-							<!-- Before Users Table Extension Point -->
-							{#if beforeUsersTable}
-								{@render beforeUsersTable()}
-							{/if}
-
-							<UsersAdminTable initialPageSize={usersTableLimit} {...usersTableProps} />
-
-							<!-- View All Button -->
-							{#if showViewAllActions}
-								{@const LinkComponent = Link}
-								<div class="mt-4 flex justify-center">
-									<LinkComponent href={usersViewAllHref}>
-										<Button variant="outline">
-											View All Users
-											<ArrowRight class="ml-2 size-4" />
-										</Button>
-									</LinkComponent>
-								</div>
-							{/if}
-
-							<!-- After Users Table Extension Point -->
-							{#if afterUsersTable}
-								{@render afterUsersTable()}
-							{/if}
-						</Tabs.Content>
+						<Tabs.Trigger value="users">Users</Tabs.Trigger>
 					{/if}
-
 					{#if showOrgsTable}
-						<Tabs.Content value="organizations" class="mt-6">
-							<!-- Before Orgs Table Extension Point -->
-							{#if beforeOrgsTable}
-								{@render beforeOrgsTable()}
-							{/if}
-
-							<OrganizationsAdminTable initialPageSize={orgsTableLimit} {...orgsTableProps} />
-
-							<!-- View All Button -->
-							{#if showViewAllActions}
-								{@const LinkComponent = Link}
-								<div class="mt-4 flex justify-center">
-									<LinkComponent href={orgsViewAllHref}>
-										<Button variant="outline">
-											View All Organizations
-											<ArrowRight class="ml-2 size-4" />
-										</Button>
-									</LinkComponent>
-								</div>
-							{/if}
-
-							<!-- After Orgs Table Extension Point -->
-							{#if afterOrgsTable}
-								{@render afterOrgsTable()}
-							{/if}
-						</Tabs.Content>
+						<Tabs.Trigger value="organizations">Organizations</Tabs.Trigger>
 					{/if}
-				</Tabs.Root>
+				</Tabs.List>
 
+				{#if showUsersTable}
+					<Tabs.Content value="users" class="mt-6">
+						<!-- Before Users Table Extension Point -->
+						{#if beforeUsersTable}
+							{@render beforeUsersTable()}
+						{/if}
+
+						<UsersAdminTable initialPageSize={usersTableLimit} {...usersTableProps} />
+
+						<!-- View All Button -->
+						{#if showViewAllActions}
+							{@const LinkComponent = Link}
+							<div class="mt-4 flex justify-center">
+								<LinkComponent href={usersViewAllHref}>
+									<Button variant="outline">
+										View All Users
+										<ArrowRight class="ml-2 size-4" />
+									</Button>
+								</LinkComponent>
+							</div>
+						{/if}
+
+						<!-- After Users Table Extension Point -->
+						{#if afterUsersTable}
+							{@render afterUsersTable()}
+						{/if}
+					</Tabs.Content>
+				{/if}
+
+				{#if showOrgsTable}
+					<Tabs.Content value="organizations" class="mt-6">
+						<!-- Before Orgs Table Extension Point -->
+						{#if beforeOrgsTable}
+							{@render beforeOrgsTable()}
+						{/if}
+
+						<OrganizationsAdminTable initialPageSize={orgsTableLimit} {...orgsTableProps} />
+
+						<!-- View All Button -->
+						{#if showViewAllActions}
+							{@const LinkComponent = Link}
+							<div class="mt-4 flex justify-center">
+								<LinkComponent href={orgsViewAllHref}>
+									<Button variant="outline">
+										View All Organizations
+										<ArrowRight class="ml-2 size-4" />
+									</Button>
+								</LinkComponent>
+							</div>
+						{/if}
+
+						<!-- After Orgs Table Extension Point -->
+						{#if afterOrgsTable}
+							{@render afterOrgsTable()}
+						{/if}
+					</Tabs.Content>
+				{/if}
+			</Tabs.Root>
 		{/if}
 
 		<!-- Children Extension Point -->

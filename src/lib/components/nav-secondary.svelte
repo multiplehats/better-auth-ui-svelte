@@ -1,8 +1,9 @@
 <script lang="ts">
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import type { WithoutChildren } from "$lib/utils/ui.js";
-	import type { ComponentProps } from "svelte";
-	import type { Icon } from "@tabler/icons-svelte";
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { resolve } from '$app/paths';
+	import type { WithoutChildren } from '$lib/utils/ui.js';
+	import type { ComponentProps } from 'svelte';
+	import type { Icon } from '@tabler/icons-svelte';
 
 	let {
 		items,
@@ -19,7 +20,7 @@
 				<Sidebar.MenuItem>
 					<Sidebar.MenuButton>
 						{#snippet child({ props })}
-							<a href={item.url} {...props}>
+							<a href={(resolve as (path: string) => string)(item.url)} {...props}>
 								<item.icon />
 								<span>{item.title}</span>
 							</a>

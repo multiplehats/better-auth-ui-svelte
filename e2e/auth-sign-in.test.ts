@@ -44,9 +44,7 @@ test.describe('Sign In', () => {
 		await fillField(page, 'input#password', 'WrongPassword999!');
 		await page.getByRole('button', { name: 'Login' }).click();
 
-		await expect(
-			page.locator('[data-sonner-toast]').first()
-		).toBeVisible({ timeout: 10_000 });
+		await expect(page.locator('[data-sonner-toast]').first()).toBeVisible({ timeout: 10_000 });
 	});
 
 	test('shows error for non-existent email', async ({ page }) => {
@@ -56,9 +54,7 @@ test.describe('Sign In', () => {
 		await fillField(page, 'input#password', 'SomePassword123!');
 		await page.getByRole('button', { name: 'Login' }).click();
 
-		await expect(
-			page.locator('[data-sonner-toast]').first()
-		).toBeVisible({ timeout: 10_000 });
+		await expect(page.locator('[data-sonner-toast]').first()).toBeVisible({ timeout: 10_000 });
 	});
 
 	test('shows social provider (Google) button', async ({ page }) => {

@@ -53,7 +53,6 @@
 	});
 
 	// Form validation schema - created once at initialization
-	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	const initLocalization = { ...contextLocalization, ...propLocalization };
 	const formSchema = z.object({
 		email: z
@@ -81,7 +80,7 @@
 			};
 
 			try {
-				await authClient.forgetPassword({
+				await (authClient.forgetPassword as unknown as (params: Record<string, unknown>) => Promise<unknown>)({
 					email: value.email,
 					redirectTo: `${baseURL}${basePath}/${resetPasswordPath}`,
 					fetchOptions

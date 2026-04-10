@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import { useCurrentOrganization } from '$lib/hooks/use-current-organization.svelte.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
@@ -7,6 +6,7 @@
 	import SettingsCard from '../settings/shared/settings-card.svelte';
 	import OrganizationTeamsInner from './organization-teams-inner.svelte';
 
+	/* eslint-disable @typescript-eslint/no-explicit-any */
 	export interface OrganizationTeamsCardProps {
 		className?: string;
 		classNames?: SettingsCardClassNames;
@@ -16,11 +16,11 @@
 		canCreateTeam?: () => boolean;
 		canDeleteTeam?: (team: any) => boolean;
 		canManageMembers?: (team: any) => boolean;
-		canAddMember?: (team: any) => boolean;
 		filterMembers?: (members: any[]) => any[];
 		canRemoveMember?: (member: any) => boolean;
-		renderTeamActions?: Snippet<[team: any]>;
 	}
+
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 
 	type Props = OrganizationTeamsCardProps;
 
@@ -33,10 +33,8 @@
 		canCreateTeam,
 		canDeleteTeam,
 		canManageMembers,
-		canAddMember,
 		filterMembers,
 		canRemoveMember,
-		renderTeamActions
 	}: Props = $props();
 
 	const config = getAuthUIConfig();
@@ -72,9 +70,7 @@
 		{canCreateTeam}
 		{canDeleteTeam}
 		{canManageMembers}
-		{canAddMember}
 		{filterMembers}
 		{canRemoveMember}
-		{renderTeamActions}
 	/>
 {/if}

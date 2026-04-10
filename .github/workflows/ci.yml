@@ -38,6 +38,11 @@ jobs:
 
       - name: Run check
         run: pnpm check
+        env:
+          BETTER_AUTH_URL: http://localhost:5173
+          BETTER_AUTH_SECRET: ci-check-secret
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
 
   Lint:
     runs-on: macos-latest

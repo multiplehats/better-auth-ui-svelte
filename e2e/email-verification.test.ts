@@ -44,9 +44,7 @@ test.describe('Email Verification', () => {
 		await page.getByRole('button', { name: 'Create an account' }).click();
 
 		await page.waitForURL('**/verify-email**', { timeout: 15_000 });
-		await expect(
-			page.getByRole('button', { name: /resend/i })
-		).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByRole('button', { name: /resend/i })).toBeVisible({ timeout: 10_000 });
 	});
 
 	test('verification link verifies email and shows success', async ({ page }) => {

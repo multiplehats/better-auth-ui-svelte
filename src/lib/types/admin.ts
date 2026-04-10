@@ -13,6 +13,9 @@ export interface User {
 	image?: string | null;
 	createdAt: Date | string | null;
 	updatedAt: Date | string | null;
+	twoFactorEnabled?: boolean | null;
+	username?: string | null;
+	displayUsername?: string | null;
 }
 
 /**
@@ -106,7 +109,9 @@ export interface UsersAdminTableProps {
 	data: UserWithRole[];
 	pageCount: number;
 	pagination: PaginationState;
-	onPaginationChange: (updater: PaginationState | ((state: PaginationState) => PaginationState)) => void;
+	onPaginationChange: (
+		updater: PaginationState | ((state: PaginationState) => PaginationState)
+	) => void;
 	isLoading: boolean;
 	onImpersonate?: (userId: string) => void | Promise<void>;
 	onBanUser?: (userId: string, reason?: string, expiresAt?: Date) => void | Promise<void>;
@@ -132,11 +137,16 @@ export interface OrganizationsAdminTableProps {
 	data: Organization[];
 	pageCount: number;
 	pagination: PaginationState;
-	onPaginationChange: (updater: PaginationState | ((state: PaginationState) => PaginationState)) => void;
+	onPaginationChange: (
+		updater: PaginationState | ((state: PaginationState) => PaginationState)
+	) => void;
 	isLoading: boolean;
 	onViewMembers?: (organizationId: string) => void | Promise<void>;
 	onImpersonateMember?: (organizationId: string) => void | Promise<void>;
-	onUpdateOrganization?: (organizationId: string, data: Partial<Organization>) => void | Promise<void>;
+	onUpdateOrganization?: (
+		organizationId: string,
+		data: Partial<Organization>
+	) => void | Promise<void>;
 	onDeleteOrganization?: (organizationId: string) => void | Promise<void>;
 	/** Custom actions to add to the dropdown menu */
 	customActions?: AdminTableAction<Organization>[];

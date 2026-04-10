@@ -129,7 +129,7 @@ class QRBitBuffer {
 			this.buffer.push(0);
 		}
 		if (bit) {
-			this.buffer[bufIndex] |= 0x80 >>> this.length % 8;
+			this.buffer[bufIndex] |= 0x80 >>> (this.length % 8);
 		}
 		this.length++;
 	}

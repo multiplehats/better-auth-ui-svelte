@@ -86,7 +86,6 @@
 	let uploadingAvatar = $state(false);
 
 	// Captcha integration
-	// svelte-ignore state_referenced_locally -- hooks are initialized once with current localization
 	const captchaHook = useCaptcha({ localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
@@ -99,7 +98,6 @@
 	});
 
 	// Success transition for navigation
-	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
 		redirectTo
 	});
@@ -119,7 +117,6 @@
 	}
 
 	// Build form schema - localization and passwordValidation are intentionally captured at init
-	// svelte-ignore state_referenced_locally -- form validation schema uses initial localization values
 	const defaultFields = {
 		email: z.email({
 			error: `${localization.EMAIL} ${localization.IS_INVALID}`
@@ -150,7 +147,6 @@
 	const schemaFields = {} as Record<string, z.ZodTypeAny>;
 
 	// Add additional fields from signUpFields
-	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	if (signUpFields) {
 		for (const field of signUpFields) {
 			if (field === 'name' || field === 'image') continue;
@@ -198,7 +194,6 @@
 		}
 	}
 
-	// svelte-ignore state_referenced_locally -- form schema intentionally captures initial localization
 	const formSchema = z
 		.object({
 			...defaultFields,
@@ -324,7 +319,7 @@
 			// Determine the callback URL for email verification
 			// If redirectToVerifyPage is true, redirect to verify-email page after verification
 			let signUpCallbackURL = getCallbackURL();
-			if (emailVerification?.redirectToVerifyPage) {
+			if (typeof emailVerification === 'object' && emailVerification?.redirectToVerifyPage) {
 				const origin = baseURL || (typeof window !== 'undefined' ? window.location.origin : '');
 				const verifyEmailPath = `${basePath}/${viewPaths.VERIFY_EMAIL}`;
 				signUpCallbackURL = `${origin}${verifyEmailPath}?verified=true&email=${encodeURIComponent(email as string)}`;
@@ -451,7 +446,7 @@
 									>
 										<UserAvatar
 											isPending={uploadingAvatar}
-											className="size-16"
+											class="size-16"
 											user={avatarImage
 												? {
 														name: form.getFieldValue('name') as string,
@@ -647,7 +642,7 @@
 			{#if additionalField}
 				<form.Field
 					name={field as never}
-					validators={{ onChange: getAdditionalFieldValidator(field) }}
+					validators={{ onChange: getAdditionalFieldValidator(field) as any }}
 				>
 					{#snippet children(fieldState)}
 						{#if additionalField.type === 'boolean'}
@@ -684,7 +679,7 @@
 									placeholder={additionalField.placeholder ||
 										(typeof additionalField.label === 'string' ? additionalField.label : '')}
 									value={fieldState.state.value}
-									oninput={(e) => fieldState.handleChange(e.currentTarget.value)}
+									oninput={(e) => fieldState.handleChange(e.currentTarget.value as never)}
 									onblur={fieldState.handleBlur}
 									disabled={isSubmitting}
 									class={classNames?.input}
@@ -706,7 +701,7 @@
 									placeholder={additionalField.placeholder ||
 										(typeof additionalField.label === 'string' ? additionalField.label : '')}
 									value={fieldState.state.value}
-									oninput={(e) => fieldState.handleChange(e.currentTarget.value)}
+									oninput={(e) => fieldState.handleChange(e.currentTarget.value as never)}
 									onblur={fieldState.handleBlur}
 									disabled={isSubmitting}
 									class={classNames?.input}
@@ -729,7 +724,7 @@
 									placeholder={additionalField.placeholder ||
 										(typeof additionalField.label === 'string' ? additionalField.label : '')}
 									value={fieldState.state.value}
-									oninput={(e) => fieldState.handleChange(e.currentTarget.value)}
+									oninput={(e) => fieldState.handleChange(e.currentTarget.value as never)}
 									onblur={fieldState.handleBlur}
 									disabled={isSubmitting}
 									class={classNames?.input}

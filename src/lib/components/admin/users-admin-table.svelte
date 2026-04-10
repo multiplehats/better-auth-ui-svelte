@@ -7,9 +7,7 @@
 	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table/render-helpers.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Badge from '$lib/components/ui/badge/index.js';
 	import type {
-		Column,
 		ColumnDef,
 		PaginationState,
 		Row,
@@ -19,13 +17,11 @@
 	import { getCoreRowModel, getPaginationRowModel, getSortedRowModel } from '@tanstack/table-core';
 	import type { UserWithRole } from '$lib/types/admin.js';
 	import { createRawSnippet } from 'svelte';
-	import {
-		getAuthClient,
-		getAuthUIConfig,
-		getLocalization
-	} from '$lib/context/auth-ui-config.svelte.js';
+	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import {
 		MoreHorizontal,
 		ChevronLeft,
@@ -60,21 +56,18 @@
 	// Get Better Auth client and config
 	const authClient = getAuthClient();
 	const config = getAuthUIConfig();
-	const contextLocalization = getLocalization();
 	const toast = config.toast;
 
 	// Internal state
 	let data = $state<UserWithRole[]>([]);
 	let isLoading = $state(false);
 	let pageCount = $state(0);
-	// svelte-ignore state_referenced_locally -- initialPageSize sets the initial pagination state
 	let pagination = $state<PaginationState>({
 		pageIndex: 0,
 		pageSize: initialPageSize
 	});
 
 	// URL sync - read initial values from URL if enabled
-	// svelte-ignore state_referenced_locally -- syncWithUrl and initialPageSize are checked once at mount
 	if (syncWithUrl && typeof window !== 'undefined') {
 		const urlPage = Number($page.url.searchParams.get('page') ?? '1');
 		const urlLimit = Number($page.url.searchParams.get('limit') ?? String(initialPageSize));
@@ -102,8 +95,10 @@
 		isLoading = true;
 		try {
 			const { data: response, error } = await authClient.admin.listUsers({
-				limit: pagination.pageSize,
-				offset: pagination.pageIndex * pagination.pageSize
+				query: {
+					limit: pagination.pageSize,
+					offset: pagination.pageIndex * pagination.pageSize
+				}
 			});
 
 			if (error) {
@@ -112,24 +107,24 @@
 			}
 
 			if (response) {
-				data = (response.users as any[]).map((user) => ({
-					id: user.id,
-					email: user.email,
-					name: user.name,
-					emailVerified: user.emailVerified,
-					image: user.image,
-					createdAt: user.createdAt ? new Date(user.createdAt) : null,
-					updatedAt: user.updatedAt ? new Date(user.updatedAt) : null,
-					role: user.role ?? 'user',
-					banned: user.banned ?? false,
-					banReason: user.banReason,
-					banExpires: user.banExpires ? new Date(user.banExpires) : null
+				data = (response.users as Record<string, unknown>[]).map((user) => ({
+					id: user.id as string,
+					email: user.email as string,
+					name: user.name as string | null | undefined,
+					emailVerified: user.emailVerified as boolean,
+					image: user.image as string | null | undefined,
+					createdAt: user.createdAt ? new Date(user.createdAt as string) : null,
+					updatedAt: user.updatedAt ? new Date(user.updatedAt as string) : null,
+					role: (user.role as string) ?? 'user',
+					banned: (user.banned as boolean) ?? false,
+					banReason: user.banReason as string | null | undefined,
+					banExpires: user.banExpires ? new Date(user.banExpires as string) : null
 				}));
 
 				const total = response.total ?? data.length;
 				pageCount = Math.ceil(total / pagination.pageSize);
 			}
-		} catch (err) {
+		} catch {
 			toast.error('Failed to fetch users');
 		} finally {
 			isLoading = false;
@@ -150,10 +145,10 @@
 
 		// Update URL if sync enabled
 		if (syncWithUrl && typeof window !== 'undefined') {
-			const params = new URLSearchParams($page.url.searchParams);
+			const params = new SvelteURLSearchParams($page.url.searchParams);
 			params.set('page', String(newPagination.pageIndex + 1));
 			params.set('limit', String(newPagination.pageSize));
-			goto(`?${params.toString()}`, { replaceState: true, keepFocus: true });
+			goto((resolve as (path: string) => string)(`?${params.toString()}`), { replaceState: true, keepFocus: true });
 		}
 	}
 
@@ -205,7 +200,7 @@
 						render: () => `<div class="font-medium">${email}</div>`
 					};
 				});
-				return renderSnippet(emailSnippet, { email: row.getValue('email') });
+				return renderSnippet(emailSnippet, { email: row.getValue('email') as string });
 			},
 			enableSorting: false
 		},
@@ -220,7 +215,7 @@
 							`<div class="text-muted-foreground">${name ?? '<span class="italic">No name</span>'}</div>`
 					};
 				});
-				return renderSnippet(nameSnippet, { name: row.getValue('name') });
+				return renderSnippet(nameSnippet, { name: row.getValue('name') as string | null | undefined });
 			}
 		},
 		{
@@ -229,20 +224,22 @@
 			cell: ({ row }) => {
 				const roleSnippet = createRawSnippet<[{ role: string }]>((getRole) => {
 					const { role } = getRole();
-					const baseClass = 'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3';
+					const baseClass =
+						'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3';
 					let variantClass = '';
 					if (role === 'admin') {
 						variantClass = 'border-transparent bg-purple-500 text-white [a&]:hover:bg-purple-600';
 					} else if (role === 'moderator') {
 						variantClass = 'border-transparent bg-blue-500 text-white [a&]:hover:bg-blue-600';
 					} else {
-						variantClass = 'bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 border-transparent';
+						variantClass =
+							'bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 border-transparent';
 					}
 					return {
 						render: () => `<span class="${baseClass} ${variantClass}">${role}</span>`
 					};
 				});
-				return renderSnippet(roleSnippet, { role: row.getValue('role') });
+				return renderSnippet(roleSnippet, { role: row.getValue('role') as string });
 			}
 		},
 		{
@@ -251,7 +248,8 @@
 			cell: ({ row }) => {
 				const bannedSnippet = createRawSnippet<[{ banned: boolean }]>((getBanned) => {
 					const { banned } = getBanned();
-					const baseClass = 'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3';
+					const baseClass =
+						'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3';
 					const variantClass = banned
 						? 'bg-destructive [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/70 border-transparent text-white'
 						: 'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground border-green-600 text-green-600';
@@ -260,7 +258,7 @@
 						render: () => `<span class="${baseClass} ${variantClass}">${text}</span>`
 					};
 				});
-				return renderSnippet(bannedSnippet, { banned: row.getValue('banned') });
+				return renderSnippet(bannedSnippet, { banned: row.getValue('banned') as boolean });
 			}
 		},
 		{
@@ -289,7 +287,7 @@
 						};
 					}
 				);
-				return renderSnippet(dateSnippet, { dateValue: row.getValue('createdAt') });
+				return renderSnippet(dateSnippet, { dateValue: row.getValue('createdAt') as Date | string | null | undefined });
 			}
 		},
 		{
@@ -367,7 +365,7 @@
 			if (typeof window !== 'undefined') {
 				window.location.reload();
 			}
-		} catch (err) {
+		} catch {
 			toast.error('Failed to impersonate user');
 		}
 	}
@@ -397,7 +395,7 @@
 			selectedUser = null;
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to ban user');
 		}
 	}
@@ -413,7 +411,7 @@
 		try {
 			const { error } = await authClient.admin.setRole({
 				userId: selectedUser.id,
-				role
+				role: role as 'user' | 'admin'
 			});
 
 			if (error) {
@@ -426,7 +424,7 @@
 			selectedUser = null;
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to update role');
 		}
 	}
@@ -445,7 +443,7 @@
 			toast.success('User unbanned successfully');
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to unban user');
 		}
 	}
@@ -473,7 +471,7 @@
 			selectedUser = null;
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to delete user');
 		}
 	}
@@ -502,7 +500,7 @@
 			selectedUser = null;
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to reset password');
 		}
 	}
@@ -530,7 +528,7 @@
 			selectedUser = null;
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to revoke sessions');
 		}
 	}
@@ -562,7 +560,7 @@
 			rowSelection = {};
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to delete users');
 		}
 	}
@@ -576,14 +574,14 @@
 		password: string,
 		name: string,
 		role?: string,
-		customData?: Record<string, any>
+		customData?: Record<string, unknown>
 	) {
 		try {
 			const { error } = await authClient.admin.createUser({
 				email,
 				password,
 				name,
-				role,
+				role: role as 'user' | 'admin' | undefined,
 				data: customData
 			});
 
@@ -596,7 +594,7 @@
 			createUserDialogOpen = false;
 
 			await fetchUsers();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to create user');
 		}
 	}
@@ -606,7 +604,7 @@
 	{@const user = row.original}
 
 	<DropdownMenu.Root>
-		<DropdownMenu.Trigger asChild>
+		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
 				<Button {...props} variant="ghost" size="icon" class="h-8 w-8 p-0">
 					<span class="sr-only">Open menu</span>

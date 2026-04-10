@@ -27,8 +27,9 @@
 	const config = getAuthUIConfig();
 	const localization = $derived({ ...config.localization, ...localizationProp });
 
+	const magicLinkConfig = $derived(typeof config.magicLink === 'object' ? config.magicLink : {} as Record<string, unknown>);
+
 	// State management
-	// svelte-ignore state_referenced_locally -- email prop initializes form state
 	let email = $state(emailProp || '');
 	let isResending = $state(false);
 	let resendDisabled = $state(false);
@@ -45,8 +46,7 @@
 
 		// Start cooldown immediately if user just arrived (they've already received initial email)
 		if (email) {
-			const magicLinkConfig = typeof config.magicLink === 'object' ? config.magicLink : {};
-			const cooldownPeriod = magicLinkConfig.resendCooldown || 60;
+			const cooldownPeriod = (magicLinkConfig as { resendCooldown?: number }).resendCooldown || 60;
 			const storageKey = `better-auth-magic-link-cooldown-${email}`;
 
 			// Check if there's an existing cooldown in localStorage
@@ -118,7 +118,7 @@
 			config.toast.success(localization.MAGIC_LINK_EMAIL);
 
 			// Start countdown with configured cooldown period
-			const cooldownPeriod = magicLinkConfig.resendCooldown || 60;
+			const cooldownPeriod = (magicLinkConfig as { resendCooldown?: number }).resendCooldown || 60;
 			countdown = cooldownPeriod;
 			resendDisabled = true;
 

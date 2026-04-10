@@ -24,7 +24,6 @@
 
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
-	// svelte-ignore state_referenced_locally -- slug prop initializes organization hook
 	const slug = slugProp || organizationOptions?.slug;
 
 	const currentOrg = useCurrentOrganization({ slug });

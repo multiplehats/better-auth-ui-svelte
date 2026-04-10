@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import type { DropdownMenuContentProps } from '$lib/components/ui/dropdown-menu/index.js';
+	import type { ComponentProps } from 'svelte';
+	type DropdownMenuContentProps = ComponentProps<typeof DropdownMenu.Content>;
 	import { Button, type ButtonSize } from '$lib/components/ui/button/index.js';
 	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
 	import UserAvatar, { type UserAvatarClassNames } from './user-avatar.svelte';

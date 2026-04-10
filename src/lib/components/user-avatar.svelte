@@ -104,7 +104,7 @@
 
 		<Avatar.Fallback
 			class={cn('text-foreground uppercase', classNames?.fallback)}
-			delayMs={src ? 600 : undefined}
+			{...({ delayMs: src ? 600 : undefined } as Record<string, unknown>)}
 		>
 			{#if firstTwoCharacters(name)}
 				<span>{firstTwoCharacters(name)}</span>

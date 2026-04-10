@@ -2,7 +2,7 @@
 	import Check from '@lucide/svelte/icons/check';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import X from '@lucide/svelte/icons/x';
-	import { getAuthClient, getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn, getLocalizedError, getSearchParam } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { SettingsCardClassNames } from '../settings/shared/settings-card.svelte';
@@ -29,7 +29,6 @@
 	const { redirectTo, replace, toast, organization: organizationOptions } = config;
 
 	// Hook called unconditionally at top level — invitationId is guaranteed by the parent.
-	// svelte-ignore state_referenced_locally -- invitationId is stable for the lifetime of this component
 	const invitationHook = config.hooks.useInvitation({ id: invitationId });
 	const invitation = $derived(invitationHook?.data ?? null);
 	const isPending = $derived(invitationHook?.isPending ?? false);

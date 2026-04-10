@@ -21,7 +21,7 @@
 			password: string,
 			name: string,
 			role?: string,
-			data?: Record<string, any>
+			data?: Record<string, unknown>
 		) => void | Promise<void>;
 		onCancel: () => void;
 	} = $props();
@@ -68,7 +68,7 @@
 		if (customData.trim()) {
 			try {
 				JSON.parse(customData);
-			} catch (e) {
+			} catch {
 				newErrors.customData = 'Invalid JSON format';
 			}
 		}
@@ -82,11 +82,11 @@
 
 		isLoading = true;
 		try {
-			let parsedData: Record<string, any> | undefined;
+			let parsedData: Record<string, unknown> | undefined;
 			if (customData.trim()) {
 				try {
 					parsedData = JSON.parse(customData);
-				} catch (e) {
+				} catch {
 					// Already validated, this shouldn't happen
 				}
 			}

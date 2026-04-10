@@ -36,7 +36,6 @@
 
 	// Use hook if skipHook is false
 	let listAccountsResult: ReturnType<typeof useListAccounts> | undefined = undefined;
-	// svelte-ignore state_referenced_locally -- skipHook is checked once at initialization to determine data source
 	if (!skipHook) {
 		listAccountsResult = useListAccounts();
 	}
@@ -76,7 +75,7 @@
 				<ProviderCell
 					{classNames}
 					account={derivedAccounts?.find((acc) => acc.providerId === provider.provider)}
-					{provider}
+					provider={provider as import('$lib/social-providers.js').Provider}
 					refetch={derivedRefetch}
 					other
 				/>

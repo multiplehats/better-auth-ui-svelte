@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.svelte';
+	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import { CardContent } from '$lib/components/ui/card/index.js';
@@ -22,17 +22,16 @@
 	const { hooks } = config;
 
 	// Hooks called unconditionally at the top level — organization is guaranteed by the parent.
-	// svelte-ignore state_referenced_locally -- organizationId is stable for the lifetime of this component
+	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const hasPermissionInviteHook = hooks.useHasPermission({
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		organizationId: organization.id, permissions: { invitation: ['create'] }
+		organizationId: organization.id,
+		permissions: { invitation: ['create'] }
 	} as any);
-	// svelte-ignore state_referenced_locally -- organizationId is stable for the lifetime of this component
 	const hasPermissionUpdateMemberHook = hooks.useHasPermission({
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		organizationId: organization.id, permission: { member: ['update'] }
+		organizationId: organization.id,
+		permission: { member: ['update'] }
 	} as any);
-	// svelte-ignore state_referenced_locally -- organizationId is stable for the lifetime of this component
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 	const membersHook = hooks.useListMembers({ query: { organizationId: organization.id } });
 
 	const hasPermissionInvite = $derived(hasPermissionInviteHook?.data);

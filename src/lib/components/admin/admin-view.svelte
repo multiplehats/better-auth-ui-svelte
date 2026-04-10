@@ -1,7 +1,5 @@
 <script lang="ts" module>
-	import type { AdminViewProps } from '$lib/types/admin.js';
-
-	export type { AdminViewProps };
+	export type { AdminViewProps } from '$lib/types/admin.js';
 </script>
 
 <script lang="ts">
@@ -13,6 +11,7 @@
 	import UsersAdminTable from './users-admin-table.svelte';
 	import OrganizationsAdminTable from './organizations-admin-table.svelte';
 	import { adminViewPaths } from '$lib/utils/view-paths.js';
+	import type { AdminViewProps } from '$lib/types/admin.js';
 
 	type Props = AdminViewProps;
 
@@ -37,20 +36,22 @@
 
 	const path = $derived(pathProp ?? pathname?.split('/').pop());
 
-	const view = $derived(
-		viewProp || getViewByPath(adminViewPaths, path!) || 'DASHBOARD'
-	);
+	const view = $derived(viewProp || getViewByPath(adminViewPaths, path!) || 'DASHBOARD');
 
 	// Use adminBasePath from config, default to '/admin'
 	const basePath = $derived(adminBasePath ?? '/admin');
 
 	const navItems = $derived([
-		{ view: 'DASHBOARD', label: localization.DASHBOARD || 'Dashboard', value: 'dashboard' },
-		{ view: 'USERS', label: localization.USERS || 'Users', value: 'users' },
-		{ view: 'ORGANIZATIONS', label: localization.ORGANIZATIONS || 'Organizations', value: 'organizations' }
+		{ view: 'DASHBOARD', label: (localization as Record<string, string>).DASHBOARD || 'Dashboard', value: 'dashboard' },
+		{ view: 'USERS', label: (localization as Record<string, string>).USERS || 'Users', value: 'users' },
+		{
+			view: 'ORGANIZATIONS',
+			label: localization.ORGANIZATIONS || 'Organizations',
+			value: 'organizations'
+		}
 	] as const);
 
-	const currentTabValue = $derived(adminViewPaths[view] || 'dashboard');
+	const currentTabValue = $derived(adminViewPaths[view as keyof typeof adminViewPaths] || 'dashboard');
 </script>
 
 <div class={cn('flex w-full grow flex-col gap-4', className, classNames?.base)}>
@@ -77,7 +78,11 @@
 		{:else if view === 'USERS'}
 			<UsersAdminTable syncWithUrl={true} />
 		{:else if view === 'ORGANIZATIONS'}
-			<OrganizationsAdminTable syncWithUrl={true} customActions={organizationCustomActions} {fetchOrganizations} />
+			<OrganizationsAdminTable
+				syncWithUrl={true}
+				customActions={organizationCustomActions}
+				{fetchOrganizations}
+			/>
 		{/if}
 	</div>
 </div>

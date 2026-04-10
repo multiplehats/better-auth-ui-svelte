@@ -246,7 +246,7 @@ export interface ConditionalProps {
 // Re-export all types
 export * from './additional-fields.js';
 export * from './admin.js';
-export * from './any-auth-client.js';
+export { type AnyAuthClient, type AuthClient, type Session } from './any-auth-client.js';
 export * from './api-key.js';
 export * from './auth-hooks.js';
 export * from './auth-mutators.js';

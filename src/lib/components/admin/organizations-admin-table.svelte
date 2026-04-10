@@ -7,9 +7,7 @@
 	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table/render-helpers.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Badge from '$lib/components/ui/badge/index.js';
 	import type {
-		Column,
 		ColumnDef,
 		PaginationState,
 		Row,
@@ -17,15 +15,17 @@
 		SortingState
 	} from '@tanstack/table-core';
 	import { getCoreRowModel, getPaginationRowModel, getSortedRowModel } from '@tanstack/table-core';
-	import type { Organization, AdminTableAction, FetchOrganizationsResponse } from '$lib/types/admin.js';
+	import type {
+		Organization,
+		AdminTableAction,
+		FetchOrganizationsResponse
+	} from '$lib/types/admin.js';
 	import { createRawSnippet } from 'svelte';
-	import {
-		getAuthClient,
-		getAuthUIConfig,
-		getLocalization
-	} from '$lib/context/auth-ui-config.svelte.js';
+	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import {
 		MoreHorizontal,
 		ChevronLeft,
@@ -33,7 +33,6 @@
 		ChevronsLeft,
 		ChevronsRight,
 		Users,
-		UserCog,
 		Edit,
 		Trash2
 	} from '@lucide/svelte';
@@ -69,21 +68,18 @@
 	// Get Better Auth client and config
 	const authClient = getAuthClient();
 	const config = getAuthUIConfig();
-	const contextLocalization = getLocalization();
 	const toast = config.toast;
 
 	// Internal state
 	let data = $state<Organization[]>([]);
 	let isLoading = $state(false);
 	let pageCount = $state(0);
-	// svelte-ignore state_referenced_locally -- initialPageSize sets the initial pagination state
 	let pagination = $state<PaginationState>({
 		pageIndex: 0,
 		pageSize: initialPageSize
 	});
 
 	// URL sync - read initial values from URL if enabled
-	// svelte-ignore state_referenced_locally -- syncWithUrl and initialPageSize are checked once at mount
 	if (syncWithUrl && typeof window !== 'undefined') {
 		const urlPage = Number($page.url.searchParams.get('page') ?? '1');
 		const urlLimit = Number($page.url.searchParams.get('limit') ?? String(initialPageSize));
@@ -136,13 +132,13 @@
 				}
 
 				if (response) {
-					const allOrgs = (response as any[]).map((org) => ({
-						id: org.id,
-						name: org.name,
-						slug: org.slug,
-						logo: org.logo,
-						createdAt: org.createdAt ? new Date(org.createdAt) : null,
-						metadata: org.metadata
+					const allOrgs = (response as Record<string, unknown>[]).map((org) => ({
+						id: org.id as string,
+						name: org.name as string,
+						slug: org.slug as string,
+						logo: org.logo as string | null | undefined,
+						createdAt: org.createdAt ? new Date(org.createdAt as string) : null,
+						metadata: org.metadata as Record<string, unknown> | null | undefined
 					}));
 
 					// Client-side pagination (organization.list doesn't support pagination)
@@ -152,7 +148,7 @@
 					pageCount = Math.ceil(allOrgs.length / pagination.pageSize);
 				}
 			}
-		} catch (err) {
+		} catch {
 			toast.error('Failed to fetch organizations');
 		} finally {
 			isLoading = false;
@@ -173,10 +169,10 @@
 
 		// Update URL if sync enabled
 		if (syncWithUrl && typeof window !== 'undefined') {
-			const params = new URLSearchParams($page.url.searchParams);
+			const params = new SvelteURLSearchParams($page.url.searchParams);
 			params.set('page', String(newPagination.pageIndex + 1));
 			params.set('limit', String(newPagination.pageSize));
-			goto(`?${params.toString()}`, { replaceState: true, keepFocus: true });
+			goto((resolve as (path: string) => string)(`?${params.toString()}`), { replaceState: true, keepFocus: true });
 		}
 	}
 
@@ -221,7 +217,7 @@
 						render: () => `<div class="font-medium">${name}</div>`
 					};
 				});
-				return renderSnippet(nameSnippet, { name: row.getValue('name') });
+				return renderSnippet(nameSnippet, { name: row.getValue('name') as string });
 			},
 			enableSorting: false
 		},
@@ -235,7 +231,7 @@
 						render: () => `<div class="text-muted-foreground font-mono text-sm">${slug}</div>`
 					};
 				});
-				return renderSnippet(slugSnippet, { slug: row.getValue('slug') });
+				return renderSnippet(slugSnippet, { slug: row.getValue('slug') as string });
 			}
 		},
 		{
@@ -264,7 +260,7 @@
 						};
 					}
 				);
-				return renderSnippet(dateSnippet, { dateValue: row.getValue('createdAt') });
+				return renderSnippet(dateSnippet, { dateValue: row.getValue('createdAt') as Date | string | null | undefined });
 			}
 		},
 		{
@@ -358,7 +354,7 @@
 			selectedOrganization = null;
 
 			await fetchOrganizations();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to delete organization');
 		}
 	}
@@ -390,7 +386,7 @@
 			rowSelection = {};
 
 			await fetchOrganizations();
-		} catch (err) {
+		} catch {
 			toast.error('Failed to delete organizations');
 		}
 	}
@@ -400,7 +396,7 @@
 	{@const org = row.original}
 
 	<DropdownMenu.Root>
-		<DropdownMenu.Trigger asChild>
+		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
 				<Button {...props} variant="ghost" size="icon" class="h-8 w-8 p-0">
 					<span class="sr-only">Open menu</span>
@@ -429,7 +425,7 @@
 
 			{#if customActions.length > 0}
 				<DropdownMenu.Separator />
-				{#each customActions as action}
+				{#each customActions as action (action.label)}
 					{#if !action.show || action.show(org)}
 						<DropdownMenu.Item
 							onclick={() => action.onClick(org)}

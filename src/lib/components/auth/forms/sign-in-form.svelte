@@ -68,7 +68,6 @@
 		...passwordValidationProp
 	});
 
-	// svelte-ignore state_referenced_locally -- hooks are initialized once with current localization
 	const captchaHook = useCaptcha({ localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
@@ -80,7 +79,6 @@
 		captchaHook.captchaRef = captchaRef;
 	});
 
-	// svelte-ignore state_referenced_locally -- redirect value is captured once for transition hook
 	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
 		redirectTo
 	});

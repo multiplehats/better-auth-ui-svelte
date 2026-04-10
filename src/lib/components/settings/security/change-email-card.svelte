@@ -172,7 +172,7 @@
 		</SettingsCard>
 	</form>
 
-	{#if emailVerification?.enabled && sessionData?.user && !sessionData?.user.emailVerified}
+	{#if emailVerification && sessionData?.user && !sessionData?.user.emailVerified}
 		<form
 			onsubmit={(e) => {
 				e.preventDefault();

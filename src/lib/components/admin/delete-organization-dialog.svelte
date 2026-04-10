@@ -55,14 +55,14 @@
 
 				<div class="grid gap-2">
 					<div class="text-sm font-medium">Organization to Delete</div>
-					<div class="rounded-md border p-3 space-y-2">
+					<div class="space-y-2 rounded-md border p-3">
 						<div class="flex justify-between">
 							<span class="text-sm text-muted-foreground">Name:</span>
 							<span class="text-sm font-medium">{organization.name}</span>
 						</div>
 						<div class="flex justify-between">
 							<span class="text-sm text-muted-foreground">Slug:</span>
-							<span class="text-sm font-medium font-mono">{organization.slug}</span>
+							<span class="font-mono text-sm font-medium">{organization.slug}</span>
 						</div>
 					</div>
 				</div>

@@ -42,7 +42,8 @@
 		<Dialog.Header>
 			<Dialog.Title class="flex items-center gap-2">
 				<Trash2 class="h-5 w-5" />
-				Delete {itemCount} {itemCount === 1 ? itemLabel : itemLabelPlural}
+				Delete {itemCount}
+				{itemCount === 1 ? itemLabel : itemLabelPlural}
 			</Dialog.Title>
 			<Dialog.Description>
 				This action cannot be undone. This will permanently delete the selected {itemCount === 1
@@ -67,9 +68,9 @@
 					<div class="text-sm font-medium">
 						{itemCount === 1 ? itemLabel : itemLabelPlural} to delete:
 					</div>
-					<div class="rounded-md border p-3 max-h-[200px] overflow-y-auto">
+					<div class="max-h-[200px] overflow-y-auto rounded-md border p-3">
 						<ul class="space-y-1 text-sm">
-							{#each items as item}
+							{#each items as item (item.name)}
 								<li class="py-1">• {item.name}</li>
 							{/each}
 						</ul>

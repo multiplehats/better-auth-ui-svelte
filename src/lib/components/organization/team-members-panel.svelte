@@ -77,7 +77,7 @@
 
 	{#if isPending}
 		<div class="space-y-2">
-			{#each Array(2) as _}
+			{#each Array.from({length: 2}, (_, i) => i) as i (i)}
 				<div class="h-12 animate-pulse rounded-md bg-muted"></div>
 			{/each}
 		</div>

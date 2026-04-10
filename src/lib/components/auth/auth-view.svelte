@@ -223,7 +223,7 @@
 								{/if}
 							{/each}
 
-							{#each genericOAuth?.providers || [] as provider (provider.providerId)}
+							{#each genericOAuth?.providers || [] as provider (provider.provider)}
 								<ProviderButton
 									{classNames}
 									{callbackURL}

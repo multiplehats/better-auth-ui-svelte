@@ -8,7 +8,6 @@
 	import SettingsCard from '../settings/shared/settings-card.svelte';
 	import TeamCell from './team-cell.svelte';
 	import CreateTeamDialog from './create-team-dialog.svelte';
-	import type { Snippet } from 'svelte';
 
 	interface Team {
 		id: string;
@@ -18,6 +17,7 @@
 		updatedAt: Date;
 	}
 
+	/* eslint-disable @typescript-eslint/no-explicit-any */
 	interface Props {
 		className?: string;
 		classNames?: SettingsCardClassNames;
@@ -27,11 +27,11 @@
 		canCreateTeam?: () => boolean;
 		canDeleteTeam?: (team: Team) => boolean;
 		canManageMembers?: (team: Team) => boolean;
-		canAddMember?: (team: Team) => boolean;
 		filterMembers?: (members: any[]) => any[];
 		canRemoveMember?: (member: any) => boolean;
-		renderTeamActions?: Snippet<[team: Team]>;
 	}
+
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 
 	let {
 		className,
@@ -42,10 +42,8 @@
 		canCreateTeam,
 		canDeleteTeam,
 		canManageMembers,
-		canAddMember,
 		filterMembers,
 		canRemoveMember,
-		renderTeamActions
 	}: Props = $props();
 
 	const config = getAuthUIConfig();

@@ -377,5 +377,5 @@ export const nlLocalization: AuthLocalization = {
 	FAILED_TO_UNLINK_LAST_ACCOUNT: 'Je kunt je laatste account niet ontkoppelen',
 	ACCOUNT_NOT_FOUND: 'Account niet gevonden',
 	USER_ALREADY_HAS_PASSWORD:
-		'Gebruiker heeft al een wachtwoord. Geef dat op om het account te verwijderen.',
+		'Gebruiker heeft al een wachtwoord. Geef dat op om het account te verwijderen.'
 };

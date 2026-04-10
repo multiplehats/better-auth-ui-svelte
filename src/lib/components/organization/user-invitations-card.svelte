@@ -37,7 +37,7 @@
 
 	// useListOrganizations returns a store, so we need fromStore
 	const organizationsStore = useListOrganizations();
-	const organizationsResult = fromStore(organizationsStore);
+	const organizationsResult = fromStore(organizationsStore) as { value: { refetch?: () => void } };
 	const refetchOrganizations = $derived(organizationsResult.value?.refetch);
 
 	const pendingInvitations = $derived(

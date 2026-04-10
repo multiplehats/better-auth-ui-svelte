@@ -1,12 +1,13 @@
 <script lang="ts">
-	import DotsIcon from "@tabler/icons-svelte/icons/dots";
-	import FolderIcon from "@tabler/icons-svelte/icons/folder";
-	import Share3Icon from "@tabler/icons-svelte/icons/share-3";
-	import TrashIcon from "@tabler/icons-svelte/icons/trash";
-	import type { Icon } from "@tabler/icons-svelte";
+	import DotsIcon from '@tabler/icons-svelte/icons/dots';
+	import FolderIcon from '@tabler/icons-svelte/icons/folder';
+	import Share3Icon from '@tabler/icons-svelte/icons/share-3';
+	import TrashIcon from '@tabler/icons-svelte/icons/trash';
+	import type { Icon } from '@tabler/icons-svelte';
 
-	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { resolve } from '$app/paths';
 
 	let { items }: { items: { name: string; url: string; icon: Icon }[] } = $props();
 
@@ -20,7 +21,7 @@
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton>
 					{#snippet child({ props })}
-						<a {...props} href={item.url}>
+						<a {...props} href={(resolve as (path: string) => string)(item.url)}>
 							<item.icon />
 							<span>{item.name}</span>
 						</a>
@@ -32,7 +33,7 @@
 							<Sidebar.MenuAction
 								{...props}
 								showOnHover
-								class="data-[state=open]:bg-accent rounded-sm"
+								class="rounded-sm data-[state=open]:bg-accent"
 							>
 								<DotsIcon />
 								<span class="sr-only">More</span>
@@ -41,8 +42,8 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content
 						class="w-24 rounded-lg"
-						side={sidebar.isMobile ? "bottom" : "right"}
-						align={sidebar.isMobile ? "end" : "start"}
+						side={sidebar.isMobile ? 'bottom' : 'right'}
+						align={sidebar.isMobile ? 'end' : 'start'}
 					>
 						<DropdownMenu.Item>
 							<FolderIcon />

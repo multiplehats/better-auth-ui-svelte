@@ -42,7 +42,8 @@
 	async function deleteTeam() {
 		isDeleting = true;
 		try {
-			await authClient.organization.removeTeam({
+			await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(authClient.organization as any).removeTeam({
 				teamId: team.id,
 				organizationId: team.organizationId,
 				fetchOptions: { throw: true }

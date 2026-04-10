@@ -56,7 +56,6 @@
 	const roles = $derived([...builtInRoles, ...(organizationOptions?.customRoles || [])]);
 	const role = $derived(roles.find((r) => r.role === invitation.role));
 
-	// svelte-ignore state_referenced_locally -- organization prop initializes invitations hook
 	const invitationsHook = useListInvitations({
 		query: { organizationId: organization?.id }
 	});

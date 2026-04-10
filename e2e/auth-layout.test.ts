@@ -31,9 +31,7 @@ test.describe('Auth Layout & UI', () => {
 		await passwordInput.click();
 		await passwordInput.pressSequentially('testpass', { delay: 50 });
 		// Dispatch input event to ensure oninput handler fires
-		await passwordInput.evaluate((el) =>
-			el.dispatchEvent(new Event('input', { bubbles: true }))
-		);
+		await passwordInput.evaluate((el) => el.dispatchEvent(new Event('input', { bubbles: true })));
 		await page.waitForTimeout(500);
 
 		// Click the toggle button inside the password container

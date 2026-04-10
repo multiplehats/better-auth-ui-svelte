@@ -65,7 +65,6 @@
 	}
 
 	// Form validation schema - localization captured at init for validation messages
-	// svelte-ignore state_referenced_locally -- form schema is created once with initial localization values
 	const initLocalization = { ...contextLocalization, ...propLocalization };
 	const formSchema = z.object({
 		logo: z.string().optional(),

@@ -226,7 +226,7 @@ For applications using the Better Auth admin plugin, create an admin interface w
 
 ```svelte
 <!-- src/routes/app/admin/[path]/+page.svelte -->
-<script lang=\"ts\">
+<script lang="\"ts\"">
 	import { AdminView } from 'better-auth-ui-svelte';
 	import type { PageProps } from './$types.js';
 
@@ -237,6 +237,7 @@ For applications using the Better Auth admin plugin, create an admin interface w
 ```
 
 This creates admin routes at:
+
 - `/app/admin/dashboard` - Overview with stats and charts
 - `/app/admin/users` - User management table
 - `/app/admin/organizations` - Organization management table

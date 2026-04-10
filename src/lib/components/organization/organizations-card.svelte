@@ -27,8 +27,9 @@
 
 	const mergedLocalization = $derived({ ...contextLocalization, ...localization });
 
+	type OrgData = { id: string; name: string; slug: string; createdAt: Date; logo?: string | null; metadata?: unknown };
 	const organizationsStore = useListOrganizations();
-	const organizationsResult = fromStore(organizationsStore);
+	const organizationsResult = fromStore(organizationsStore) as { value: { data?: OrgData[] | null; isPending?: boolean } };
 
 	// Derive reactive values from the store
 	const organizationsData = $derived(organizationsResult.value?.data ?? null);

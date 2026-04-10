@@ -1,4 +1,5 @@
 <script lang="ts">
+	/* eslint-disable svelte/no-unused-props */
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
@@ -51,7 +52,8 @@
 		defaultValues: { name: team.name },
 		onSubmit: async ({ value }) => {
 			try {
-				await authClient.organization.updateTeam({
+				await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(authClient.organization as any).updateTeam({
 					teamId: team.id,
 					data: { name: value.name },
 					fetchOptions: { throw: true }

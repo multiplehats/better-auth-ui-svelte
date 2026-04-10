@@ -20,7 +20,7 @@
 	import RemoveMemberDialog from './remove-member-dialog.svelte';
 
 	let {
-		organizationId,
+		organizationId, // eslint-disable-line @typescript-eslint/no-unused-vars
 		organizationName,
 		open = $bindable(false),
 		onOpenChange,
@@ -188,7 +188,7 @@
 									</Table.Cell>
 									<Table.Cell>
 										<DropdownMenu.Root>
-											<DropdownMenu.Trigger asChild>
+											<DropdownMenu.Trigger>
 												{#snippet child({ props })}
 													<Button {...props} variant="ghost" size="icon" class="h-8 w-8 p-0">
 														<span class="sr-only">Open menu</span>
@@ -267,7 +267,7 @@
 									<div>
 										<div class="font-medium">{invitation.email}</div>
 										<div class="text-xs text-muted-foreground">
-											Role: {invitation.role} • Expires:{' '}
+											Role: {invitation.role} • Expires:
 											{(() => {
 												if (!invitation.expiresAt) return 'N/A';
 												const date =

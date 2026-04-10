@@ -1,4 +1,5 @@
 <script lang="ts">
+	/* eslint-disable svelte/no-unused-props */
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import type { User } from 'better-auth';
@@ -71,7 +72,8 @@
 	async function addExistingMember(userId: string) {
 		isAdding = true;
 		try {
-			await authClient.organization.addTeamMember({
+			await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(authClient.organization as any).addTeamMember({
 				teamId: team.id,
 				userId,
 				fetchOptions: { throw: true }
@@ -100,7 +102,8 @@
 		defaultValues: { email: '' },
 		onSubmit: async ({ value }) => {
 			try {
-				await authClient.organization.inviteMember({
+				await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(authClient.organization as any).inviteMember({
 					email: value.email,
 					role: 'member',
 					organizationId: organization.id,

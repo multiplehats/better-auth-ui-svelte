@@ -1,4 +1,5 @@
 <script lang="ts">
+	/* eslint-disable svelte/no-unused-props */
 	import type { User } from 'better-auth';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import {
@@ -45,7 +46,8 @@
 	async function removeMember() {
 		isRemoving = true;
 		try {
-			await authClient.organization.removeTeamMember({
+			await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(authClient.organization as any).removeTeamMember({
 				teamId: teamMember.teamId,
 				userId: teamMember.userId,
 				fetchOptions: { throw: true }

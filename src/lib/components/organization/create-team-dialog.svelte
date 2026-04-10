@@ -52,7 +52,8 @@
 		defaultValues: { name: '' },
 		onSubmit: async ({ value }) => {
 			try {
-				await authClient.organization.createTeam({
+				await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(authClient.organization as any).createTeam({
 					name: value.name,
 					organizationId: organization.id,
 					fetchOptions: { throw: true }

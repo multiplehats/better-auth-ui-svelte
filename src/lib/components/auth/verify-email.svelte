@@ -29,7 +29,6 @@
 	const localization = $derived({ ...config.localization, ...localizationProp });
 
 	// State management
-	// svelte-ignore state_referenced_locally -- email prop initializes form state
 	let email = $state(emailProp || '');
 	let isResending = $state(false);
 	let resendDisabled = $state(false);

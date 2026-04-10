@@ -37,8 +37,7 @@
 				Revoke All Sessions
 			</Dialog.Title>
 			<Dialog.Description>
-				This will log the user out from all devices and browsers where they are currently signed
-				in.
+				This will log the user out from all devices and browsers where they are currently signed in.
 			</Dialog.Description>
 		</Dialog.Header>
 
@@ -48,14 +47,14 @@
 					<AlertTriangle class="h-4 w-4 text-amber-500" />
 					<Alert.Title>Warning</Alert.Title>
 					<Alert.Description>
-						The user will be immediately logged out from all active sessions. They will need to
-						sign in again.
+						The user will be immediately logged out from all active sessions. They will need to sign
+						in again.
 					</Alert.Description>
 				</Alert.Root>
 
 				<div class="grid gap-2">
 					<div class="text-sm font-medium">User Details</div>
-					<div class="rounded-md border p-3 space-y-2">
+					<div class="space-y-2 rounded-md border p-3">
 						<div class="flex justify-between">
 							<span class="text-sm text-muted-foreground">Email:</span>
 							<span class="text-sm font-medium">{user.email}</span>

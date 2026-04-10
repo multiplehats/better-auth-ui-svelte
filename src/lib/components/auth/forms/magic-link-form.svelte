@@ -52,7 +52,6 @@
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
-	// svelte-ignore state_referenced_locally -- hooks are initialized once with current localization
 	const captchaHook = useCaptcha({ localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
