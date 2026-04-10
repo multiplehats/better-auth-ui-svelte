@@ -1,5 +1,18 @@
 # better-auth-ui-svelte
 
+## 0.10.0
+
+### Minor Changes
+
+- Add Teams UI to OrganizationView ([`ed9c178`](https://github.com/multiplehats/better-auth-ui-svelte/commit/ed9c1782583a937ec0b68ccd76f5e7a60f48158c))
+  - New "Teams" tab in OrganizationView with full team CRUD (create, rename, delete)
+  - Inline accordion expansion to view and manage team members
+  - Add/remove team members from existing org members or invite by email
+  - Extensibility callback props (`filterTeams`, `canCreateTeam`, `canDeleteTeam`, `canManageMembers`, `filterMembers`, `canRemoveMember`) for consumers to customize permissions
+  - New `useListTeams` and `useListTeamMembers` hooks with default implementations
+  - Enable via `organization.teams: true` in AuthUIProvider config
+  - 10 new exported components: `OrganizationTeamsCard`, `TeamCell`, `TeamMemberCell`, `TeamMembersPanel`, `CreateTeamDialog`, `UpdateTeamDialog`, `DeleteTeamDialog`, `AddTeamMemberDialog`, `RemoveTeamMemberDialog`
+
 ## 0.9.2
 
 ### Patch Changes
