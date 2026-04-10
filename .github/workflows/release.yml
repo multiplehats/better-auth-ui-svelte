@@ -8,17 +8,15 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-# Add workflow-level permissions
 permissions:
   contents: write
   pull-requests: write
-  packages: write
   id-token: write # Required for trusted publishing with OIDC
 
 jobs:
   release:
     name: Release
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Create Release Pull Request or Publish to npm
+      - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
         with:
@@ -51,12 +49,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Publish to npm with trusted publishing
+      - name: Publish to npm
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
-          # Strip the auth token that setup-node added so npm uses OIDC instead
-          echo "registry=https://registry.npmjs.org/" > "$NPM_CONFIG_USERCONFIG"
-          # Build the package
           pnpm prepack
-          # Publish directly via npm so the native OIDC exchange works
           npm publish --provenance --access public
+        env:
+          # Empty string overrides any NODE_AUTH_TOKEN that changesets/action
+          # may have exported, letting npm fall through to OIDC trusted publishing
+          NODE_AUTH_TOKEN: ''
