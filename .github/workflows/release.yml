@@ -52,5 +52,6 @@ jobs:
       - name: Publish to npm
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
+          npm install -g npm@latest
           pnpm prepack
           npm publish --access public
