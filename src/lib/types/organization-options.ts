@@ -39,6 +39,11 @@ export type OrganizationOptions = {
 	 * @default false
 	 */
 	apiKey?: boolean;
+		/**
+	 * Enable or disable teams support for organizations
+	 * @default false
+	 */
+	teams?: boolean;
 	/**
 	 * Base path for organization-scoped views (supports slugged or static base)
 	 * When using slug paths, set this to the common prefix (e.g. "/organization")
@@ -82,6 +87,11 @@ export type OrganizationOptionsContext = {
 	 * @default false
 	 */
 	apiKey?: boolean;
+		/**
+	 * Enable or disable teams support for organizations
+	 * @default false
+	 */
+	teams?: boolean;
 	/**
 	 * Base path for organization-scoped views
 	 */

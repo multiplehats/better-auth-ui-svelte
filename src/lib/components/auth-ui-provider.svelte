@@ -24,7 +24,9 @@
 		RenderToast,
 		AuthLocalization,
 		AdditionalFields,
-		GravatarOptions
+		GravatarOptions,
+		CaptchaOptions,
+		AuthUIConfig
 	} from '$lib/types/index.js';
 	import type { AuthViewPaths } from '$lib/utils/view-paths.js';
 	import { authViewPaths, accountViewPaths, organizationViewPaths } from '$lib/utils/view-paths.js';
@@ -511,35 +513,36 @@
 	});
 
 	// Default hooks
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const defaultHooks = $derived.by((): AuthHooks => {
 		return {
 			useSession: authClient.useSession,
 			useListAccounts: () =>
 				useAuthData({
-					queryFn: authClient.listAccounts,
+					queryFn: authClient.listAccounts as any,
 					cacheKey: 'listAccounts'
-				}) as unknown,
+				}) as any,
 			useAccountInfo: (params) =>
 				useAuthData({
-					queryFn: () => authClient.accountInfo({ accountId: params.providerId }),
+					queryFn: (() => authClient.accountInfo({ accountId: params.providerId } as any)) as any,
 					cacheKey: `accountInfo:${JSON.stringify(params)}`
-				}),
+				}) as any,
 			useListDeviceSessions: () =>
 				useAuthData({
-					queryFn: authClient.multiSession.listDeviceSessions,
+					queryFn: authClient.multiSession.listDeviceSessions as any,
 					cacheKey: 'listDeviceSessions'
-				}),
+				}) as any,
 			useListSessions: () =>
 				useAuthData({
-					queryFn: authClient.listSessions,
+					queryFn: authClient.listSessions as any,
 					cacheKey: 'listSessions'
-				}),
+				}) as any,
 			useListPasskeys: authClient.useListPasskeys,
 			useListApiKeys: () =>
 				useAuthData({
-					queryFn: authClient.apiKey.list,
+					queryFn: authClient.apiKey.list as any,
 					cacheKey: 'listApiKeys'
-				}),
+				}) as any,
 			useActiveOrganization: authClient.useActiveOrganization,
 			useListOrganizations: authClient.useListOrganizations,
 			useHasPermission: (params) =>
@@ -550,12 +553,12 @@
 							body: params
 						}),
 					cacheKey: `hasPermission:${JSON.stringify(params)}`
-				}),
+				}) as any,
 			useInvitation: (params) =>
 				useAuthData({
-					queryFn: () => authClient.organization.getInvitation({ query: params }),
+					queryFn: (() => authClient.organization.getInvitation({ query: params })) as any,
 					cacheKey: `invitation:${JSON.stringify(params)}`
-				}),
+				}) as any,
 			useListInvitations: (params) =>
 				useAuthData({
 					queryFn: () =>
@@ -563,12 +566,12 @@
 							`/organization/list-invitations?organizationId=${params?.query?.organizationId || ''}`
 						),
 					cacheKey: `listInvitations:${JSON.stringify(params)}`
-				}),
+				}) as any,
 			useListUserInvitations: () =>
 				useAuthData({
 					queryFn: () => authClient.$fetch('/organization/list-user-invitations'),
 					cacheKey: `listUserInvitations`
-				}),
+				}) as any,
 			useListMembers: (params) =>
 				useAuthData({
 					queryFn: () =>
@@ -576,7 +579,23 @@
 							`/organization/list-members?organizationId=${params?.query?.organizationId || ''}`
 						),
 					cacheKey: `listMembers:${JSON.stringify(params)}`
-				})
+				}) as any,
+						useListTeams: (params) =>
+				useAuthData({
+					queryFn: () =>
+						authClient.$fetch(
+							`/organization/list-teams?organizationId=${params?.query?.organizationId || ''}`
+						),
+					cacheKey: `listTeams:${JSON.stringify(params)}`
+				}) as any,
+			useListTeamMembers: (params) =>
+				useAuthData({
+					queryFn: () =>
+						authClient.$fetch(
+							`/organization/list-team-members?teamId=${params?.query?.teamId || ''}`
+						),
+					cacheKey: `listTeamMembers:${JSON.stringify(params)}`
+				}) as any
 		};
 	});
 
@@ -625,7 +644,6 @@
 	const baseURL = $derived(baseURLProp.endsWith('/') ? baseURLProp.slice(0, -1) : baseURLProp);
 
 	// Get session data
-	// svelte-ignore state_referenced_locally -- authClient is stable and the session store is created once at initialization
 	const sessionStore = authClient.useSession();
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
 
@@ -753,7 +771,7 @@
 	};
 
 	// Set the context for child components synchronously
-	setAuthUIConfig(config);
+	setAuthUIConfig(config as AuthUIConfig);
 
 	// Handle error query parameters and show toast
 	$effect(() => {
@@ -762,7 +780,7 @@
 		const searchParams = window.location.search ? new URL(window.location.href).searchParams : null;
 		const errorCode = searchParams?.get('error');
 
-		if (errorCode) {
+		if (errorCode && searchParams) {
 			const errorMessage = BASE_ERROR_CODES[errorCode as keyof typeof BASE_ERROR_CODES];
 
 			if (errorMessage) {
@@ -784,7 +802,7 @@
 	<OrganizationRefetcher />
 {/if}
 
-{#if captcha?.provider === 'google-recaptcha-v3'}
+{#if (captcha as CaptchaOptions | undefined)?.provider === 'google-recaptcha-v3'}
 	<RecaptchaV3>
 		{@render children()}
 	</RecaptchaV3>

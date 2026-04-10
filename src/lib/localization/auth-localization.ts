@@ -770,6 +770,79 @@ export const authLocalization = {
 	/** @default "Unknown" */
 	UNKNOWN: 'Unknown',
 
+
+	/** @default "Add Member" */
+	ADD_TEAM_MEMBER: 'Add Member',
+
+	/** @default "Add a member to this team from your organization, or invite someone new by email." */
+	ADD_TEAM_MEMBER_DESCRIPTION: 'Add a member to this team from your organization, or invite someone new by email.',
+
+	/** @default "Member added to team successfully" */
+	ADD_TEAM_MEMBER_SUCCESS: 'Member added to team successfully',
+
+	/** @default "All organization members are already in this team." */
+	ALL_MEMBERS_IN_TEAM: 'All organization members are already in this team.',
+
+	/** @default "Create Team" */
+	CREATE_TEAM: 'Create Team',
+
+	/** @default "Create a new team in your organization." */
+	CREATE_TEAM_DESCRIPTION: 'Create a new team in your organization.',
+
+	/** @default "Team created successfully" */
+	CREATE_TEAM_SUCCESS: 'Team created successfully',
+
+	/** @default "Delete Team" */
+	DELETE_TEAM: 'Delete Team',
+
+	/** @default "Are you sure you want to delete this team? This action cannot be undone." */
+	DELETE_TEAM_CONFIRM: 'Are you sure you want to delete this team? This action cannot be undone.',
+
+	/** @default "Team deleted successfully" */
+	DELETE_TEAM_SUCCESS: 'Team deleted successfully',
+
+	/** @default "No members yet" */
+	NO_TEAM_MEMBERS: 'No members yet',
+
+	/** @default "No teams yet" */
+	NO_TEAMS: 'No teams yet',
+
+	/** @default "Remove from Team" */
+	REMOVE_TEAM_MEMBER: 'Remove from Team',
+
+	/** @default "Are you sure you want to remove this member from the team?" */
+	REMOVE_TEAM_MEMBER_CONFIRM: 'Are you sure you want to remove this member from the team?',
+
+	/** @default "Member removed from team successfully" */
+	REMOVE_TEAM_MEMBER_SUCCESS: 'Member removed from team successfully',
+
+	/** @default "Rename Team" */
+	RENAME_TEAM: 'Rename Team',
+
+	/** @default "Team renamed successfully" */
+	RENAME_TEAM_SUCCESS: 'Team renamed successfully',
+
+	/** @default "Team" */
+	TEAM: 'Team',
+
+	/** @default "members" */
+	TEAM_MEMBER_COUNT: 'members',
+
+	/** @default "Team Name" */
+	TEAM_NAME: 'Team Name',
+
+	/** @default "Enter a name for your team" */
+	TEAM_NAME_PLACEHOLDER: 'Enter a name for your team',
+
+	/** @default "Teams" */
+	TEAMS: 'Teams',
+
+	/** @default "Organize members into teams for granular access control." */
+	TEAMS_DESCRIPTION: 'Organize members into teams for granular access control.',
+
+	/** @default "Create teams to group members together." */
+	TEAMS_INSTRUCTIONS: 'Create teams to group members together.',
+
 	...BASE_ERROR_CODES,
 	...ADMIN_ERROR_CODES,
 	...ANONYMOUS_ERROR_CODES,
