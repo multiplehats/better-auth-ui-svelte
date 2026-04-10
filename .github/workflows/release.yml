@@ -29,6 +29,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -47,7 +48,14 @@ jobs:
         with:
           commit: 'chore(release): version package'
           title: 'chore(release): version package'
-          publish: pnpm ci:publish
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Publish to npm with trusted publishing
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: |
+          # Strip the auth token that setup-node added so npm uses OIDC instead
+          echo "registry=https://registry.npmjs.org/" > "$NPM_CONFIG_USERCONFIG"
+          pnpm ci:publish
+        env:
           NPM_CONFIG_PROVENANCE: true
