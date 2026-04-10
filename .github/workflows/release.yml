@@ -11,7 +11,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
-  id-token: write # Required for trusted publishing with OIDC
+  id-token: write # Required for OIDC trusted publishing
 
 jobs:
   release:
@@ -24,7 +24,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
@@ -53,8 +53,4 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           pnpm prepack
-          npm publish --provenance --access public
-        env:
-          # Empty string overrides any NODE_AUTH_TOKEN that changesets/action
-          # may have exported, letting npm fall through to OIDC trusted publishing
-          NODE_AUTH_TOKEN: ''
+          npm publish --access public
