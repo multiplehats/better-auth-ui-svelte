@@ -56,6 +56,7 @@ jobs:
         run: |
           # Strip the auth token that setup-node added so npm uses OIDC instead
           echo "registry=https://registry.npmjs.org/" > "$NPM_CONFIG_USERCONFIG"
-          pnpm ci:publish
-        env:
-          NPM_CONFIG_PROVENANCE: true
+          # Build the package
+          pnpm prepack
+          # Publish directly via npm so the native OIDC exchange works
+          npm publish --provenance --access public
