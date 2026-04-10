@@ -33,6 +33,7 @@
 	import OrganizationMembersCard from './organization-members-card.svelte';
 	import OrganizationInvitationsCard from './organization-invitations-card.svelte';
 	import OrganizationSettingsCards from './organization-settings-cards.svelte';
+	import OrganizationTeamsCard from './organization-teams-card.svelte';
 	// TODO: Import ApiKeysCard when api-key directory is ported
 	// import ApiKeysCard from '../settings/api-key/api-keys-card.svelte';
 	import { browser } from '$app/environment';
@@ -87,6 +88,13 @@
 			{ view: 'SETTINGS', label: localization.SETTINGS },
 			{ view: 'MEMBERS', label: localization.MEMBERS }
 		];
+
+		if (organizationOptions?.teams) {
+			items.push({
+				view: 'TEAMS',
+				label: localization.TEAMS
+			});
+		}
 
 		if (apiKey) {
 			items.push({
@@ -195,7 +203,11 @@
 
 				<OrganizationInvitationsCard classNames={classNames?.card} {localization} {slug} />
 			</div>
-		{:else if view === 'API_KEYS'}
+		{:else if view === 'TEAMS'}
+		<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
+			<OrganizationTeamsCard classNames={classNames?.card} {localization} {slug} />
+		</div>
+	{:else if view === 'API_KEYS'}
 			<!-- TODO: Uncomment when ApiKeysCard is ported -->
 			<div class="text-muted-foreground">API Keys coming soon (ApiKeysCard not yet ported)</div>
 			<!-- <ApiKeysCard

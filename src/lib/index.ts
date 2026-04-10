@@ -80,6 +80,16 @@ export { default as UpdateMemberRoleDialog } from './components/organization/upd
 export { default as UserInvitationRow } from './components/organization/user-invitation-row.svelte';
 export { default as UserInvitationsCard } from './components/organization/user-invitations-card.svelte';
 export { default as PersonalAccountView } from './components/organization/personal-account-view.svelte';
+// Team Components
+export { default as OrganizationTeamsCard } from './components/organization/organization-teams-card.svelte';
+export { default as TeamCell } from './components/organization/team-cell.svelte';
+export { default as TeamMemberCell } from './components/organization/team-member-cell.svelte';
+export { default as TeamMembersPanel } from './components/organization/team-members-panel.svelte';
+export { default as CreateTeamDialog } from './components/organization/create-team-dialog.svelte';
+export { default as UpdateTeamDialog } from './components/organization/update-team-dialog.svelte';
+export { default as DeleteTeamDialog } from './components/organization/delete-team-dialog.svelte';
+export { default as AddTeamMemberDialog } from './components/organization/add-team-member-dialog.svelte';
+export { default as RemoveTeamMemberDialog } from './components/organization/remove-team-member-dialog.svelte';
 
 // Settings Components - Account
 export { default as AccountsCard } from './components/settings/account/accounts-card.svelte';
@@ -179,6 +189,7 @@ import OrganizationSettingsCardsComponent from './components/organization/organi
 import OrganizationSlugCardComponent from './components/organization/organization-slug-card.svelte';
 import OrganizationViewComponent from './components/organization/organization-view.svelte';
 import OrganizationsCardComponent from './components/organization/organizations-card.svelte';
+import OrganizationTeamsCardComponent from './components/organization/organization-teams-card.svelte';
 import UserInvitationsCardComponent from './components/organization/user-invitations-card.svelte';
 import SettingsCardComponent from './components/settings/shared/settings-card.svelte';
 export type AuthFormClassNames = ComponentProps<typeof AuthFormComponent>;
@@ -201,6 +212,7 @@ export type OrganizationSettingsCardsProps = ComponentProps<
 export type OrganizationSlugCardProps = ComponentProps<typeof OrganizationSlugCardComponent>;
 export type OrganizationViewProps = ComponentProps<typeof OrganizationViewComponent>;
 export type OrganizationsCardProps = ComponentProps<typeof OrganizationsCardComponent>;
+export type OrganizationTeamsCardProps = ComponentProps<typeof OrganizationTeamsCardComponent>;
 export type UserInvitationsCardProps = ComponentProps<typeof UserInvitationsCardComponent>;
 export type SettingsCardClassNames = ComponentProps<typeof SettingsCardComponent>;
 export * from './types/auth-hooks.js';
