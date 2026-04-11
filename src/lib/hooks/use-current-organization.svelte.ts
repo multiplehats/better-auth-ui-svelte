@@ -39,7 +39,7 @@ export function useCurrentOrganization({
 
 	// When organizationId is provided, fetch the org directly by ID
 	if (organizationId) {
-		const orgByIdHook = useAuthData<{ members: { user: unknown }[]; organization: Organization }>({
+		const orgByIdHook = useAuthData<Organization>({
 			queryFn: () =>
 				authClient.organization.getFullOrganization({
 					query: { organizationId },
@@ -51,7 +51,7 @@ export function useCurrentOrganization({
 
 		return {
 			get data() {
-				return orgByIdHook.data?.organization ?? null;
+				return orgByIdHook.data ?? null;
 			},
 			get isPending() {
 				return orgByIdHook.isPending;
