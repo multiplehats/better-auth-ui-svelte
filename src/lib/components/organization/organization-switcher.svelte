@@ -48,6 +48,22 @@
 		};
 	}
 
+	export interface AdditionalOrganizationItem {
+		id: string;
+		name: string;
+		slug: string;
+		logo?: string | null;
+	}
+
+	export interface AdditionalOrganizations {
+		/** Label shown as a group header above the items */
+		label: string;
+		/** List of organizations to show in this group */
+		items: AdditionalOrganizationItem[];
+		/** Called when an additional organization is selected. Use this to navigate without calling setActiveOrganization. */
+		onSelect?: (org: AdditionalOrganizationItem) => void;
+	}
+
 	interface Props {
 		class?: string;
 		classNames?: OrganizationSwitcherClassNames;
@@ -67,6 +83,13 @@
 		 * @default false
 		 */
 		hidePersonal?: boolean;
+		/**
+		 * Additional organizations to display in the switcher, grouped under a label.
+		 * These are rendered separately from the user's own organizations and use
+		 * `onSelect` instead of `setActiveOrganization` — useful for agency/client
+		 * orgs where the user isn't a direct member.
+		 */
+		additionalOrganizations?: AdditionalOrganizations;
 	}
 
 	let {
@@ -82,6 +105,7 @@
 		size,
 		onSetActive,
 		hidePersonal = false,
+		additionalOrganizations,
 		...restProps
 	}: Props = $props();
 
@@ -370,6 +394,28 @@
 				{/if}
 			{/if}
 		{/each}
+
+		{#if additionalOrganizations && additionalOrganizations.items.length > 0}
+			<DropdownMenu.Separator class={classNames?.content?.separator} />
+			<div class="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+				{additionalOrganizations.label}
+			</div>
+			{#each additionalOrganizations.items as additionalOrg (additionalOrg.id)}
+				<DropdownMenu.Item
+					onclick={() => {
+						dropdownOpen = false;
+						additionalOrganizations?.onSelect?.(additionalOrg);
+					}}
+				>
+					<OrganizationCellView
+						classNames={classNames?.content?.organization}
+						{isPending}
+						{localization}
+						organization={{ id: additionalOrg.id, name: additionalOrg.name, slug: additionalOrg.slug, logo: additionalOrg.logo ?? null, createdAt: new Date(), metadata: null }}
+					/>
+				</DropdownMenu.Item>
+			{/each}
+		{/if}
 
 		{#if organizations && organizations.length > 0 && (!hidePersonal || organizations.length > 1)}
 			<DropdownMenu.Separator class={classNames?.content?.separator} />
