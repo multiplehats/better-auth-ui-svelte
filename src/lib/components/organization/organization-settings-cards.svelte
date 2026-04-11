@@ -9,6 +9,7 @@
 			cards?: string;
 		};
 		localization?: Partial<AuthLocalization>;
+		organizationId?: string;
 		slug?: string;
 	}
 </script>
@@ -23,19 +24,19 @@
 
 	type Props = OrganizationSettingsCardsProps;
 
-	let { className, classNames, localization, slug }: Props = $props();
+	let { className, classNames, localization, organizationId, slug }: Props = $props();
 
 	const { organization: organizationOptions } = getAuthUIConfig();
 </script>
 
 <div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
 	{#if organizationOptions?.logo}
-		<OrganizationLogoCard classNames={classNames?.card} {localization} {slug} />
+		<OrganizationLogoCard classNames={classNames?.card} {localization} {slug} {organizationId} />
 	{/if}
 
-	<OrganizationNameCard classNames={classNames?.card} {localization} {slug} />
+	<OrganizationNameCard classNames={classNames?.card} {localization} {slug} {organizationId} />
 
-	<OrganizationSlugCard classNames={classNames?.card} {localization} {slug} />
+	<OrganizationSlugCard classNames={classNames?.card} {localization} {slug} {organizationId} />
 
-	<DeleteOrganizationCard classNames={classNames?.card} {localization} {slug} />
+	<DeleteOrganizationCard classNames={classNames?.card} {localization} {slug} {organizationId} />
 </div>

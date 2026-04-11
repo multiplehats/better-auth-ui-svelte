@@ -13,6 +13,14 @@
 			card?: SettingsCardClassNames;
 		};
 		localization?: Partial<AuthLocalization>;
+		/**
+		 * Override the organization resolved from the session's active org.
+		 * When provided, all internal API calls (members, invitations, settings, etc.)
+		 * will target this organization instead. Useful for rendering org details
+		 * for an org the user isn't a direct Better Auth member of (e.g. agency
+		 * accessing a client org).
+		 */
+		organizationId?: string;
 		path?: string;
 		pathname?: string;
 		view?: OrganizationViewPath;
@@ -44,6 +52,7 @@
 		className,
 		classNames,
 		localization: localizationProp,
+		organizationId,
 		path: pathProp,
 		pathname,
 		view: viewProp,
@@ -75,7 +84,7 @@
 
 	const slug = $derived(slugProp || contextSlug);
 
-	const currentOrg = $derived(useCurrentOrganization({ slug }));
+	const currentOrg = $derived(useCurrentOrganization({ slug, organizationId }));
 	const organization = $derived(currentOrg?.data);
 	const organizationPending = $derived(currentOrg?.isPending ?? false);
 	const organizationRefetching = $derived(currentOrg?.isRefetching ?? false);
@@ -111,8 +120,10 @@
 	let drawerOpen = $state(false);
 
 	// Redirect to organizations list if organization doesn't exist
+	// Skip redirect when organizationId is provided (external org that may need different error handling)
 	$effect(() => {
-		if (!browser || organization || organizationPending || organizationRefetching) return;
+		if (!browser || organization || organizationPending || organizationRefetching || organizationId)
+			return;
 
 		replace(`${accountOptions?.basePath}/${accountOptions?.viewPaths?.ORGANIZATIONS}`);
 	});
@@ -199,13 +210,28 @@
 		<!-- Main Content Area -->
 		{#if view === 'MEMBERS'}
 			<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
-				<OrganizationMembersCard classNames={classNames?.card} {localization} {slug} />
+				<OrganizationMembersCard
+					classNames={classNames?.card}
+					{localization}
+					{slug}
+					{organizationId}
+				/>
 
-				<OrganizationInvitationsCard classNames={classNames?.card} {localization} {slug} />
+				<OrganizationInvitationsCard
+					classNames={classNames?.card}
+					{localization}
+					{slug}
+					{organizationId}
+				/>
 			</div>
 		{:else if view === 'TEAMS'}
 		<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
-			<OrganizationTeamsCard classNames={classNames?.card} {localization} {slug} />
+			<OrganizationTeamsCard
+				classNames={classNames?.card}
+				{localization}
+				{slug}
+				{organizationId}
+			/>
 		</div>
 	{:else if view === 'API_KEYS'}
 			<!-- TODO: Uncomment when ApiKeysCard is ported -->
@@ -217,7 +243,12 @@
 				organizationId={organization?.id}
 			/> -->
 		{:else if view === 'SETTINGS'}
-			<OrganizationSettingsCards {classNames} {localization} {slug} />
+			<OrganizationSettingsCards
+				{classNames}
+				{localization}
+				{slug}
+				{organizationId}
+			/>
 		{/if}
 	</div>
 {/if}

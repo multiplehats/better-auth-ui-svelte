@@ -1,10 +1,16 @@
 import type { Organization } from 'better-auth/plugins/organization';
 import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
+import { useAuthData } from '$lib/stores/use-auth-data.svelte.js';
 import { fromStore } from '$lib/utils/store-to-rune.svelte.js';
 
 /**
  * Hook that returns the current organization based on the path mode.
  * This hook bridges better-auth's nanostores with Svelte 5's rune-based reactivity.
+ *
+ * When `organizationId` is provided, it fetches that specific organization directly
+ * via `getFullOrganization`, bypassing the slug/active-org resolution. This is useful
+ * for rendering org details for an org the user isn't a direct member of (e.g. agency
+ * accessing a client org).
  *
  * IMPORTANT: Must be called during component initialization for proper reactivity.
  *
@@ -12,6 +18,7 @@ import { fromStore } from '$lib/utils/store-to-rune.svelte.js';
  * ```svelte
  * <script>
  *   const org = useCurrentOrganization({ slug: 'my-org' });
+ *   // or: const org = useCurrentOrganization({ organizationId: 'org_abc123' });
  * </script>
  *
  * {#if org.isPending}
@@ -21,10 +28,42 @@ import { fromStore } from '$lib/utils/store-to-rune.svelte.js';
  * {/if}
  * ```
  */
-export function useCurrentOrganization({ slug: slugProp }: { slug?: string } = {}) {
+export function useCurrentOrganization({
+	slug: slugProp,
+	organizationId
+}: { slug?: string; organizationId?: string } = {}) {
 	const config = getAuthUIConfig();
+	const { authClient } = config;
 	const organizationOptions = config.organization;
 	const { useActiveOrganization, useListOrganizations } = config.hooks;
+
+	// When organizationId is provided, fetch the org directly by ID
+	if (organizationId) {
+		const orgByIdHook = useAuthData<{ members: { user: unknown }[]; organization: Organization }>({
+			queryFn: () =>
+				authClient.organization.getFullOrganization({
+					query: { organizationId },
+					fetchOptions: { throw: false }
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				}) as any,
+			cacheKey: `fullOrganization:${organizationId}`
+		});
+
+		return {
+			get data() {
+				return orgByIdHook.data?.organization ?? null;
+			},
+			get isPending() {
+				return orgByIdHook.isPending;
+			},
+			get isRefetching() {
+				return orgByIdHook.isRefetching;
+			},
+			get refetch() {
+				return orgByIdHook.refetch;
+			}
+		};
+	}
 
 	const { pathMode, slug: contextSlug } = organizationOptions || {};
 
