@@ -1,5 +1,15 @@
 # better-auth-ui-svelte
 
+## 0.12.1
+
+### Patch Changes
+
+- fix: `useCurrentOrganization` with `organizationId` now correctly returns the organization data ([#27](https://github.com/multiplehats/better-auth-ui-svelte/pull/27))
+
+  Better Auth's `getFullOrganization` endpoint returns the org as a flat object, not wrapped
+  in `{ organization: {...} }`. The hook was incorrectly accessing `.organization` on the
+  response, causing `OrganizationView` to never render when `organizationId` is provided.
+
 ## 0.12.0
 
 ### Minor Changes
