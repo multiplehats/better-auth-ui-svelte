@@ -1,5 +1,17 @@
 # better-auth-ui-svelte
 
+## 0.12.0
+
+### Minor Changes
+
+- Add `organizationId` prop to OrganizationView to override the session's active organization for all internal API calls ([#25](https://github.com/multiplehats/better-auth-ui-svelte/pull/25))
+
+### Patch Changes
+
+- Wire up `onDeleteUser` callback in `UsersAdminTable` ([#25](https://github.com/multiplehats/better-auth-ui-svelte/pull/25))
+
+  When provided, the `onDeleteUser` callback is used instead of the default `authClient.admin.removeUser()` for both single and bulk user deletion. This allows consumers to implement soft-delete or custom deletion logic.
+
 ## 0.11.0
 
 ### Minor Changes
