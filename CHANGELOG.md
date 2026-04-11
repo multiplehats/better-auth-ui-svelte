@@ -1,5 +1,15 @@
 # better-auth-ui-svelte
 
+## 0.12.2
+
+### Patch Changes
+
+- fix: add `credentials: 'include'` to `getFullOrganization` fetch in `useCurrentOrganization` ([#29](https://github.com/multiplehats/better-auth-ui-svelte/pull/29))
+
+  When `organizationId` is provided and the app runs cross-origin (e.g. SvelteKit app on :5173,
+  API on :3000), the `getFullOrganization` request was missing `credentials: 'include'`, so no
+  cookies were sent and the request returned 403.
+
 ## 0.12.1
 
 ### Patch Changes
