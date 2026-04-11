@@ -43,7 +43,7 @@ export function useCurrentOrganization({
 			queryFn: () =>
 				authClient.organization.getFullOrganization({
 					query: { organizationId },
-					fetchOptions: { throw: false }
+					fetchOptions: { throw: false, credentials: 'include' }
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				}) as any,
 			cacheKey: `fullOrganization:${organizationId}`
