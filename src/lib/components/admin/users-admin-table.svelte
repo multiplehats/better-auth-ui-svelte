@@ -47,10 +47,12 @@
 
 	let {
 		initialPageSize = 10,
-		syncWithUrl = false
+		syncWithUrl = false,
+		onDeleteUser,
 	}: {
 		initialPageSize?: number;
 		syncWithUrl?: boolean;
+		onDeleteUser?: (userId: string) => void | Promise<void>;
 	} = $props();
 
 	// Get Better Auth client and config
@@ -457,13 +459,17 @@
 		if (!selectedUser) return;
 
 		try {
-			const { error } = await authClient.admin.removeUser({
-				userId: selectedUser.id
-			});
+			if (onDeleteUser) {
+				await onDeleteUser(selectedUser.id);
+			} else {
+				const { error } = await authClient.admin.removeUser({
+					userId: selectedUser.id
+				});
 
-			if (error) {
-				toast.error(error.message ?? 'Failed to delete user');
-				return;
+				if (error) {
+					toast.error(error.message ?? 'Failed to delete user');
+					return;
+				}
 			}
 
 			toast.success('User deleted successfully');
@@ -545,13 +551,17 @@
 	async function executeBulkDelete() {
 		try {
 			for (const userId of selectedUserIds) {
-				const { error } = await authClient.admin.removeUser({
-					userId
-				});
+				if (onDeleteUser) {
+					await onDeleteUser(userId);
+				} else {
+					const { error } = await authClient.admin.removeUser({
+						userId
+					});
 
-				if (error) {
-					toast.error(`Failed to delete user ${userId}: ${error.message}`);
-					return;
+					if (error) {
+						toast.error(`Failed to delete user ${userId}: ${error.message}`);
+						return;
+					}
 				}
 			}
 
