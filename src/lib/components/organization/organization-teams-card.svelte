@@ -11,6 +11,7 @@
 		className?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
+		organizationId?: string;
 		slug?: string;
 		filterTeams?: (teams: any[]) => any[];
 		canCreateTeam?: () => boolean;
@@ -28,6 +29,7 @@
 		className,
 		classNames,
 		localization: propLocalization,
+		organizationId,
 		slug: slugProp,
 		filterTeams,
 		canCreateTeam,
@@ -46,7 +48,7 @@
 
 	const slug = slugProp || organizationOptions?.slug;
 
-	const currentOrg = useCurrentOrganization({ slug });
+	const currentOrg = useCurrentOrganization({ slug, organizationId });
 	const organization = $derived(currentOrg.data);
 </script>
 

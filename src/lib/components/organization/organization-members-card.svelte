@@ -10,12 +10,19 @@
 		className?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
+		organizationId?: string;
 		slug?: string;
 	}
 
 	type Props = OrganizationMembersCardProps;
 
-	let { className, classNames, localization: propLocalization, slug: slugProp }: Props = $props();
+	let {
+		className,
+		classNames,
+		localization: propLocalization,
+		organizationId,
+		slug: slugProp
+	}: Props = $props();
 
 	const config = getAuthUIConfig();
 	const contextLocalization = getLocalization();
@@ -26,7 +33,7 @@
 
 	const slug = slugProp || organizationOptions?.slug;
 
-	const currentOrg = useCurrentOrganization({ slug });
+	const currentOrg = useCurrentOrganization({ slug, organizationId });
 	const organization = $derived(currentOrg.data);
 </script>
 

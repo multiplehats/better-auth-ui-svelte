@@ -14,6 +14,7 @@
 		className?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
+		organizationId?: string;
 		slug?: string;
 	}
 
@@ -23,6 +24,7 @@
 		className,
 		classNames,
 		localization: propLocalization,
+		organizationId,
 		slug,
 		...restProps
 	}: Props = $props();
@@ -31,7 +33,7 @@
 
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
-	const currentOrg = useCurrentOrganization({ slug });
+	const currentOrg = useCurrentOrganization({ slug, organizationId });
 	const organization = $derived(currentOrg.data);
 </script>
 

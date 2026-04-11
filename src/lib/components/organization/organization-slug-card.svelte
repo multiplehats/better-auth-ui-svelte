@@ -13,17 +13,18 @@
 		className?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
+		organizationId?: string;
 		slug?: string;
 	}
 
 	type Props = OrganizationSlugCardProps;
 
-	let { className, classNames, localization: propLocalization, slug }: Props = $props();
+	let { className, classNames, localization: propLocalization, organizationId, slug }: Props = $props();
 
 	const contextLocalization = getLocalization();
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
-	const currentOrg = useCurrentOrganization({ slug });
+	const currentOrg = useCurrentOrganization({ slug, organizationId });
 	const organization = $derived(currentOrg.data);
 	const isPending = $derived(currentOrg.isPending);
 </script>
