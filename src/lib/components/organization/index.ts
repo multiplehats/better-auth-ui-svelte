@@ -19,6 +19,7 @@ export { default as OrganizationsCard } from './organizations-card.svelte';
 export { default as OrganizationSettingsCards } from './organization-settings-cards.svelte';
 export { default as OrganizationSlugCard } from './organization-slug-card.svelte';
 export { default as OrganizationSwitcher } from './organization-switcher.svelte';
+export type { AdditionalOrganizationItem, AdditionalOrganizations } from './organization-switcher.svelte';
 export { default as OrganizationView } from './organization-view.svelte';
 export { default as PersonalAccountView } from './personal-account-view.svelte';
 export { default as RemoveMemberDialog } from './remove-member-dialog.svelte';
