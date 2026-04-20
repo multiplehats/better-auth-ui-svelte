@@ -157,6 +157,12 @@
 	const organizationRefetching = $derived(currentOrgResult.isRefetching);
 	const organizationRefetch = currentOrgResult.refetch;
 
+t// Whether there are any non-active orgs or personal account rendered above additionalOrganizations
+tconst hasItemsAboveAdditional = $derived(
+tt(!hidePersonal && !!activeOrganization) ||
+tt(organizations ?? []).some((o) => o.id !== activeOrganization?.id)
+t);
+
 	// Smarter pending logic: Only show loading if we're truly waiting for data
 	// If we have organizations list, we can show the UI even if active org is still loading
 	const isPending = $derived(
@@ -396,7 +402,9 @@
 		{/each}
 
 		{#if additionalOrganizations && additionalOrganizations.items.length > 0}
-			<DropdownMenu.Separator class={classNames?.content?.separator} />
+			{#if hasItemsAboveAdditional}
+				<DropdownMenu.Separator class={classNames?.content?.separator} />
+			{/if}
 			<div class="px-2 py-1.5 text-xs font-medium text-muted-foreground">
 				{additionalOrganizations.label}
 			</div>
@@ -418,7 +426,9 @@
 		{/if}
 
 		{#if organizations && organizations.length > 0 && (!hidePersonal || organizations.length > 1)}
-			<DropdownMenu.Separator class={classNames?.content?.separator} />
+			{#if hasItemsAboveAdditional}
+				<DropdownMenu.Separator class={classNames?.content?.separator} />
+			{/if}
 		{/if}
 
 		{#if !isPending && sessionData && !user?.isAnonymous}
