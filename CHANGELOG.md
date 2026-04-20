@@ -1,5 +1,15 @@
 # better-auth-ui-svelte
 
+## 0.12.3
+
+### Patch Changes
+
+- fix: remove double separator in OrganizationSwitcher when no orgs are listed above additional organizations ([#31](https://github.com/multiplehats/better-auth-ui-svelte/pull/31))
+
+  When `hidePersonal={true}` and the user has only one org (the active one), the always-present
+  separator and the `additionalOrganizations` separator appeared adjacent. The separator before
+  additional orgs now only renders when there are items above it.
+
 ## 0.12.2
 
 ### Patch Changes
