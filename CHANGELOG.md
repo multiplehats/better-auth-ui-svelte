@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.12.4
+
+### Patch Changes
+
+- fix: correct indentation in OrganizationSwitcher that broke Svelte compiler in 0.12.3 ([#34](https://github.com/multiplehats/better-auth-ui-svelte/pull/34))
+
 ## 0.12.3
 
 ### Patch Changes
