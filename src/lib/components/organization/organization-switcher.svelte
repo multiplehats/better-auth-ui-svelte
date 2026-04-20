@@ -157,11 +157,11 @@
 	const organizationRefetching = $derived(currentOrgResult.isRefetching);
 	const organizationRefetch = currentOrgResult.refetch;
 
-t// Whether there are any non-active orgs or personal account rendered above additionalOrganizations
-tconst hasItemsAboveAdditional = $derived(
-tt(!hidePersonal && !!activeOrganization) ||
-tt(organizations ?? []).some((o) => o.id !== activeOrganization?.id)
-t);
+	// Whether there are any non-active orgs or personal account rendered above additionalOrganizations
+	const hasItemsAboveAdditional = $derived(
+		(!hidePersonal && !!activeOrganization) ||
+		(organizations ?? []).some((o) => o.id !== activeOrganization?.id)
+	);
 
 	// Smarter pending logic: Only show loading if we're truly waiting for data
 	// If we have organizations list, we can show the UI even if active org is still loading
