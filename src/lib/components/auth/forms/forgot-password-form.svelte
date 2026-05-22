@@ -103,10 +103,12 @@
 		}
 	}));
 
+	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
+
 	// Sync isSubmitting state
 	$effect(() => {
-		isSubmitting = form.state.isSubmitting;
-		setIsSubmitting?.(form.state.isSubmitting);
+		isSubmitting = formIsSubmitting.current;
+		setIsSubmitting?.(formIsSubmitting.current);
 	});
 </script>
 
@@ -130,7 +132,7 @@
 					value={field.state.value}
 					oninput={(e) => field.handleChange(e.currentTarget.value)}
 					onblur={field.handleBlur}
-					disabled={form.state.isSubmitting}
+					disabled={formIsSubmitting.current}
 					class={classNames?.input}
 				/>
 
@@ -147,10 +149,10 @@
 
 	<Button
 		type="submit"
-		disabled={form.state.isSubmitting}
+		disabled={formIsSubmitting.current}
 		class={cn('w-full', classNames?.button, classNames?.primaryButton)}
 	>
-		{#if form.state.isSubmitting}
+		{#if formIsSubmitting.current}
 			<Loader2 class="animate-spin" />
 		{:else}
 			{localization.FORGOT_PASSWORD_ACTION}

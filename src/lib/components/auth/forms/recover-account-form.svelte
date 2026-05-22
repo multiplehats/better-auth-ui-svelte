@@ -41,9 +41,8 @@
 	// Merge localization from context and props
 	const localization = { ...contextLocalization, ...localizationProp };
 
-	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo
-	});
+	const transition = useOnSuccessTransition({ redirectTo });
+	const { onSuccess } = transition;
 
 	const schema = z.object({
 		code: z.string().min(1, { message: localization.BACKUP_CODE_REQUIRED })
@@ -71,11 +70,12 @@
 	}));
 
 	// Compute final isSubmitting state
-	const isSubmitting = $derived(isSubmittingProp ?? (form.state.isSubmitting || transitionPending));
+	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
+	const isSubmitting = $derived(isSubmittingProp ?? (formIsSubmitting.current || transition.isPending));
 
 	// Sync isSubmitting state
 	$effect(() => {
-		setIsSubmitting?.(form.state.isSubmitting || transitionPending);
+		setIsSubmitting?.(formIsSubmitting.current || transition.isPending);
 	});
 </script>
 

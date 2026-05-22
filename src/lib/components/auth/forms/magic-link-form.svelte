@@ -129,11 +129,12 @@
 		}
 	}));
 
-	const isSubmitting = $derived(isSubmittingProp || form.state.isSubmitting);
+	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
+	const isSubmitting = $derived(isSubmittingProp || formIsSubmitting.current);
 
 	// Update parent isSubmitting state
 	$effect(() => {
-		setIsSubmitting?.(form.state.isSubmitting);
+		setIsSubmitting?.(formIsSubmitting.current);
 	});
 </script>
 

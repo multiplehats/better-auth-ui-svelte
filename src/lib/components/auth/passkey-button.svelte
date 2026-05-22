@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Fingerprint from '@lucide/svelte/icons/fingerprint';
+	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import {
 		getAuthClient,
 		getAuthUIConfig,
@@ -31,8 +32,11 @@
 
 	const { onSuccess } = useOnSuccessTransition({ redirectTo });
 
+	let isPending = $state(false);
+
 	async function signInPasskey() {
 		setIsSubmitting?.(true);
+		isPending = true;
 
 		try {
 			const response = await authClient.signIn.passkey({
@@ -48,6 +52,7 @@
 				);
 
 				setIsSubmitting?.(false);
+				isPending = false;
 			} else {
 				await onSuccess();
 			}
@@ -55,6 +60,7 @@
 			config.toast.error(getLocalizedError({ error, localization: loc }));
 
 			setIsSubmitting?.(false);
+			isPending = false;
 		}
 	}
 </script>
@@ -67,7 +73,11 @@
 	variant="secondary"
 	onclick={signInPasskey}
 >
-	<Fingerprint class={classNames?.form?.icon} />
-	{loc.SIGN_IN_WITH}
-	{loc.PASSKEY}
+	{#if isPending}
+		<Loader2 class="animate-spin" />
+	{:else}
+		<Fingerprint class={classNames?.form?.icon} />
+		{loc.SIGN_IN_WITH}
+		{loc.PASSKEY}
+	{/if}
 </Button>

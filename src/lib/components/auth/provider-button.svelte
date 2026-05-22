@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn } from '$lib/utils/ui.js';
@@ -37,6 +38,8 @@
 	const authClient = getAuthClient();
 	const config = getAuthUIConfig();
 
+	let isPending = $state(false);
+
 	function getRedirectTo() {
 		return redirectToProp || getSearchParam('redirectTo') || config.redirectTo;
 	}
@@ -53,6 +56,7 @@
 
 	async function doSignInSocial() {
 		setIsSubmitting(true);
+		isPending = true;
 
 		try {
 			if (other) {
@@ -94,6 +98,7 @@
 			config.toast.error(getLocalizedError({ error, localization }));
 
 			setIsSubmitting(false);
+			isPending = false;
 		}
 	}
 </script>
@@ -110,14 +115,18 @@
 	variant="outline"
 	onclick={doSignInSocial}
 >
-	{#if provider.icon}
-		<provider.icon class={classNames?.form?.icon} />
-	{/if}
+	{#if isPending}
+		<Loader2 class="animate-spin" />
+	{:else}
+		{#if provider.icon}
+			<provider.icon class={classNames?.form?.icon} />
+		{/if}
 
-	{#if socialLayout === 'grid'}
-		{provider.name}
-	{/if}
-	{#if socialLayout === 'vertical'}
-		{localization.SIGN_IN_WITH} {provider.name}
+		{#if socialLayout === 'grid'}
+			{provider.name}
+		{/if}
+		{#if socialLayout === 'vertical'}
+			{localization.SIGN_IN_WITH} {provider.name}
+		{/if}
 	{/if}
 </Button>

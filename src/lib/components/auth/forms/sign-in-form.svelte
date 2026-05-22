@@ -79,9 +79,8 @@
 		captchaHook.captchaRef = captchaRef;
 	});
 
-	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo
-	});
+	const transition = useOnSuccessTransition({ redirectTo });
+	const { onSuccess } = transition;
 
 	// Form schema
 	const formSchema = $derived(
@@ -162,11 +161,12 @@
 		}
 	}));
 
-	const isSubmitting = $derived(isSubmittingProp || form.state.isSubmitting || transitionPending);
+	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
+	const isSubmitting = $derived(isSubmittingProp || formIsSubmitting.current || transition.isPending);
 
 	// Update parent isSubmitting state
 	$effect(() => {
-		setIsSubmitting?.(form.state.isSubmitting || transitionPending);
+		setIsSubmitting?.(formIsSubmitting.current || transition.isPending);
 	});
 </script>
 

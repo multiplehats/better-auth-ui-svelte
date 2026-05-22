@@ -98,9 +98,8 @@
 	});
 
 	// Success transition for navigation
-	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo
-	});
+	const transition = useOnSuccessTransition({ redirectTo });
+	const { onSuccess } = transition;
 
 	// Helper functions
 	function getRedirectTo() {
@@ -391,7 +390,8 @@
 	}
 
 	// Combine isSubmitting states
-	const isSubmitting = $derived(form.state.isSubmitting || transitionPending);
+	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
+	const isSubmitting = $derived(formIsSubmitting.current || transition.isPending);
 
 	// Sync external isSubmitting
 	$effect(() => {

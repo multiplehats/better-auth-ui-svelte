@@ -45,9 +45,8 @@
 	let verifiedEmail = $state<string | undefined>(undefined);
 
 	// Transition for OTP verification success
-	const { onSuccess, isPending: transitionPending } = useOnSuccessTransition({
-		redirectTo
-	});
+	const transition = useOnSuccessTransition({ redirectTo });
+	const { onSuccess } = transition;
 
 	// Reactive validation schemas
 	const emailFormSchema = $derived(
@@ -106,10 +105,13 @@
 		}
 	}));
 
+	const emailFormIsSubmitting = emailForm.useStore((s) => s.isSubmitting);
+	const otpFormIsSubmitting = otpForm.useStore((s) => s.isSubmitting);
+
 	// Computed submitting states
-	const emailFormSubmitting = $derived(isSubmittingProp || emailForm.state.isSubmitting);
+	const emailFormSubmitting = $derived(isSubmittingProp || emailFormIsSubmitting.current);
 	const otpFormSubmitting = $derived(
-		isSubmittingProp || otpForm.state.isSubmitting || transitionPending
+		isSubmittingProp || otpFormIsSubmitting.current || transition.isPending
 	);
 
 	// Handle email form submission with error handling
@@ -137,7 +139,7 @@
 	// Update parent isSubmitting state
 	$effect(() => {
 		setIsSubmitting?.(
-			emailForm.state.isSubmitting || otpForm.state.isSubmitting || transitionPending
+			emailFormIsSubmitting.current || otpFormIsSubmitting.current || transition.isPending
 		);
 	});
 

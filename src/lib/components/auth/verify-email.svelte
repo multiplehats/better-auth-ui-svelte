@@ -5,6 +5,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
+	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import MailOpen from '@lucide/svelte/icons/mail-open';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
 
@@ -274,7 +275,7 @@
 
 			<Button onclick={handleVerifyEmail} disabled={isVerifying} class="w-full">
 				{#if isVerifying}
-					{localization.VERIFYING || 'Verifying'}...
+					<Loader2 class="animate-spin" />
 				{:else}
 					{localization.VERIFY_EMAIL_BUTTON || 'Verify Email'}
 				{/if}
@@ -299,10 +300,10 @@
 					onclick={handleResendEmail}
 					class="w-full"
 				>
-					{#if countdown > 0}
+					{#if isResending}
+						<Loader2 class="animate-spin" />
+					{:else if countdown > 0}
 						{localization.RESEND_VERIFICATION_EMAIL} ({countdown}s)
-					{:else if isResending}
-						{localization.RESEND_VERIFICATION_EMAIL}...
 					{:else}
 						{localization.RESEND_VERIFICATION_EMAIL}
 					{/if}
