@@ -1,5 +1,13 @@
 # better-auth-ui-svelte
 
+## 0.12.6
+
+### Patch Changes
+
+- fix: upgrade layerchart peer dependency to 2.0.0-next.48 ([`c46ad69`](https://github.com/multiplehats/better-auth-ui-svelte/commit/c46ad69f0f3897e94b2b07ec0172623944d87235))
+
+  Replaces removed `getTooltipContext` with `getChartContext` and adapts tooltip/marks snippet APIs to the new layerchart interface.
+
 ## 0.12.5
 
 ### Patch Changes
