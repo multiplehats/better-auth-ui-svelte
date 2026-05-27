@@ -516,15 +516,15 @@
 										yAxis: { format: () => '' }
 									}}
 								>
-									{#snippet marks({ series, getAreaProps })}
+									{#snippet marks({ context })}
 										<defs>
 											<linearGradient id="fillUsers" x1="0" y1="0" x2="0" y2="1">
 												<stop offset="5%" stop-color="var(--color-users)" stop-opacity={1.0} />
 												<stop offset="95%" stop-color="var(--color-users)" stop-opacity={0.1} />
 											</linearGradient>
 										</defs>
-										{#each series as s, i (s.key)}
-											<Area {...getAreaProps(s, i)} fill="url(#fillUsers)" />
+										{#each context.series.visibleSeries as s (s.key)}
+											<Area seriesKey={s.key} fill="url(#fillUsers)" />
 										{/each}
 									{/snippet}
 									{#snippet tooltip()}
