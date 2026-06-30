@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import type { Snippet } from 'svelte';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { AccountViewPath } from '$lib/utils/view-paths.js';
 	import type { SettingsCardClassNames } from '../settings/shared/settings-card.svelte';
@@ -17,6 +18,12 @@
 		pathname?: string;
 		view?: AccountViewPath;
 		hideNav?: boolean;
+		/**
+		 * Extra cards rendered in the SETTINGS view, below the built-in account
+		 * fields (forwarded to `AccountSettingsCards`). Build them with the
+		 * exported `SettingsCard`; the snippet receives the card `classNames`.
+		 */
+		settingsCards?: Snippet<[{ classNames?: SettingsCardClassNames }]>;
 	}
 </script>
 
@@ -43,7 +50,8 @@
 		path: pathProp,
 		pathname,
 		view: viewProp,
-		hideNav
+		hideNav,
+		settingsCards
 	}: Props = $props();
 
 	const {
@@ -176,7 +184,7 @@
 
 		<!-- Main Content Area -->
 		{#if view === 'SETTINGS'}
-			<AccountSettingsCards {classNames} {localization} />
+			<AccountSettingsCards {classNames} {localization} children={settingsCards} />
 		{:else if view === 'SECURITY'}
 			<SecuritySettingsCards {classNames} {localization} />
 		{:else if view === 'API_KEYS'}

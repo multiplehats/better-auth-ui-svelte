@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import type { Snippet } from 'svelte';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { SettingsCardClassNames } from '../shared/settings-card.svelte';
 
@@ -9,6 +10,13 @@
 			cards?: string;
 		};
 		localization?: Partial<AuthLocalization>;
+		/**
+		 * Extra cards to render in the same column (same gap + width) below the
+		 * built-in account fields — e.g. a custom phone-number card. Build them
+		 * with the exported `SettingsCard`; the snippet receives the resolved card
+		 * `classNames` so custom cards match the surrounding ones.
+		 */
+		children?: Snippet<[{ classNames?: SettingsCardClassNames }]>;
 	}
 </script>
 
@@ -25,7 +33,7 @@
 
 	type Props = AccountSettingsCardsProps;
 
-	let { className, classNames, localization }: Props = $props();
+	let { className, classNames, localization, children }: Props = $props();
 
 	const {
 		additionalFields,
@@ -85,6 +93,9 @@
 			{/if}
 		{/each}
 	{/if}
+
+	<!-- Consumer-injected cards (custom fields) — same column, below built-ins. -->
+	{@render children?.({ classNames: classNames?.card })}
 
 	{#if multiSession}
 		<AccountsCard classNames={classNames?.card} {localization} />
