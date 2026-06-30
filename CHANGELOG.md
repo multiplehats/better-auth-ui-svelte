@@ -1,5 +1,11 @@
 # better-auth-ui-svelte
 
+## 0.13.0
+
+### Minor Changes
+
+- Add a slot to inject custom cards into the account settings area. `AccountView` gains a `settingsCards` snippet and `AccountSettingsCards` a `children` snippet, both rendered in the same column (matching gap + width) below the built-in account fields. The snippet receives the resolved card `classNames`, so custom cards built with the exported `SettingsCard` match the surrounding ones — e.g. a phone-number card. ([`bc3f683`](https://github.com/multiplehats/better-auth-ui-svelte/commit/bc3f68329cfcde2001e2fca2f21ec0532d3f6c1e))
+
 ## 0.12.6
 
 ### Patch Changes
