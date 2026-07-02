@@ -5,7 +5,7 @@
 	import RecaptchaV2 from './recaptcha-v2.svelte';
 
 	// Default captcha endpoints
-	const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/forget-password'];
+	const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/request-password-reset'];
 
 	interface Props {
 		ref?: unknown;

@@ -2,7 +2,7 @@ import { getAuthUIConfig, getLocalization } from '$lib/context/auth-ui-config.sv
 import type { AuthLocalization } from '$lib/types/index.js';
 
 // Default captcha endpoints
-const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/forget-password'];
+const DEFAULT_CAPTCHA_ENDPOINTS = ['/sign-up/email', '/sign-in/email', '/request-password-reset'];
 
 // Sanitize action name for reCAPTCHA
 // Google reCAPTCHA only allows A-Za-z/_ in action names

@@ -76,11 +76,16 @@
 
 			const fetchOptions: Record<string, unknown> = {
 				throw: true,
-				headers: await captchaHook.getCaptchaHeaders('/forget-password')
+				headers: await captchaHook.getCaptchaHeaders('/request-password-reset')
 			};
 
 			try {
-				await (authClient.forgetPassword as unknown as (params: Record<string, unknown>) => Promise<unknown>)({
+				// better-auth 1.6 removed `forgetPassword` in favour of
+				// `requestPasswordReset` (endpoint /forget-password became
+				// /request-password-reset). requestPasswordReset also exists on <=1.5,
+				// so this works across the supported better-auth range and matches the
+				// settings change-password flow.
+				await (authClient.requestPasswordReset as unknown as (params: Record<string, unknown>) => Promise<unknown>)({
 					email: value.email,
 					redirectTo: `${baseURL}${basePath}/${resetPasswordPath}`,
 					fetchOptions
@@ -145,7 +150,7 @@
 		{/snippet}
 	</form.Field>
 
-	<Captcha {localization} action="/forget-password" />
+	<Captcha {localization} action="/request-password-reset" />
 
 	<Button
 		type="submit"

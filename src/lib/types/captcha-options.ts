@@ -26,7 +26,7 @@ export type CaptchaOptions = {
 	enterprise?: boolean;
 	/**
 	 * Overrides the default array of paths where captcha validation is enforced
-	 * @default ["/sign-up/email", "/sign-in/email", "/forget-password"]
+	 * @default ["/sign-up/email", "/sign-in/email", "/request-password-reset"]
 	 */
 	endpoints?: string[];
 };
