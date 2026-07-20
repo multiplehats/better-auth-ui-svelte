@@ -524,7 +524,7 @@
 				}) as any,
 			useAccountInfo: (params) =>
 				useAuthData({
-					queryFn: (() => authClient.accountInfo({ accountId: params.providerId } as any)) as any,
+					queryFn: (() => authClient.accountInfo({ query: { accountId: params.providerId } })) as any,
 					cacheKey: `accountInfo:${JSON.stringify(params)}`
 				}) as any,
 			useListDeviceSessions: () =>
