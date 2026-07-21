@@ -134,11 +134,12 @@
 
 	const isSubmitting = $derived(form.state.isSubmitting);
 
-	// Update form values when prop value changes
-	// Use untrack to prevent infinite loop from form state updates
+	// Update form values when prop value changes without infinitely looping.
+	// Read `value` outside untrack so this effect re-runs when it updates.
 	$effect(() => {
+		const v = value;
 		untrack(() => {
-			form.setFieldValue(name, value || '');
+			form.setFieldValue(name, v || '');
 		});
 	});
 </script>
