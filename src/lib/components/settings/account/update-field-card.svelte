@@ -4,7 +4,7 @@
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError } from '$lib/utils/utils.js';
+	import { cn, getLocalizedError, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization, FieldType } from '$lib/types/index.js';
 	import { CardContent } from '$lib/components/ui/card/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
@@ -181,7 +181,7 @@
 
 							{#if state.meta.errors.length > 0}
 								<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-									{state.meta.errors[0]}
+									{getFieldError(state.meta.errors[0])}
 								</p>
 							{/if}
 						</div>
@@ -226,7 +226,7 @@
 
 							{#if state.meta.errors.length > 0}
 								<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-									{state.meta.errors[0]}
+									{getFieldError(state.meta.errors[0])}
 								</p>
 							{/if}
 						</div>
