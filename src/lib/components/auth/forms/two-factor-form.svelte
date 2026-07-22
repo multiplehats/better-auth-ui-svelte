@@ -190,7 +190,10 @@
 		const codeField = form.getFieldInfo('code');
 		const codeValue = codeField?.instance?.state.value ?? '';
 		if (codeValue.length === 6 && !form.state.isSubmitting) {
-			form.handleSubmit();
+			// Handle the rejection — onSubmit already shows the toast.
+			form.handleSubmit().catch((error) => {
+				console.error('[two-factor-form] auto-submit failed', error);
+			});
 		}
 	});
 </script>
