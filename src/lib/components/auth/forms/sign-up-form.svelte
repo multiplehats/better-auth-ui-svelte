@@ -493,7 +493,7 @@
 					</div>
 
 					{#if field.state.meta.errors.length > 0}
-						<p class={cn('text-sm text-red-500', classNames?.error)}>
+						<p class={cn('text-sm text-destructive', classNames?.error)}>
 							{getFieldError(field.state.meta.errors[0])}
 						</p>
 					{/if}
@@ -520,7 +520,7 @@
 						class={classNames?.input}
 					/>
 					{#if field.state.meta.errors.length > 0}
-						<p class={cn('text-sm text-red-500', classNames?.error)}>
+						<p class={cn('text-sm text-destructive', classNames?.error)}>
 							{getFieldError(field.state.meta.errors[0])}
 						</p>
 					{/if}
@@ -547,7 +547,7 @@
 						class={classNames?.input}
 					/>
 					{#if field.state.meta.errors.length > 0}
-						<p class={cn('text-sm text-red-500', classNames?.error)}>
+						<p class={cn('text-sm text-destructive', classNames?.error)}>
 							{getFieldError(field.state.meta.errors[0])}
 						</p>
 					{/if}
@@ -573,7 +573,7 @@
 					class={classNames?.input}
 				/>
 				{#if field.state.meta.errors.length > 0}
-					<p class={cn('text-sm text-red-500', classNames?.error)}>
+					<p class={cn('text-sm text-destructive', classNames?.error)}>
 						{getFieldError(field.state.meta.errors[0])}
 					</p>
 				{/if}
@@ -598,7 +598,7 @@
 					enableToggle
 				/>
 				{#if field.state.meta.errors.length > 0}
-					<p class={cn('text-sm text-red-500', classNames?.error)}>
+					<p class={cn('text-sm text-destructive', classNames?.error)}>
 						{getFieldError(field.state.meta.errors[0])}
 					</p>
 				{/if}
@@ -626,7 +626,7 @@
 						enableToggle
 					/>
 					{#if field.state.meta.errors.length > 0}
-						<p class={cn('text-sm text-red-500', classNames?.error)}>
+						<p class={cn('text-sm text-destructive', classNames?.error)}>
 							{getFieldError(field.state.meta.errors[0])}
 						</p>
 					{/if}
@@ -662,7 +662,7 @@
 									</Label>
 								</div>
 								{#if fieldState.state.meta.errors.length > 0}
-									<p class={cn('text-sm text-red-500', classNames?.error)}>
+									<p class={cn('text-sm text-destructive', classNames?.error)}>
 										{getFieldError(fieldState.state.meta.errors[0])}
 									</p>
 								{/if}
@@ -685,7 +685,7 @@
 									class={classNames?.input}
 								/>
 								{#if fieldState.state.meta.errors.length > 0}
-									<p class={cn('text-sm text-red-500', classNames?.error)}>
+									<p class={cn('text-sm text-destructive', classNames?.error)}>
 										{getFieldError(fieldState.state.meta.errors[0])}
 									</p>
 								{/if}
@@ -707,7 +707,7 @@
 									class={classNames?.input}
 								/>
 								{#if fieldState.state.meta.errors.length > 0}
-									<p class={cn('text-sm text-red-500', classNames?.error)}>
+									<p class={cn('text-sm text-destructive', classNames?.error)}>
 										{getFieldError(fieldState.state.meta.errors[0])}
 									</p>
 								{/if}
@@ -730,7 +730,7 @@
 									class={classNames?.input}
 								/>
 								{#if fieldState.state.meta.errors.length > 0}
-									<p class={cn('text-sm text-red-500', classNames?.error)}>
+									<p class={cn('text-sm text-destructive', classNames?.error)}>
 										{getFieldError(fieldState.state.meta.errors[0])}
 									</p>
 								{/if}
