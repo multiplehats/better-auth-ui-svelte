@@ -8,6 +8,7 @@
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import MailOpen from '@lucide/svelte/icons/mail-open';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
+	import type { ErrorContext } from '@better-fetch/fetch';
 
 	interface Props {
 		className?: string;
@@ -144,7 +145,7 @@
 					callbackURL
 				},
 				{
-					onError: (ctx) => {
+					onError: (ctx: ErrorContext) => {
 						throw new Error(ctx.error.message || 'Failed to send verification email');
 					}
 				}

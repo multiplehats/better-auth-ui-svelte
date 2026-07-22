@@ -7,6 +7,7 @@
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import MailOpen from '@lucide/svelte/icons/mail-open';
+	import type { ErrorContext } from '@better-fetch/fetch';
 
 	interface Props {
 		className?: string;
@@ -113,7 +114,7 @@
 					callbackURL: config.redirectTo || '/'
 				},
 				{
-					onError: (ctx) => {
+					onError: (ctx: ErrorContext) => {
 						throw new Error(ctx.error.message || 'Failed to send magic link');
 					}
 				}

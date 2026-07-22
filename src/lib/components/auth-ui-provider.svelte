@@ -260,10 +260,7 @@
 		 * Theme (light/dark)
 		 */
 		theme?: 'light' | 'dark';
-		/**
-		 * All other props
-		 */
-		[key: string]: unknown;
+		captcha?: CaptchaOptions;
 	}
 
 	let {
@@ -306,8 +303,7 @@
 		onSessionChange,
 		replace: replaceProp,
 		Link: LinkProp,
-		theme = 'light',
-		...props
+		theme = 'light'
 	}: Props = $props();
 
 	const authClient = $derived(authClientProp);
@@ -895,8 +891,7 @@
 		},
 		get theme() {
 			return theme;
-		},
-		...props
+		}
 	};
 
 	// Set the context for child components synchronously
@@ -931,7 +926,7 @@
 	<OrganizationRefetcher />
 {/if}
 
-{#if (captcha as CaptchaOptions | undefined)?.provider === 'google-recaptcha-v3'}
+{#if captcha?.provider === 'google-recaptcha-v3'}
 	<RecaptchaV3>
 		{@render children()}
 	</RecaptchaV3>

@@ -1,7 +1,6 @@
 import { createAuthClient } from 'better-auth/svelte';
 import {
 	organizationClient,
-	apiKeyClient,
 	twoFactorClient,
 	usernameClient,
 	magicLinkClient,
@@ -14,6 +13,7 @@ import {
 	adminClient
 } from 'better-auth/client/plugins';
 import { passkeyClient } from '@better-auth/passkey/client';
+import { apiKeyClient } from '@better-auth/api-key/client';
 
 /**
  * Better Auth Svelte client

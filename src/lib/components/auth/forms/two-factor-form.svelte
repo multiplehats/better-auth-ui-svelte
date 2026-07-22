@@ -190,7 +190,7 @@
 	// Auto-submit when code reaches 6 characters
 	$effect(() => {
 		const codeField = form.getFieldInfo('code');
-		const codeValue = codeField?.instance?.state.value ?? '';
+		const codeValue = codeField?.instance?.store.state.value ?? '';
 		if (codeValue.length === 6 && !form.state.isSubmitting) {
 			// Handle the rejection — onSubmit already shows the toast.
 			form.handleSubmit().catch((error) => {

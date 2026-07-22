@@ -4,6 +4,7 @@
 	import * as z from 'zod';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
+	import type { ErrorContext } from '@better-fetch/fetch';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import { CardContent } from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -98,7 +99,7 @@
 						callbackURL: window.location.pathname
 					},
 					{
-						onError: (ctx) => {
+						onError: (ctx: ErrorContext) => {
 							throw new Error(ctx.error.message || 'Failed to send verification email');
 						}
 					}

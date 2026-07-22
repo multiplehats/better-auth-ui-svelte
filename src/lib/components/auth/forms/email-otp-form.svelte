@@ -148,7 +148,7 @@
 	// Auto-submit when code reaches 6 characters
 	$effect(() => {
 		const codeField = otpForm.getFieldInfo('code');
-		const codeValue = codeField?.instance?.state.value ?? '';
+		const codeValue = codeField?.instance?.store.state.value ?? '';
 		if (codeValue.length === 6 && !otpForm.state.isSubmitting && verifiedEmail) {
 			handleOTPSubmit();
 		}

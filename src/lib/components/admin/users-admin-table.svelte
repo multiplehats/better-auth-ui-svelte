@@ -113,18 +113,18 @@
 			}
 
 			if (response) {
-				data = (response.users as Record<string, unknown>[]).map((user) => ({
-					id: user.id as string,
-					email: user.email as string,
-					name: user.name as string | null | undefined,
-					emailVerified: user.emailVerified as boolean,
-					image: user.image as string | null | undefined,
-					createdAt: user.createdAt ? new Date(user.createdAt as string) : null,
-					updatedAt: user.updatedAt ? new Date(user.updatedAt as string) : null,
-					role: (user.role as string) ?? 'user',
-					banned: (user.banned as boolean) ?? false,
-					banReason: user.banReason as string | null | undefined,
-					banExpires: user.banExpires ? new Date(user.banExpires as string) : null
+				data = response.users.map((user) => ({
+					id: user.id,
+					email: user.email,
+					name: user.name ?? null,
+					emailVerified: user.emailVerified,
+					image: user.image ?? null,
+					createdAt: user.createdAt ? new Date(user.createdAt) : null,
+					updatedAt: user.updatedAt ? new Date(user.updatedAt) : null,
+					role: user.role ?? 'user',
+					banned: user.banned ?? false,
+					banReason: user.banReason ?? null,
+					banExpires: user.banExpires ? new Date(user.banExpires) : null
 				}));
 
 				const total = response.total ?? data.length;

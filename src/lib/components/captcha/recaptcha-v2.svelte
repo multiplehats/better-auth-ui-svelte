@@ -6,7 +6,10 @@
 		captchaRef?: unknown;
 	}
 
-	let { captchaRef = $bindable() }: Props = $props();
+	let {
+		// eslint-disable-next-line no-useless-assignment -- $bindable default for parent binding; consumer binding is reserved for the (currently commented-out) ReCAPTCHA component
+		captchaRef = $bindable()
+	}: Props = $props();
 
 	const config = getAuthUIConfig();
 	const { captcha } = config;

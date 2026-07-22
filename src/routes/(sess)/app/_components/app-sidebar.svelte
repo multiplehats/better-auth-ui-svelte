@@ -154,7 +154,7 @@
 	}: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root {collapsible} {...restProps}>
+<Sidebar.Root bind:ref {collapsible} {...restProps}>
 	<Sidebar.Header>
 		<OrganizationSwitcher
 			classNames={{

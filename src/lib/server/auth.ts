@@ -1,9 +1,9 @@
 import { betterAuth, type OAuth2Tokens } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { apiKey } from '@better-auth/api-key';
 import { db } from './db/index.js';
 import {
 	organization,
-	apiKey,
 	oneTimeToken,
 	twoFactor,
 	username,

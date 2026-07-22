@@ -63,7 +63,7 @@
 
 	// Create the appropriate schema based on type (used for validation logic)
 	const fieldSchema = $derived.by(() => {
-		let schema: z.ZodType<unknown> = z.unknown();
+		let schema: z.ZodType<unknown>;
 
 		if (type === 'number') {
 			schema = required
