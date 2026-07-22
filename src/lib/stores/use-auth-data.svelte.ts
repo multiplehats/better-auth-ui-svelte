@@ -1,6 +1,7 @@
 import { authDataCache } from '../utils/auth-data-cache.js';
 import { getAuthUIConfig } from '../context/auth-ui-config.svelte.js';
 import { fromStore } from '../utils/store-to-rune.svelte.js';
+import { dev } from '$app/environment';
 import type { BetterFetchError } from '@better-fetch/fetch';
 
 export function useAuthData<T>({
@@ -15,7 +16,13 @@ export function useAuthData<T>({
 	const config = getAuthUIConfig();
 	const { authClient, toast, localization } = config;
 
-	// Generate a stable cache key
+	// Fall back to queryFn.toString() — unsafe under minification (see warn below).
+	if (!cacheKey && dev) {
+		console.warn(
+			'[better-auth-ui-svelte] useAuthData called without an explicit cacheKey — ' +
+				'the toString() fallback is unsafe under minification.'
+		);
+	}
 	const stableCacheKey = cacheKey || queryFn.toString();
 
 	// Reactive state using Svelte 5 runes
