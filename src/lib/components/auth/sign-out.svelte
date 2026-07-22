@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
+	import { getLocalizedError } from '$lib/utils/utils.js';
 
 	const authClient = getAuthClient();
 	const config = getAuthUIConfig();
@@ -11,13 +12,13 @@
 		redirectTo: `${config.basePath}/${config.viewPaths.SIGN_IN}`
 	});
 
-	let signingOut = $state(false);
-
-	onMount(() => {
-		if (signingOut) return;
-		signingOut = true;
-
-		authClient.signOut().finally(onSuccess);
+	onMount(async () => {
+		try {
+			await authClient.signOut({ fetchOptions: { throw: true } });
+			await onSuccess();
+		} catch (error) {
+			config.toast.error(getLocalizedError({ error, localization: config.localization }));
+		}
 	});
 </script>
 
