@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Loader2 from '@lucide/svelte/icons/loader';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { getSearchParam } from '$lib/utils/utils.js';
+	import { getSearchParam, getLocalizedError } from '$lib/utils/utils.js';
 
 	interface Props {
 		redirectTo?: string;
@@ -14,6 +14,9 @@
 	// Track if we're already redirecting to prevent multiple redirects
 	let isRedirecting = $state(false);
 
+	// Resolve once at init — re-invoking per call can leak subscriptions.
+	const sessionHook = config.hooks.useSession?.();
+
 	// Get redirect URL from props, URL params, or config
 	const getRedirectTo = () => {
 		return redirectToProp || getSearchParam('redirectTo') || config.redirectTo;
@@ -22,7 +25,6 @@
 	// Handle the success callback
 	const onSuccess = async () => {
 		// Refetch session if available
-		const sessionHook = config.hooks.useSession();
 		if (sessionHook && 'refetch' in sessionHook && typeof sessionHook.refetch === 'function') {
 			await sessionHook.refetch?.();
 		}
@@ -44,7 +46,10 @@
 		// If no persistClient, redirect immediately
 		if (!config.persistClient) {
 			isRedirecting = true;
-			onSuccess();
+			onSuccess().catch((error) => {
+				config.toast.error(getLocalizedError({ error, localization: config.localization }));
+				isRedirecting = false;
+			});
 			return;
 		}
 
@@ -56,7 +61,10 @@
 
 		// Mark as redirecting and execute the success callback
 		isRedirecting = true;
-		onSuccess();
+		onSuccess().catch((error) => {
+			config.toast.error(getLocalizedError({ error, localization: config.localization }));
+			isRedirecting = false;
+		});
 	});
 </script>
 
