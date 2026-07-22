@@ -1,0 +1,65 @@
+name: Release tarball (fork)
+
+# Manually build the selected tag and attach the `npm pack` tarball to a
+# GitHub Release for that tag. Triggered via the Actions UI ("Run workflow")
+# — pick the tag from the branch/tag dropdown before clicking Run.
+#
+# Consumers install via a tarball URL, e.g.:
+#
+#   pnpm add https://github.com/<owner>/better-auth-ui-svelte/releases/download/v0.13.1-fork.1/better-auth-ui-svelte-0.13.1.tgz
+#
+# This lets the fork be consumed without renaming the package, without
+# committing dist/ to the repo, and without publishing to a registry.
+# Tags follow the `v<upstream-version>-fork.<n>` pattern.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & release tarball
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify dispatch is from a tag
+        run: |
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
+            echo "::error::This workflow must be dispatched from a tag. Select the tag from the dropdown in the Actions UI before clicking Run."
+            exit 1
+          fi
+          echo "Releasing tag: ${GITHUB_REF_NAME}"
+
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build package (prepack only — skip demo vite build)
+        # `pnpm build` runs the demo app's vite build too, which requires
+        # server-only env vars (GOOGLE_CLIENT_*, BETTER_AUTH_URL, etc.) that
+        # aren't relevant to the published library. `prepack` produces the
+        # dist/ that consumers actually install.
+        run: pnpm run prepack
+
+      - name: Pack
+        run: npm pack
+
+      - name: Attach tarball to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: better-auth-ui-svelte-*.tgz
+          generate_release_notes: true
+          draft: false
+          prerelease: true
