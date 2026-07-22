@@ -68,7 +68,7 @@
 		...passwordValidationProp
 	});
 
-	const captchaHook = useCaptcha({ localization });
+	const captchaHook = useCaptcha({ localization: () => localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding
@@ -79,7 +79,7 @@
 		captchaHook.captchaRef = captchaRef;
 	});
 
-	const transition = useOnSuccessTransition({ redirectTo });
+	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
 
 	// Form schema
@@ -162,7 +162,9 @@
 	}));
 
 	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
-	const isSubmitting = $derived(isSubmittingProp || formIsSubmitting.current || transition.isPending);
+	const isSubmitting = $derived(
+		isSubmittingProp || formIsSubmitting.current || transition.isPending
+	);
 
 	// Update parent isSubmitting state
 	$effect(() => {

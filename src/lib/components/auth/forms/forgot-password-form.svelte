@@ -42,7 +42,7 @@
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
 	// Initialize captcha with reactive localization
-	const captchaHook = $derived(useCaptcha({ localization }));
+	const captchaHook = useCaptcha({ localization: () => localization });
 
 	// Local state for captcha binding
 	let captchaRef = $state<unknown>(null);
@@ -52,18 +52,19 @@
 		captchaHook.captchaRef = captchaRef;
 	});
 
-	// Form validation schema - created once at initialization
-	const initLocalization = { ...contextLocalization, ...propLocalization };
-	const formSchema = z.object({
-		email: z
-			.string()
-			.min(1, {
-				message: `${initLocalization.EMAIL} ${initLocalization.IS_REQUIRED}`
-			})
-			.email({
-				message: `${initLocalization.EMAIL} ${initLocalization.IS_INVALID}`
-			})
-	});
+	// Form validation schema - derived so localization changes propagate
+	const formSchema = $derived(
+		z.object({
+			email: z
+				.string()
+				.min(1, {
+					message: `${localization.EMAIL} ${localization.IS_REQUIRED}`
+				})
+				.email({
+					message: `${localization.EMAIL} ${localization.IS_INVALID}`
+				})
+		})
+	);
 
 	// Create form with validation and submission handling
 	const form = createForm(() => ({

@@ -86,7 +86,7 @@
 	let uploadingAvatar = $state(false);
 
 	// Captcha integration
-	const captchaHook = useCaptcha({ localization });
+	const captchaHook = useCaptcha({ localization: () => localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding
@@ -98,7 +98,7 @@
 	});
 
 	// Success transition for navigation
-	const transition = useOnSuccessTransition({ redirectTo });
+	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
 
 	// Helper functions
@@ -115,100 +115,104 @@
 		}`;
 	}
 
-	// Build form schema - localization and passwordValidation are intentionally captured at init
-	const defaultFields = {
-		email: z.email({
-			error: `${localization.EMAIL} ${localization.IS_INVALID}`
-		}),
-		password: getPasswordSchema(passwordValidation, localization),
-		name:
-			signUpFields?.includes('name') && nameRequired
+	// Build form schema reactively so localization and passwordValidation
+	// changes propagate to validators. The structure (which fields exist)
+	// is stable, but the messages need to reflect the current localization.
+	const formSchema = $derived.by(() => {
+		const defaultFields = {
+			email: z.email({
+				error: `${localization.EMAIL} ${localization.IS_INVALID}`
+			}),
+			password: getPasswordSchema(passwordValidation, localization),
+			name:
+				signUpFields?.includes('name') && nameRequired
+					? z.string().min(1, {
+							error: `${localization.NAME} ${localization.IS_REQUIRED}`
+						})
+					: z.string().optional(),
+			image: z.string().optional(),
+			username: usernameEnabled
 				? z.string().min(1, {
-						error: `${localization.NAME} ${localization.IS_REQUIRED}`
+						error: `${localization.USERNAME} ${localization.IS_REQUIRED}`
 					})
 				: z.string().optional(),
-		image: z.string().optional(),
-		username: usernameEnabled
-			? z.string().min(1, {
-					error: `${localization.USERNAME} ${localization.IS_REQUIRED}`
-				})
-			: z.string().optional(),
-		confirmPassword: confirmPasswordEnabled
-			? getPasswordSchema(passwordValidation, {
-					PASSWORD_REQUIRED: localization.CONFIRM_PASSWORD_REQUIRED,
-					PASSWORD_TOO_SHORT: localization.PASSWORD_TOO_SHORT,
-					PASSWORD_TOO_LONG: localization.PASSWORD_TOO_LONG,
-					INVALID_PASSWORD: localization.INVALID_PASSWORD
-				} as AuthLocalization)
-			: z.string().optional()
-	};
+			confirmPassword: confirmPasswordEnabled
+				? getPasswordSchema(passwordValidation, {
+						PASSWORD_REQUIRED: localization.CONFIRM_PASSWORD_REQUIRED,
+						PASSWORD_TOO_SHORT: localization.PASSWORD_TOO_SHORT,
+						PASSWORD_TOO_LONG: localization.PASSWORD_TOO_LONG,
+						INVALID_PASSWORD: localization.INVALID_PASSWORD
+					} as AuthLocalization)
+				: z.string().optional()
+		};
 
-	const schemaFields = {} as Record<string, z.ZodTypeAny>;
+		const schemaFields = {} as Record<string, z.ZodTypeAny>;
 
-	// Add additional fields from signUpFields
-	if (signUpFields) {
-		for (const field of signUpFields) {
-			if (field === 'name' || field === 'image') continue;
+		// Add additional fields from signUpFields
+		if (signUpFields) {
+			for (const field of signUpFields) {
+				if (field === 'name' || field === 'image') continue;
 
-			const additionalField = additionalFields?.[field];
-			if (!additionalField) continue;
+				const additionalField = additionalFields?.[field];
+				if (!additionalField) continue;
 
-			let fieldSchema: z.ZodTypeAny;
+				let fieldSchema: z.ZodTypeAny;
 
-			// Create the appropriate schema based on field type
-			if (additionalField.type === 'number') {
-				fieldSchema = additionalField.required
-					? z.preprocess(
-							(val) => (!val ? undefined : Number(val)),
-							z.number({
-								message: `${additionalField.label} ${localization.IS_INVALID}`
-							})
-						)
-					: z.coerce
-							.number({
-								message: `${additionalField.label} ${localization.IS_INVALID}`
-							})
-							.optional();
-			} else if (additionalField.type === 'boolean') {
-				fieldSchema = additionalField.required
-					? z.coerce
-							.boolean({
-								message: `${additionalField.label} ${localization.IS_INVALID}`
-							})
-							.refine((val) => val === true, {
-								message: `${additionalField.label} ${localization.IS_REQUIRED}`
-							})
-					: z.coerce
-							.boolean({
-								message: `${additionalField.label} ${localization.IS_INVALID}`
-							})
-							.optional();
-			} else {
-				fieldSchema = additionalField.required
-					? z.string().min(1, `${additionalField.label} ${localization.IS_REQUIRED}`)
-					: z.string().optional();
+				// Create the appropriate schema based on field type
+				if (additionalField.type === 'number') {
+					fieldSchema = additionalField.required
+						? z.preprocess(
+								(val) => (!val ? undefined : Number(val)),
+								z.number({
+									message: `${additionalField.label} ${localization.IS_INVALID}`
+								})
+							)
+						: z.coerce
+								.number({
+									message: `${additionalField.label} ${localization.IS_INVALID}`
+								})
+								.optional();
+				} else if (additionalField.type === 'boolean') {
+					fieldSchema = additionalField.required
+						? z.coerce
+								.boolean({
+									message: `${additionalField.label} ${localization.IS_INVALID}`
+								})
+								.refine((val) => val === true, {
+									message: `${additionalField.label} ${localization.IS_REQUIRED}`
+								})
+						: z.coerce
+								.boolean({
+									message: `${additionalField.label} ${localization.IS_INVALID}`
+								})
+								.optional();
+				} else {
+					fieldSchema = additionalField.required
+						? z.string().min(1, `${additionalField.label} ${localization.IS_REQUIRED}`)
+						: z.string().optional();
+				}
+
+				schemaFields[field] = fieldSchema;
 			}
-
-			schemaFields[field] = fieldSchema;
 		}
-	}
 
-	const formSchema = z
-		.object({
-			...defaultFields,
-			...schemaFields
-		})
-		.refine(
-			(data) => {
-				// Skip validation if confirmPassword is not enabled
-				if (!confirmPasswordEnabled) return true;
-				return data.password === data.confirmPassword;
-			},
-			{
-				message: localization.PASSWORDS_DO_NOT_MATCH!,
-				path: ['confirmPassword']
-			}
-		);
+		return z
+			.object({
+				...defaultFields,
+				...schemaFields
+			})
+			.refine(
+				(data) => {
+					// Skip validation if confirmPassword is not enabled
+					if (!confirmPasswordEnabled) return true;
+					return data.password === data.confirmPassword;
+				},
+				{
+					message: localization.PASSWORDS_DO_NOT_MATCH!,
+					path: ['confirmPassword']
+				}
+			);
+	});
 
 	// Create default values for the form
 	const defaultValues = {
@@ -642,7 +646,7 @@
 			{#if additionalField}
 				<form.Field
 					name={field as never}
-					validators={{ onChange: getAdditionalFieldValidator(field) as any }}
+					validators={{ onChange: getAdditionalFieldValidator(field) as never }}
 				>
 					{#snippet children(fieldState)}
 						{#if additionalField.type === 'boolean'}

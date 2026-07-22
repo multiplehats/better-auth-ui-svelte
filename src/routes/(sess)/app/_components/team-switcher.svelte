@@ -5,12 +5,13 @@
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 
-	// This should be `Component` after @lucide/svelte updates types
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let { teams }: { teams: { name: string; logo: any; plan: string }[] } = $props();
+	import { type Component } from 'svelte';
+
+	let { teams }: { teams: { name: string; logo: Component; plan: string }[] } = $props();
 	const sidebar = useSidebar();
 
-	let activeTeam = $state(teams[0]);
+	let activeTeam = $state<{ name: string; logo: Component; plan: string } | undefined>(undefined);
+	const currentTeam = $derived(activeTeam ?? teams[0]);
 </script>
 
 <Sidebar.Menu>
@@ -26,13 +27,13 @@
 						<div
 							class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
 						>
-							<activeTeam.logo class="size-4" />
+							<currentTeam.logo class="size-4" />
 						</div>
 						<div class="grid flex-1 text-left text-sm leading-tight">
 							<span class="truncate font-medium">
-								{activeTeam.name}
+								{currentTeam.name}
 							</span>
-							<span class="truncate text-xs">{activeTeam.plan}</span>
+							<span class="truncate text-xs">{currentTeam.plan}</span>
 						</div>
 						<ChevronsUpDownIcon class="ml-auto" />
 					</Sidebar.MenuButton>

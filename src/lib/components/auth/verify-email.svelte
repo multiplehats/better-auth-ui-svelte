@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn } from '$lib/utils/ui.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -29,8 +29,9 @@
 	const config = getAuthUIConfig();
 	const localization = $derived({ ...config.localization, ...localizationProp });
 
-	// State management
-	let email = $state(emailProp || '');
+	// State management. `emailProp` is only an initial value; subsequent updates
+	// come from URL params in onMount, so we intentionally capture the prop once.
+	let email = $state(untrack(() => emailProp || ''));
 	let isResending = $state(false);
 	let resendDisabled = $state(false);
 	let countdown = $state(0);

@@ -28,6 +28,8 @@
 	let {
 		className,
 		classNames,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- required by AuthForm's shared props interface
+		callbackURL,
 		isSubmitting: isSubmittingProp,
 		localization: localizationProp,
 		otpSeparators = 0,
@@ -45,7 +47,7 @@
 	let verifiedEmail = $state<string | undefined>(undefined);
 
 	// Transition for OTP verification success
-	const transition = useOnSuccessTransition({ redirectTo });
+	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
 
 	// Reactive validation schemas

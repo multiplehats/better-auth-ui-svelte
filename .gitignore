@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 
 # auth schema generated (manually copy to schema.ts)
 auth-schema.ts
+
+# eslint cache
+.eslintcache

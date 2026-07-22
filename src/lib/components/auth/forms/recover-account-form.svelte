@@ -39,14 +39,16 @@
 	const config = getAuthUIConfig();
 
 	// Merge localization from context and props
-	const localization = { ...contextLocalization, ...localizationProp };
+	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
-	const transition = useOnSuccessTransition({ redirectTo });
+	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
 
-	const schema = z.object({
-		code: z.string().min(1, { message: localization.BACKUP_CODE_REQUIRED })
-	});
+	const schema = $derived(
+		z.object({
+			code: z.string().min(1, { message: localization.BACKUP_CODE_REQUIRED })
+		})
+	);
 
 	const form = createForm(() => ({
 		defaultValues: {
@@ -71,7 +73,9 @@
 
 	// Compute final isSubmitting state
 	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
-	const isSubmitting = $derived(isSubmittingProp ?? (formIsSubmitting.current || transition.isPending));
+	const isSubmitting = $derived(
+		isSubmittingProp ?? (formIsSubmitting.current || transition.isPending)
+	);
 
 	// Sync isSubmitting state
 	$effect(() => {

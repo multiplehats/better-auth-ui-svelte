@@ -59,6 +59,8 @@
 
 	// Use hook if skipHook is false
 	let listAccountsResult: ReturnType<typeof useListAccounts> | undefined = undefined;
+	// skipHook gates a conditional hook call; reactively re-evaluating would violate rules-of-hooks.
+	// svelte-ignore state_referenced_locally
 	if (!skipHook) {
 		listAccountsResult = useListAccounts();
 	}

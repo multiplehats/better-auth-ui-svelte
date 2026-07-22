@@ -29,6 +29,8 @@
 	const { redirectTo, replace, toast, organization: organizationOptions } = config;
 
 	// Hook called unconditionally at top level — invitationId is guaranteed by the parent.
+	// useInvitation is an init-only hook accepting plain values; invitationId is stable per mount
+	// svelte-ignore state_referenced_locally
 	const invitationHook = config.hooks.useInvitation({ id: invitationId });
 	const invitation = $derived(invitationHook?.data ?? null);
 	const isPending = $derived(invitationHook?.isPending ?? false);

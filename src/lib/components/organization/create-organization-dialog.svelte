@@ -64,22 +64,23 @@
 		fileInputRef?.click();
 	}
 
-	// Form validation schema - localization captured at init for validation messages
-	const initLocalization = { ...contextLocalization, ...propLocalization };
-	const formSchema = z.object({
-		logo: z.string().optional(),
-		name: z.string().min(1, {
-			message: `${initLocalization.ORGANIZATION_NAME} ${initLocalization.IS_REQUIRED}`
-		}),
-		slug: z
-			.string()
-			.min(1, {
-				message: `${initLocalization.ORGANIZATION_SLUG} ${initLocalization.IS_REQUIRED}`
-			})
-			.regex(/^[a-z0-9-]+$/, {
-				message: `${initLocalization.ORGANIZATION_SLUG} ${initLocalization.IS_INVALID}`
-			})
-	});
+	// Form validation schema — reactive to localization changes
+	const formSchema = $derived(
+		z.object({
+			logo: z.string().optional(),
+			name: z.string().min(1, {
+				message: `${localization.ORGANIZATION_NAME} ${localization.IS_REQUIRED}`
+			}),
+			slug: z
+				.string()
+				.min(1, {
+					message: `${localization.ORGANIZATION_SLUG} ${localization.IS_REQUIRED}`
+				})
+				.regex(/^[a-z0-9-]+$/, {
+					message: `${localization.ORGANIZATION_SLUG} ${localization.IS_INVALID}`
+				})
+		})
+	);
 
 	// Create form
 	const form = createForm(() => ({

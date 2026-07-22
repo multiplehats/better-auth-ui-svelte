@@ -8,7 +8,7 @@ import type { Refetch } from './refetch.js';
 
 type AnyAuthSession = AnyAuthClient['$Infer']['Session'];
 
-type AuthHook<T> = {
+export type AuthHook<T> = {
 	isPending: boolean;
 	data?: T | null;
 	error?: BetterFetchError | null;
@@ -45,19 +45,23 @@ export type AuthHooks = {
 		members: (Member & { user?: Partial<User> | null })[];
 		total: number;
 	}>;
-	useListTeams?: (params: { query?: { organizationId?: string } }) => AuthHook<{
-		id: string;
-		name: string;
-		organizationId: string;
-		createdAt: Date;
-		updatedAt: Date;
-	}[]>;
-	useListTeamMembers?: (params: { query?: { teamId?: string } }) => AuthHook<{
-		id: string;
-		teamId: string;
-		userId: string;
-		createdAt: Date;
-		user?: Partial<User> | null;
-	}[]>;
+	useListTeams?: (params: { query?: { organizationId?: string } }) => AuthHook<
+		{
+			id: string;
+			name: string;
+			organizationId: string;
+			createdAt: Date;
+			updatedAt: Date;
+		}[]
+	>;
+	useListTeamMembers?: (params: { query?: { teamId?: string } }) => AuthHook<
+		{
+			id: string;
+			teamId: string;
+			userId: string;
+			createdAt: Date;
+			user?: Partial<User> | null;
+		}[]
+	>;
 	useIsRestoring?: () => boolean;
 };

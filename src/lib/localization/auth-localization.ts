@@ -770,12 +770,12 @@ export const authLocalization = {
 	/** @default "Unknown" */
 	UNKNOWN: 'Unknown',
 
-
 	/** @default "Add Member" */
 	ADD_TEAM_MEMBER: 'Add Member',
 
 	/** @default "Add a member to this team from your organization, or invite someone new by email." */
-	ADD_TEAM_MEMBER_DESCRIPTION: 'Add a member to this team from your organization, or invite someone new by email.',
+	ADD_TEAM_MEMBER_DESCRIPTION:
+		'Add a member to this team from your organization, or invite someone new by email.',
 
 	/** @default "Member added to team successfully" */
 	ADD_TEAM_MEMBER_SUCCESS: 'Member added to team successfully',

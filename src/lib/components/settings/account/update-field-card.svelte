@@ -161,7 +161,7 @@
 	>
 		<CardContent class={classNames?.content}>
 			{#if type === 'boolean'}
-				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as any }}>
+				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as never }}>
 					{#snippet children({ state, handleChange })}
 						<div class="flex items-center gap-2">
 							<Checkbox
@@ -190,7 +190,7 @@
 			{:else if isPending}
 				<Skeleton class={cn('h-9 w-full', classNames?.skeleton)} />
 			{:else}
-				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as any }}>
+				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as never }}>
 					{#snippet children({ state, handleBlur, handleChange })}
 						<div class="grid w-full items-center gap-1.5">
 							{#if type === 'number'}

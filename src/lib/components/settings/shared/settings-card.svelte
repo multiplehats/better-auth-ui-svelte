@@ -66,11 +66,13 @@
 		isPending,
 		isSubmitting,
 		variant,
-		action
+		action,
+		...rest
 	}: SettingsCardProps = $props();
 </script>
 
 <Card.Root
+	{...rest}
 	class={cn(
 		'w-full pb-0 text-start',
 		variant === 'destructive' && 'border-destructive/40',

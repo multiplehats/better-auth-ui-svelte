@@ -43,6 +43,8 @@
 
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
+	// useListMembers is an init-only hook accepting plain values; member is stable per mount
+	// svelte-ignore state_referenced_locally
 	const membersHook = useListMembers({
 		query: { organizationId: member.organizationId }
 	});
@@ -54,7 +56,8 @@
 	const sessionData = $derived($sessionHook.data);
 
 	let isUpdating = $state(false);
-	let selectedRole = $state(member.role);
+	// svelte-ignore state_referenced_locally
+	let selectedRole = $state<Member['role'] | undefined>(member.role);
 
 	const builtInRoles = $derived([
 		{ role: 'owner', label: localization.OWNER },
@@ -85,6 +88,10 @@
 	);
 
 	async function updateMemberRole() {
+		if (!selectedRole) {
+			return;
+		}
+
 		if (selectedRole === member.role) {
 			toast.error(`${localization.ROLE} ${localization.IS_THE_SAME}`);
 			return;

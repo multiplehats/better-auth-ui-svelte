@@ -55,6 +55,8 @@
 		{ role: 'member', label: localization.MEMBER }
 	]);
 
+	// useListMembers is an init-only hook accepting plain values; member is stable per mount
+	// svelte-ignore state_referenced_locally
 	const membersHook = useListMembers({
 		query: { organizationId: member.organizationId }
 	});
@@ -81,6 +83,8 @@
 		organizations?.find((org: Organization) => org.id === member.organizationId)
 	);
 
+	// useHasPermission is an init-only hook accepting plain values; member is stable per mount
+	// svelte-ignore state_referenced_locally
 	const hasPermissionHook = useHasPermission({
 		organizationId: member.organizationId,
 		permission: { member: ['update'] }

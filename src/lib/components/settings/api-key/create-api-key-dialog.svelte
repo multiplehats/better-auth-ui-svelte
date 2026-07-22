@@ -79,15 +79,18 @@
 
 	// Track selected values for Select components
 	let selectedExpiresInDays = $state('none');
+	// Capture the initial org for resets when the dialog reopens.
+	// svelte-ignore state_referenced_locally
 	const initialOrgId = organizationId ?? 'personal';
-	let selectedOrganizationId = $state(initialOrgId);
+	// svelte-ignore state_referenced_locally
+	let selectedOrganizationId = $state(organizationId ?? 'personal');
 
 	// Create form
 	const form = createForm(() => ({
 		defaultValues: {
 			name: '',
 			expiresInDays: 'none',
-			organizationId: initialOrgId
+			organizationId: selectedOrganizationId
 		},
 		onSubmit: async ({ value }) => {
 			try {

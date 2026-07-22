@@ -1,7 +1,11 @@
 import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 import { getSearchParam } from '$lib/utils/utils.js';
 
-export function useOnSuccessTransition({ redirectTo: redirectToProp }: { redirectTo?: string }) {
+export function useOnSuccessTransition({
+	redirectTo: redirectToProp
+}: {
+	redirectTo?: string | (() => string | undefined);
+}) {
 	const config = getAuthUIConfig();
 	const { redirectTo: contextRedirectTo, navigate, hooks, onSessionChange } = config;
 
@@ -9,7 +13,8 @@ export function useOnSuccessTransition({ redirectTo: redirectToProp }: { redirec
 	let success = $state(false);
 
 	function getRedirectTo() {
-		return redirectToProp || getSearchParam('redirectTo') || contextRedirectTo;
+		const rd = typeof redirectToProp === 'function' ? redirectToProp() : redirectToProp;
+		return rd || getSearchParam('redirectTo') || contextRedirectTo;
 	}
 
 	// Watch for success state change

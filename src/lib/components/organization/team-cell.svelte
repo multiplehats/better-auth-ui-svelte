@@ -62,13 +62,13 @@
 <Card.Root class={cn('overflow-hidden', className, classNames?.cell)}>
 	<button
 		type="button"
-		class="flex w-full items-center gap-3 p-4 text-left hover:bg-accent/50 transition-colors"
+		class="flex w-full items-center gap-3 p-4 text-left transition-colors hover:bg-accent/50"
 		onclick={() => (expanded = !expanded)}
 	>
 		<UsersIcon class="size-5 shrink-0 text-muted-foreground" />
 
-		<div class="flex-1 min-w-0">
-			<p class="text-sm font-medium truncate">{team.name}</p>
+		<div class="min-w-0 flex-1">
+			<p class="truncate text-sm font-medium">{team.name}</p>
 			<p class="text-xs text-muted-foreground">
 				{new Date(team.createdAt).toLocaleDateString()}
 			</p>
@@ -76,7 +76,11 @@
 
 		{#if !hideActions}
 			<!-- Stop propagation so dropdown doesn't toggle accordion -->
-			<div onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()}>
+			<div
+				role="presentation"
+				onclick={(e) => e.stopPropagation()}
+				onkeydown={(e) => e.stopPropagation()}
+			>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
@@ -97,10 +101,7 @@
 							<PencilIcon class={classNames?.icon} />
 							{localization.RENAME_TEAM}
 						</DropdownMenu.Item>
-						<DropdownMenu.Item
-							onclick={() => (deleteDialogOpen = true)}
-							variant="destructive"
-						>
+						<DropdownMenu.Item onclick={() => (deleteDialogOpen = true)} variant="destructive">
 							<Trash2Icon class={classNames?.icon} />
 							{localization.DELETE_TEAM}
 						</DropdownMenu.Item>

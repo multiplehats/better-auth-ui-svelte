@@ -43,23 +43,29 @@
 		canDeleteTeam,
 		canManageMembers,
 		filterMembers,
-		canRemoveMember,
+		canRemoveMember
 	}: Props = $props();
 
 	const config = getAuthUIConfig();
 	const { hooks } = config;
 
 	/* eslint-disable @typescript-eslint/no-explicit-any */
+	// useHasPermission is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const hasPermissionCreateHook = hooks.useHasPermission({
 		organizationId: organization.id,
 		permissions: { team: ['create'] }
 	} as any);
+	// useHasPermission is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const hasPermissionDeleteHook = hooks.useHasPermission({
 		organizationId: organization.id,
 		permissions: { team: ['delete'] }
 	} as any);
 	/* eslint-enable @typescript-eslint/no-explicit-any */
 
+	// useListTeams is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const teamsHook = hooks.useListTeams?.({
 		query: { organizationId: organization.id }
 	});
@@ -115,7 +121,7 @@
 		</CardContent>
 	{:else if !isPending}
 		<CardContent>
-			<p class="text-sm text-muted-foreground text-center py-4">
+			<p class="py-4 text-center text-sm text-muted-foreground">
 				{localization.NO_TEAMS}
 			</p>
 		</CardContent>

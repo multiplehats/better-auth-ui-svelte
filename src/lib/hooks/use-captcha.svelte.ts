@@ -24,18 +24,24 @@ const sanitizeActionName = (action: string): string => {
 export function useCaptcha({
 	localization: propLocalization
 }: {
-	localization?: Partial<AuthLocalization>;
+	localization?: Partial<AuthLocalization> | (() => Partial<AuthLocalization> | undefined);
 } = {}) {
 	const config = getAuthUIConfig();
 	const contextLocalization = getLocalization();
 	const captcha = config.captcha;
 
-	const localization = { ...contextLocalization, ...propLocalization };
+	// Resolve the merged localization lazily so callers can pass a getter for
+	// prop localization without us capturing a stale value at init time.
+	const getMergedLocalization = (): AuthLocalization => {
+		const prop = typeof propLocalization === 'function' ? propLocalization() : propLocalization;
+		return { ...contextLocalization, ...prop };
+	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let captchaRef = $state<any>(null);
 
 	const executeCaptcha = async (action: string): Promise<string> => {
+		const localization = getMergedLocalization();
 		if (!captcha) throw new Error(localization.MISSING_RESPONSE);
 
 		let response: string | undefined | null;

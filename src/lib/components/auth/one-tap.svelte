@@ -24,7 +24,7 @@
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
 	// Use the success transition hook to handle session refetch and navigation
-	const { onSuccess } = useOnSuccessTransition({ redirectTo });
+	const { onSuccess } = useOnSuccessTransition({ redirectTo: () => redirectTo });
 
 	let oneTapFetched = $state(false);
 

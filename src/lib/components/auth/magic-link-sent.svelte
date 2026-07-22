@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { cn } from '$lib/utils/ui.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -28,10 +28,13 @@
 	const config = getAuthUIConfig();
 	const localization = $derived({ ...config.localization, ...localizationProp });
 
-	const magicLinkConfig = $derived(typeof config.magicLink === 'object' ? config.magicLink : {} as Record<string, unknown>);
+	const magicLinkConfig = $derived(
+		typeof config.magicLink === 'object' ? config.magicLink : ({} as Record<string, unknown>)
+	);
 
-	// State management
-	let email = $state(emailProp || '');
+	// State management. `emailProp` is only an initial value; the URL param
+	// (read in onMount) takes precedence, so we intentionally capture once.
+	let email = $state(untrack(() => emailProp || ''));
 	let isResending = $state(false);
 	let resendDisabled = $state(false);
 	let countdown = $state(0);

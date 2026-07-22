@@ -22,6 +22,8 @@
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
 	// Check if user has permission to delete the organization
+	// useHasPermission is an init-only hook; organization is stable per mount.
+	// svelte-ignore state_referenced_locally
 	const permissionResult = useHasPermission({
 		organizationId: organization.id,
 		permissions: {

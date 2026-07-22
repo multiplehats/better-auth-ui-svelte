@@ -21,6 +21,8 @@
 	const { hooks } = config;
 
 	// Hook called unconditionally at the top level — organization is guaranteed by the parent.
+	// useListInvitations is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const invitationsHook = hooks.useListInvitations({ query: { organizationId: organization.id } });
 	const invitations = $derived(invitationsHook?.data);
 	const pendingInvitations = $derived(

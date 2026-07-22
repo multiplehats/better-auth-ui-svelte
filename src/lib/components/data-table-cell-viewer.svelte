@@ -38,9 +38,16 @@
 
 	let { item }: { item: Schema } = $props();
 
-	let type = $state(item.type);
-	let status = $state(item.status);
-	let reviewer = $state(item.reviewer);
+	let type = $state<string | undefined>(undefined);
+	let status = $state<string | undefined>(undefined);
+	let reviewer = $state<string | undefined>(undefined);
+
+	// Sync local editable state from the item prop (runs before paint, so no flash).
+	$effect.pre(() => {
+		type = item.type;
+		status = item.status;
+		reviewer = item.reviewer;
+	});
 </script>
 
 <Drawer.Root direction={isMobile.current ? 'bottom' : 'right'}>

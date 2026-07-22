@@ -225,15 +225,15 @@
 				/>
 			</div>
 		{:else if view === 'TEAMS'}
-		<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
-			<OrganizationTeamsCard
-				classNames={classNames?.card}
-				{localization}
-				{slug}
-				{organizationId}
-			/>
-		</div>
-	{:else if view === 'API_KEYS'}
+			<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
+				<OrganizationTeamsCard
+					classNames={classNames?.card}
+					{localization}
+					{slug}
+					{organizationId}
+				/>
+			</div>
+		{:else if view === 'API_KEYS'}
 			<!-- TODO: Uncomment when ApiKeysCard is ported -->
 			<div class="text-muted-foreground">API Keys coming soon (ApiKeysCard not yet ported)</div>
 			<!-- <ApiKeysCard
@@ -243,12 +243,7 @@
 				organizationId={organization?.id}
 			/> -->
 		{:else if view === 'SETTINGS'}
-			<OrganizationSettingsCards
-				{classNames}
-				{localization}
-				{slug}
-				{organizationId}
-			/>
+			<OrganizationSettingsCards {classNames} {localization} {slug} {organizationId} />
 		{/if}
 	</div>
 {/if}

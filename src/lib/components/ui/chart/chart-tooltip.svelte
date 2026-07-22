@@ -52,9 +52,7 @@
 
 	const payload = $derived(ctx.tooltip.series.filter((s) => s.visible));
 
-	const headerLabel = $derived(
-		ctx.tooltip.data ? ctx.x(ctx.tooltip.data) : undefined
-	);
+	const headerLabel = $derived(ctx.tooltip.data ? ctx.x(ctx.tooltip.data) : undefined);
 
 	const formattedLabel = $derived.by(() => {
 		if (hideLabel || !payload.length) return null;
@@ -149,9 +147,7 @@
 							</div>
 							{#if item.value !== undefined}
 								<span class="font-mono font-medium text-foreground tabular-nums">
-									{typeof item.value === 'number'
-										? item.value.toLocaleString()
-										: item.value}
+									{typeof item.value === 'number' ? item.value.toLocaleString() : item.value}
 								</span>
 							{/if}
 						</div>

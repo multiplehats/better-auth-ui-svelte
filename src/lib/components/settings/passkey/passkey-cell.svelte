@@ -13,7 +13,7 @@
 		className?: string;
 		classNames?: SettingsCardClassNames;
 		localization?: Partial<AuthLocalization>;
-		passkey: { id: string; createdAt: Date | string; name?: string };
+		passkey: { id: string; createdAt: Date | string };
 		refetch?: Refetch;
 	}
 

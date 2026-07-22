@@ -56,7 +56,7 @@
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
-	const transition = useOnSuccessTransition({ redirectTo });
+	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
 
 	// Get session data to check if 2FA is being enabled
@@ -128,7 +128,9 @@
 	}));
 
 	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
-	const isSubmitting = $derived(isSubmittingProp || formIsSubmitting.current || transition.isPending);
+	const isSubmitting = $derived(
+		isSubmittingProp || formIsSubmitting.current || transition.isPending
+	);
 
 	// Update parent isSubmitting state
 	$effect(() => {
