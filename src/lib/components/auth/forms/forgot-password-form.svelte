@@ -85,7 +85,11 @@
 				// /request-password-reset). requestPasswordReset also exists on <=1.5,
 				// so this works across the supported better-auth range and matches the
 				// settings change-password flow.
-				await (authClient.requestPasswordReset as unknown as (params: Record<string, unknown>) => Promise<unknown>)({
+				await (
+					authClient.requestPasswordReset as unknown as (
+						params: Record<string, unknown>
+					) => Promise<unknown>
+				)({
 					email: value.email,
 					redirectTo: `${baseURL}${basePath}/${resetPasswordPath}`,
 					fetchOptions
@@ -93,13 +97,10 @@
 
 				config.toast.success(localization.FORGOT_PASSWORD_EMAIL);
 
-				// Navigate to sign in
+				// Navigate via config.navigate so the host's router handles the transition.
 				const signInPath = config.viewPaths.SIGN_IN || 'sign-in';
 				const searchParams = typeof window !== 'undefined' ? window.location.search : '';
-
-				if (typeof window !== 'undefined') {
-					window.location.href = `${basePath}/${signInPath}${searchParams}`;
-				}
+				config.navigate(`${basePath}/${signInPath}${searchParams}`);
 			} catch (error) {
 				config.toast.error(getLocalizedError({ error, localization }));
 				captchaHook.resetCaptcha();
