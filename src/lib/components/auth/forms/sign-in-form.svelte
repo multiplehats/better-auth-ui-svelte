@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { BetterFetchOption } from '@better-fetch/fetch';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Loader2 } from '@lucide/svelte';
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
@@ -128,9 +129,22 @@
 				}
 
 				if (response.twoFactorRedirect) {
-					navigate(
-						`${basePath}/${viewPaths.TWO_FACTOR}${typeof window !== 'undefined' ? window.location.search : ''}`
-					);
+					const searchParams =
+						typeof window !== 'undefined'
+							? new SvelteURLSearchParams(window.location.search)
+							: new SvelteURLSearchParams();
+
+					const serverMethods = response.twoFactorMethods;
+					if (
+						Array.isArray(serverMethods) &&
+						serverMethods.length > 0 &&
+						serverMethods.every((m) => m === 'totp' || m === 'otp')
+					) {
+						searchParams.set('methods', serverMethods.join(','));
+					}
+
+					const search = searchParams.toString();
+					navigate(`${basePath}/${viewPaths.TWO_FACTOR}${search ? `?${search}` : ''}`);
 				} else {
 					await onSuccess();
 				}

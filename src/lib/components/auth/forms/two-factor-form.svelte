@@ -4,6 +4,7 @@
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import QrCodeIcon from '@lucide/svelte/icons/qr-code';
 	import SendIcon from '@lucide/svelte/icons/send';
+	import { Check, Copy } from '@lucide/svelte';
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
 	import { getAuthUIConfig, getAuthClient } from '$lib/context/auth-ui-config.svelte';
@@ -40,7 +41,16 @@
 
 	const isHydrated = useIsHydrated();
 	const totpURI = $derived(isHydrated ? getSearchParam('totpURI') : null);
+	const totpSecret = $derived(totpURI ? new URL(totpURI).searchParams.get('secret') : null);
 	let initialSendRef = $state(false);
+	let copiedSecret = $state(false);
+
+	function copySecret() {
+		if (!totpSecret) return;
+		navigator.clipboard.writeText(totpSecret);
+		copiedSecret = true;
+		setTimeout(() => (copiedSecret = false), 2000);
+	}
 
 	const authClient = getAuthClient();
 	const config = getAuthUIConfig();
@@ -68,7 +78,21 @@
 	);
 	const isTwoFactorEnabled = $derived((sessionData?.user as User | undefined)?.twoFactorEnabled);
 
-	const twoFactorMethods = $derived(twoFactor || ['totp']);
+	const methodsParam = $derived(isHydrated ? getSearchParam('methods') : null);
+
+	function pickEnrolledMethod(serverMethods: string[]): ('totp' | 'otp')[] {
+		if (serverMethods.includes('totp')) return ['totp'];
+		if (serverMethods.includes('otp')) return ['otp'];
+		return (twoFactor || ['totp']) as ('totp' | 'otp')[];
+	}
+
+	const twoFactorMethods = $derived(
+		totpURI
+			? (['totp'] as ('totp' | 'otp')[])
+			: methodsParam
+				? pickEnrolledMethod(methodsParam.split(','))
+				: ((twoFactor || ['totp']) as ('totp' | 'otp')[])
+	);
 	let method = $state<'totp' | 'otp' | null>(null);
 
 	// Initialize method based on twoFactorMethods
@@ -206,9 +230,35 @@
 		<div class="space-y-3">
 			<Label class={classNames?.label}>{localization.TWO_FACTOR_TOTP_LABEL}</Label>
 
-			<div class={cn('border shadow-xs', classNames?.qrCode)}>
+			<div class={cn('mx-auto w-fit border shadow-xs', classNames?.qrCode)}>
 				<QRCode content={totpURI} />
 			</div>
+
+			{#if totpSecret}
+				<div class="space-y-2">
+					<p class="text-center text-sm text-muted-foreground">
+						{localization.TWO_FACTOR_MANUAL_ENTRY}
+					</p>
+					<div class="flex items-center justify-center gap-2">
+						<code class="rounded-md bg-muted px-2 py-1 font-mono text-sm break-all">
+							{totpSecret}
+						</code>
+						<Button
+							type="button"
+							variant="outline"
+							size="icon"
+							onclick={copySecret}
+							class="shrink-0"
+						>
+							{#if copiedSecret}
+								<Check class="size-4" />
+							{:else}
+								<Copy class="size-4" />
+							{/if}
+						</Button>
+					</div>
+				</div>
+			{/if}
 		</div>
 	{/if}
 

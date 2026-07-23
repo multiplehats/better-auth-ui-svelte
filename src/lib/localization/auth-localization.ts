@@ -511,6 +511,18 @@ export const authLocalization = {
 	/** @default "Scan the QR Code with your Authenticator" */
 	TWO_FACTOR_TOTP_LABEL: 'Scan the QR Code with your Authenticator',
 
+	/** @default "Or enter this code manually in your authenticator app" */
+	TWO_FACTOR_MANUAL_ENTRY: 'Or enter this code manually in your authenticator app',
+
+	/** @default "Two-Factor Method" */
+	TWO_FACTOR_METHOD: 'Two-Factor Method',
+
+	/** @default "Authenticator app" */
+	TWO_FACTOR_METHOD_TOTP: 'Authenticator app',
+
+	/** @default "Email code" */
+	TWO_FACTOR_METHOD_OTP: 'Email code',
+
 	/** @default "Send verification code" */
 	SEND_VERIFICATION_CODE: 'Send verification code',
 
