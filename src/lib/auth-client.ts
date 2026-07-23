@@ -7,7 +7,6 @@ import {
 	emailOTPClient,
 	lastLoginMethodClient,
 	oneTapClient,
-	genericOAuthClient,
 	anonymousClient,
 	multiSessionClient,
 	adminClient
@@ -28,7 +27,6 @@ export const authClient = createAuthClient({
 		oneTapClient({
 			clientId: ''
 		}),
-		genericOAuthClient(),
 		anonymousClient(),
 		usernameClient(),
 		magicLinkClient(),

@@ -54,10 +54,12 @@
 			});
 
 			handleOpenChange(false);
-			backupCodes = response.backupCodes;
 
-			if (twoFactor?.includes('totp')) {
-				totpURI = response.totpURI;
+			if (response && response.method === 'totp') {
+				backupCodes = response.backupCodes;
+				if (twoFactor?.includes('totp')) {
+					totpURI = response.totpURI;
+				}
 			}
 
 			setTimeout(() => {

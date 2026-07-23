@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { AuthUIProvider } from '$lib/index.js';
+	import { AuthUIProvider, ProviderIcons } from '$lib/index.js';
 	import type { LayoutProps } from './$types.js';
 	import { toast, Toaster } from 'svelte-sonner';
 	import { authClient } from '$lib/auth-client.js';
@@ -30,7 +30,7 @@
 	}}
 	multiSession={true}
 	social={{
-		providers: ['google']
+		providers: [{ provider: 'google', name: 'Google', icon: ProviderIcons.GoogleIcon }]
 	}}
 	magicLink={{
 		resendCooldown: 60,

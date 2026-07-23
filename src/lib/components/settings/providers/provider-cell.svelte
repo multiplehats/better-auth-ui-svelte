@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { Account } from 'better-auth';
-	import type { SocialProvider } from 'better-auth/social-providers';
+	import type { Provider } from '$lib/social-providers.js';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
-	import type { Provider } from '$lib/social-providers.js';
 	import { cn, getLocalizedError } from '$lib/utils/utils.js';
 	import type { AuthLocalization, Refetch } from '$lib/types/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -17,7 +16,6 @@
 		account?: Account | null;
 		isPending?: boolean;
 		localization?: Partial<AuthLocalization>;
-		other?: boolean;
 		provider: Provider;
 		refetch?: Refetch;
 	}
@@ -28,7 +26,6 @@
 		account,
 		isPending,
 		localization,
-		other,
 		provider,
 		refetch
 	}: Props = $props();
@@ -52,19 +49,11 @@
 		const callbackURL = `${baseURL}${basePath}/${viewPaths.CALLBACK}?redirectTo=${encodeURIComponent(window.location.pathname)}`;
 
 		try {
-			if (other) {
-				await authClient.oauth2.link({
-					providerId: provider.provider as SocialProvider,
-					callbackURL,
-					fetchOptions: { throw: true }
-				});
-			} else {
-				await authClient.linkSocial({
-					provider: provider.provider as SocialProvider,
-					callbackURL,
-					fetchOptions: { throw: true }
-				});
-			}
+			await authClient.linkSocial({
+				provider: provider.provider,
+				callbackURL,
+				fetchOptions: { throw: true }
+			});
 		} catch (error) {
 			toast.error(getLocalizedError({ error, localization: mergedLocalization }));
 

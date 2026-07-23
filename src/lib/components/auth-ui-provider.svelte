@@ -19,7 +19,6 @@
 		AvatarOptions,
 		DeleteUserOptions,
 		SocialOptions,
-		GenericOAuthOptions,
 		CredentialsOptions,
 		SignUpOptions,
 		Link,
@@ -232,10 +231,6 @@
 		 */
 		social?: SocialOptions;
 		/**
-		 * Generic OAuth provider configuration
-		 */
-		genericOAuth?: GenericOAuthOptions;
-		/**
 		 * Enable or disable two-factor authentication support
 		 * @default undefined
 		 */
@@ -276,7 +271,6 @@
 		emailOTP,
 		gravatar,
 		social: socialProp,
-		genericOAuth: genericOAuthProp,
 		magicLink,
 		multiSession,
 		oneTap,
@@ -393,12 +387,6 @@
 	const social = $derived.by((): SocialOptions | undefined => {
 		if (!socialProp) return undefined;
 		return socialProp;
-	});
-
-	// Process genericOAuth prop
-	const genericOAuth = $derived.by((): GenericOAuthOptions | undefined => {
-		if (!genericOAuthProp) return undefined;
-		return genericOAuthProp;
 	});
 
 	// Process credentials prop
@@ -819,9 +807,6 @@
 		},
 		get freshAge() {
 			return freshAge;
-		},
-		get genericOAuth() {
-			return genericOAuth;
 		},
 		get gravatar() {
 			return gravatar;

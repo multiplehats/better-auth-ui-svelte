@@ -4,9 +4,8 @@
 	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn } from '$lib/utils/ui.js';
 	import { getLocalizedError, getSearchParam } from '$lib/utils/utils.js';
-	import type { Provider } from '$lib/lib/social-providers.js';
+	import type { Provider } from '$lib/social-providers.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
-	import type { SocialProvider } from 'better-auth/social-providers';
 	import type { AuthViewClassNames } from './auth-view.svelte';
 
 	interface Props {
@@ -15,7 +14,6 @@
 		callbackURL?: string;
 		isSubmitting: boolean;
 		localization: Partial<AuthLocalization>;
-		other?: boolean;
 		provider: Provider;
 		redirectTo?: string;
 		socialLayout: 'auto' | 'horizontal' | 'grid' | 'vertical';
@@ -28,7 +26,6 @@
 		callbackURL: callbackURLProp,
 		isSubmitting,
 		localization,
-		other,
 		provider,
 		redirectTo: redirectToProp,
 		socialLayout,
@@ -59,40 +56,20 @@
 		isPending = true;
 
 		try {
-			if (other) {
-				// Generic OAuth
-				const oauth2Params = {
-					providerId: provider.provider,
-					callbackURL: getCallbackURL(),
-					fetchOptions: { throw: true }
-				};
+			const socialParams = {
+				provider: provider.provider,
+				callbackURL: getCallbackURL(),
+				fetchOptions: { throw: true }
+			};
 
-				if (config.genericOAuth?.signIn) {
-					await config.genericOAuth.signIn(oauth2Params);
+			if (config.social?.signIn) {
+				await config.social.signIn(socialParams);
 
-					setTimeout(() => {
-						setIsSubmitting(false);
-					}, 10000);
-				} else {
-					await authClient.signIn.oauth2(oauth2Params);
-				}
+				setTimeout(() => {
+					setIsSubmitting(false);
+				}, 10000);
 			} else {
-				// Social provider
-				const socialParams = {
-					provider: provider.provider as SocialProvider,
-					callbackURL: getCallbackURL(),
-					fetchOptions: { throw: true }
-				};
-
-				if (config.social?.signIn) {
-					await config.social.signIn(socialParams);
-
-					setTimeout(() => {
-						setIsSubmitting(false);
-					}, 10000);
-				} else {
-					await authClient.signIn.social(socialParams);
-				}
+				await authClient.signIn.social(socialParams);
 			}
 		} catch (error) {
 			config.toast.error(getLocalizedError({ error, localization }));

@@ -1,3 +1,4 @@
+import type { SocialProvider } from 'better-auth/social-providers';
 import {
 	AppleIcon,
 	DiscordIcon,
@@ -25,9 +26,9 @@ import {
 } from '$lib/components/provider-icons/index.js';
 
 export type Provider = {
-	provider: string;
+	provider: SocialProvider;
 	name: string;
-	icon: ProviderIcon;
+	icon?: ProviderIcon;
 };
 
 export const socialProviders: readonly Provider[] = [

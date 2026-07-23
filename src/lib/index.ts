@@ -136,7 +136,7 @@ export * from './hooks/use-current-organization.svelte.js';
 
 // Lib
 // export * from './lib/auth-ui-provider.js';
-export * from './lib/social-providers.js';
+export * from './social-providers.js';
 export { getViewByPath } from './utils/utils.js';
 export * from './utils/view-paths.js';
 

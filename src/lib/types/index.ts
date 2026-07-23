@@ -10,7 +10,6 @@ import type { CaptchaOptions } from './captcha-options.js';
 import type { CredentialsOptions } from './credentials-options.js';
 import type { SignUpOptions } from './sign-up-options.js';
 import type { SocialOptions } from './social-options.js';
-import type { GenericOAuthOptions } from './generic-oauth-options.js';
 import type { DeleteUserOptions } from './delete-user-options.js';
 import type { GravatarOptions } from './gravatar-options.js';
 import type { AdditionalFields } from './additional-fields.js';
@@ -116,10 +115,6 @@ export interface AuthUIConfig {
 	 * @default 60 * 60 * 24
 	 */
 	freshAge: number;
-	/**
-	 * Generic OAuth provider configuration
-	 */
-	genericOAuth?: GenericOAuthOptions;
 	/**
 	 * Gravatar configuration
 	 */
@@ -256,7 +251,6 @@ export * from './captcha-options.js';
 export * from './captcha-provider.js';
 export * from './credentials-options.js';
 export * from './delete-user-options.js';
-export * from './generic-oauth-options.js';
 export * from './gravatar-options.js';
 export * from './image.js';
 export * from './invitation.js';

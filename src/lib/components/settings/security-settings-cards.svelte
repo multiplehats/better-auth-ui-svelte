@@ -33,7 +33,6 @@
 		localization: contextLocalization,
 		passkey,
 		social,
-		genericOAuth,
 		twoFactor
 	} = getAuthUIConfig();
 
@@ -60,7 +59,7 @@
 		/>
 	{/if}
 
-	{#if social?.providers?.length || genericOAuth?.providers?.length}
+	{#if social?.providers?.length}
 		<ProvidersCard
 			{accounts}
 			classNames={classNames?.card}
