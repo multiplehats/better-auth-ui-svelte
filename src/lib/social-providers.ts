@@ -14,6 +14,7 @@ import {
 	MicrosoftIcon,
 	NotionIcon,
 	type ProviderIcon,
+	PatreonIcon,
 	RedditIcon,
 	RobloxIcon,
 	SlackIcon,
@@ -96,6 +97,11 @@ export const socialProviders: readonly Provider[] = [
 		provider: 'notion',
 		name: 'Notion',
 		icon: NotionIcon
+	},
+	{
+		provider: 'patreon',
+		name: 'Patreon',
+		icon: PatreonIcon
 	},
 	{
 		provider: 'reddit',
