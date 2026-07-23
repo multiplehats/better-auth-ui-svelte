@@ -62,16 +62,29 @@ Make sure you have these installed in your project:
 - `@lucide/svelte` ^0.400.0
 - `tailwindcss` ^4.0.0
 - `zod` ^4.0.0
-- `svelte-sonner` ^0.4.0
+- `svelte-sonner` ^1.1.1
+- `mode-watcher` ^1.1.0
+- `tw-animate-css` ^1.4.0
+
+> **Required singleton packages:** `svelte-sonner` and `mode-watcher` must be
+> installed and mounted by the consuming app (`<Toaster />` and `<ModeWatcher />`
+> respectively) so the library routes toasts and theme updates to the single
+> shared instance.
 
 ### TailwindCSS Configuration
 
-For **TailwindCSS v4**, add the following `@import` to your global CSS file:
+For **TailwindCSS v4**, add the following `@import`s to your global CSS file:
 
 ```css
 /* app.css or global.css */
+@import 'tailwindcss';
+@import 'tw-animate-css';
 @import 'better-auth-ui-svelte/css';
 ```
+
+`tw-animate-css` provides the `animate-in`/`fade-in-0`/`zoom-in-95` utilities
+used by the library's dialog, drawer, and overlay components for open/close
+animations. Without it, components render without animation transitions.
 
 For **TailwindCSS v3** _(Deprecated)_, add the following to your Tailwind config:
 
