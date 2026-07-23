@@ -7,15 +7,8 @@
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import {
-		cn,
-		getLocalizedError,
-		getPasswordSchema,
-		isValidEmail,
-		getFieldError
-	} from '$lib/utils/utils.js';
+	import { cn, getLocalizedError, isValidEmail, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
-	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
 	import PasswordInput from '$lib/components/password-input.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -31,7 +24,6 @@
 		localization?: Partial<AuthLocalization>;
 		redirectTo?: string;
 		setIsSubmitting?: (isSubmitting: boolean) => void;
-		passwordValidation?: PasswordValidation;
 	}
 
 	let {
@@ -40,8 +32,7 @@
 		isSubmitting: isSubmittingProp,
 		localization: localizationProp,
 		redirectTo,
-		setIsSubmitting,
-		passwordValidation: passwordValidationProp
+		setIsSubmitting
 	}: Props = $props();
 
 	const isHydrated = useIsHydrated();
@@ -60,13 +51,8 @@
 
 	const rememberMeEnabled = credentials?.rememberMe;
 	const usernameEnabled = credentials?.username;
-	const contextPasswordValidation = credentials?.passwordValidation;
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
-	const passwordValidation = $derived({
-		...contextPasswordValidation,
-		...passwordValidationProp
-	});
 
 	const captchaHook = useCaptcha({ localization: () => localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
@@ -97,11 +83,8 @@
 						.email({
 							message: `${localization.EMAIL} ${localization.IS_INVALID}`
 						}),
-			password: getPasswordSchema(passwordValidation, {
-				PASSWORD_REQUIRED: localization.PASSWORD_REQUIRED,
-				PASSWORD_TOO_SHORT: localization.PASSWORD_TOO_SHORT,
-				PASSWORD_TOO_LONG: localization.PASSWORD_TOO_LONG,
-				INVALID_PASSWORD: localization.INVALID_PASSWORD
+			password: z.string().min(1, {
+				message: localization.PASSWORD_REQUIRED
 			}),
 			rememberMe: z.boolean().optional()
 		})

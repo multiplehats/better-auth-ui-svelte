@@ -166,6 +166,8 @@ export const nlLocalization: AuthLocalization = {
 	PASSWORD: 'Wachtwoord',
 	PASSWORD_PLACEHOLDER: 'Wachtwoord',
 	PASSWORD_REQUIRED: 'Wachtwoord is verplicht',
+	PASSWORD_TOO_SHORT: 'Wachtwoord is te kort',
+	PASSWORD_TOO_LONG: 'Wachtwoord is te lang',
 	PASSWORDS_DO_NOT_MATCH: 'Wachtwoorden komen niet overeen',
 
 	PROVIDERS: 'Providers',
@@ -368,8 +370,6 @@ export const nlLocalization: AuthLocalization = {
 	FAILED_TO_GET_USER_INFO: 'Ophalen van gebruikersgegevens mislukt',
 	USER_EMAIL_NOT_FOUND: 'E-mailadres van gebruiker niet gevonden',
 	EMAIL_NOT_VERIFIED: 'E-mailadres niet geverifieerd',
-	PASSWORD_TOO_SHORT: 'Wachtwoord is te kort',
-	PASSWORD_TOO_LONG: 'Wachtwoord is te lang',
 	USER_ALREADY_EXISTS: 'Gebruiker bestaat al',
 	EMAIL_CAN_NOT_BE_UPDATED: 'E-mailadres kan niet worden bijgewerkt',
 	CREDENTIAL_ACCOUNT_NOT_FOUND: 'Inlogaccount niet gevonden',

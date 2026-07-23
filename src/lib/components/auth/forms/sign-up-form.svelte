@@ -381,9 +381,26 @@
 		signUpFields?.includes('name') ? formSchema.shape.name : undefined
 	);
 	const usernameValidator = $derived(usernameEnabled ? formSchema.shape.username : undefined);
-	const confirmPasswordValidator = $derived(
-		confirmPasswordEnabled ? formSchema.shape.confirmPassword : undefined
-	);
+	const confirmPasswordValidator = $derived.by(() => {
+		if (!confirmPasswordEnabled) return undefined;
+		const baseSchema = formSchema.shape.confirmPassword as z.ZodString;
+		const mismatchMessage = localization.PASSWORDS_DO_NOT_MATCH;
+		return z
+			.string()
+			.superRefine((value, ctx) => {
+				const result = baseSchema.safeParse(value);
+				if (!result.success) {
+					ctx.addIssue({
+						code: 'custom',
+						message: getFieldError(result.error.issues[0]?.message),
+						path: []
+					});
+				}
+			})
+			.refine((value) => value === form.state.values.password, {
+				message: mismatchMessage
+			});
+	});
 	const imageValidator = $derived(
 		signUpFields?.includes('image') && avatar ? formSchema.shape.image : undefined
 	);
@@ -612,7 +629,13 @@
 
 	<!-- Confirm Password Field -->
 	{#if confirmPasswordEnabled}
-		<form.Field name="confirmPassword" validators={{ onChange: confirmPasswordValidator }}>
+		<form.Field
+			name="confirmPassword"
+			validators={{
+				onChange: confirmPasswordValidator,
+				onChangeListenTo: ['password']
+			}}
+		>
 			{#snippet children(field)}
 				<div class="space-y-2">
 					<Label for="confirmPassword" class={classNames?.label}>
