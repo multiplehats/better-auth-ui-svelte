@@ -4,7 +4,7 @@
 
 	const config = getAuthUIConfig();
 	const {
-		hooks: { useListOrganizations, useSession },
+		hooks: { useListOrganizations, useSession, useActiveOrganization },
 		organization: organizationOptions,
 		navigate,
 		redirectTo
@@ -31,14 +31,30 @@
 			: undefined
 	);
 
-	// Refetch organizations when user changes
+	// Refetch organizations when user changes.
+	// Uses $effect.pre so the stale org is cleared BEFORE the org
+	// sub-components' $effect hooks (e.g. useHasPermission) refire — preventing
+	// has-permission calls against the stale org.
+	const activeOrgStore = useActiveOrganization?.();
 	let previousUserId = $state<string | undefined>(undefined);
 
-	$effect(() => {
+	$effect.pre(() => {
 		const currentUserId = sessionData?.user?.id;
 
-		// Only refetch if user ID actually changed (not on initial load)
+		// Only act if user ID actually changed (not on initial load)
 		if (currentUserId && previousUserId && currentUserId !== previousUserId) {
+			// Clear the stale active-org data FIRST so the organization view
+			// unmounts its sub-components (whose has-permission hooks would
+			// otherwise fire against the stale org and 401). The refetch
+			// below then restores the correct org for the new user.
+			if (activeOrgStore) {
+				const current = activeOrgStore.get();
+				activeOrgStore.set?.({
+					...current,
+					data: null,
+					isPending: true
+				});
+			}
 			refetchOrganization?.();
 			refetchListOrganizations?.();
 		}

@@ -32,6 +32,12 @@ export function useAuthData<T>({
 	let error = $state<BetterFetchError | null>(null);
 	let initialized = $state(false);
 	let previousUserId = $state<string | undefined>(undefined);
+	// Set to true when the consuming component unmounts, so any in-flight
+	// refetch settles silently instead of surfacing a toast for a component
+	// that's no longer on screen (e.g. an org sub-component unmounted during
+	// an account switch, whose has-permission call still 401s against the
+	// briefly-stale session).
+	let cancelled = false;
 
 	const sessionStore = authClient.useSession();
 	const session = fromStore(sessionStore);
@@ -39,8 +45,8 @@ export function useAuthData<T>({
 
 	const sessionPending = $derived(session.value?.isPending === true);
 
-	// Subscribe to cache updates
-	const unsubscribe = authDataCache.subscribe(stableCacheKey, () => {
+	// Sync local state from the current cache entry.
+	function syncFromCache() {
 		const cacheEntry = authDataCache.get<T>(stableCacheKey);
 		if (cacheEntry) {
 			data = cacheEntry.data;
@@ -50,7 +56,15 @@ export function useAuthData<T>({
 		// Update isPending whenever cache changes
 		// React version: isPending = sessionPending || (cacheEntry?.data === undefined && !error)
 		isPending = sessionPending || (cacheEntry?.data === undefined && !error);
-	});
+	}
+
+	// Subscribe to cache updates
+	const unsubscribe = authDataCache.subscribe(stableCacheKey, syncFromCache);
+	// Populate immediately from any existing cache entry. Without this, a remount
+	// with warm (non-stale) cache leaves `data` null — the subscription only
+	// fires on future mutations, and the effect skips refetching when the cache
+	// is fresh — so consumers (e.g. AccountsCard) render an empty list.
+	syncFromCache();
 
 	// Refetch function
 	async function refetch() {
@@ -90,17 +104,18 @@ export function useAuthData<T>({
 
 			if (fetchError) {
 				error = fetchError;
-				toast.error(getLocalizedError({ error: fetchError, localization }));
+				if (!cancelled) toast.error(getLocalizedError({ error: fetchError, localization }));
 			} else {
 				error = null;
 			}
 
-			// Update cache with new data
+			// Always update the shared cache — even if the consuming component
+			// unmounted — so other instances (or a remount) see the fresh data.
 			authDataCache.set(stableCacheKey, fetchedData);
 		} catch (err) {
 			const fetchError = err as BetterFetchError;
 			error = fetchError;
-			toast.error(getLocalizedError({ error: fetchError, localization }));
+			if (!cancelled) toast.error(getLocalizedError({ error: fetchError, localization }));
 		} finally {
 			authDataCache.setRefetching(stableCacheKey, false);
 			authDataCache.removeInFlightRequest(stableCacheKey);
@@ -159,6 +174,7 @@ export function useAuthData<T>({
 	$effect(() => {
 		return () => {
 			unsubscribe();
+			cancelled = true;
 		};
 	});
 

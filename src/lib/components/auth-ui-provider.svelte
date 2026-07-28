@@ -32,6 +32,7 @@
 	import type { AuthViewPaths } from '$lib/utils/view-paths.js';
 	import { authViewPaths, accountViewPaths, organizationViewPaths } from '$lib/utils/view-paths.js';
 	import { useAuthData } from '$lib/stores/use-auth-data.svelte.js';
+	import { authDataCache } from '$lib/utils/auth-data-cache.js';
 	import type { Account, User } from 'better-auth';
 	import type { Member } from 'better-auth/plugins/organization';
 	import type { Invitation, ApiKey } from '$lib/types/index.js';
@@ -553,8 +554,19 @@
 			useListOrganizations: authClient.useListOrganizations,
 			useHasPermission: (params) =>
 				useAuthData<{ error: null; success: boolean }>({
-					queryFn: async () =>
-						asResult<{ error: null; success: boolean }>(
+					queryFn: async () => {
+						// Skip the permission check when there is no active
+						// organization. This prevents 401s during account
+						// switches: the organization-refetcher clears the
+						// active-org atom (in a $effect.pre) before this
+						// queryFn runs, so we see null and degrade to
+						// "no permission" without making the network call.
+						const activeOrgStore = authClient.useActiveOrganization?.();
+						const activeOrg = activeOrgStore?.get?.();
+						if (!activeOrg?.data) {
+							return { data: { error: null, success: false }, error: null };
+						}
+						return asResult<{ error: null; success: boolean }>(
 							await authClient.$fetch<{ error: null; success: boolean }>(
 								'/organization/has-permission',
 								{
@@ -562,7 +574,8 @@
 									body: params
 								}
 							)
-						),
+						);
+					},
 					cacheKey: `hasPermission:${JSON.stringify(params)}`
 				}) as AuthHook<{ error: null; success: boolean }>,
 			useInvitation: (params) =>
@@ -759,6 +772,19 @@
 	// acknowledges that we only need authClient's initial value here.
 	const sessionStore = untrack(() => authClient.useSession());
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
+
+	// Clear all cached auth data when the signed-in user changes. This ensures
+	// that hooks like `useListDeviceSessions` show fresh data even when their
+	// consuming components were unmounted during the transition (e.g. the
+	// sidebar's UserButton is gone while on /auth/sign-in).
+	let providerPrevUserId: string | undefined;
+	$effect(() => {
+		const userId = sessionData?.user?.id;
+		if (providerPrevUserId !== undefined && userId !== providerPrevUserId) {
+			authDataCache.clear();
+		}
+		providerPrevUserId = userId;
+	});
 
 	// Create a reactive context object using getters to preserve reactivity
 	// This ensures child components always access the current derived values
