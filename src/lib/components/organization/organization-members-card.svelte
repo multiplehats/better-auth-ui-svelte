@@ -51,5 +51,7 @@
 		isPending
 	/>
 {:else}
-	<OrganizationMembersInner {className} {classNames} {localization} {organization} />
+	{#key organization.id}
+		<OrganizationMembersInner {className} {classNames} {localization} {organization} />
+	{/key}
 {/if}

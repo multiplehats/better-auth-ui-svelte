@@ -40,5 +40,7 @@
 </script>
 
 {#if organization}
-	<OrganizationInvitationsInner {className} {classNames} {localization} {organization} />
+	{#key organization.id}
+		<OrganizationInvitationsInner {className} {classNames} {localization} {organization} />
+	{/key}
 {/if}
