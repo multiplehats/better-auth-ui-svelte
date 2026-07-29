@@ -28,7 +28,10 @@ export type AuthHooks = {
 	useActiveOrganization: () => any;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	useListOrganizations: () => any;
-	useHasPermission: (params: { permission: string }) => AuthHook<{
+	useHasPermission: (params: {
+		permissions: Record<string, string[]>;
+		organizationId?: string;
+	}) => AuthHook<{
 		error: null;
 		success: boolean;
 	}>;

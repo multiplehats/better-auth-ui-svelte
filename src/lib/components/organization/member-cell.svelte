@@ -87,7 +87,7 @@
 	// svelte-ignore state_referenced_locally
 	const hasPermissionHook = useHasPermission({
 		organizationId: member.organizationId,
-		permission: { member: ['update'] }
+		permissions: { member: ['update'] }
 	} as unknown as Parameters<typeof useHasPermission>[0]);
 	const hasPermissionToUpdateMember = $derived(hasPermissionHook?.data);
 </script>

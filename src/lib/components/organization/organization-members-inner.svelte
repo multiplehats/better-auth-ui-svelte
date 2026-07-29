@@ -33,7 +33,7 @@
 	// svelte-ignore state_referenced_locally
 	const hasPermissionUpdateMemberHook = hooks.useHasPermission({
 		organizationId: organization.id,
-		permission: { member: ['update'] }
+		permissions: { member: ['update'] }
 	} as any);
 	/* eslint-enable @typescript-eslint/no-explicit-any */
 	// useListMembers is an init-only hook accepting plain values; organization is stable per mount
