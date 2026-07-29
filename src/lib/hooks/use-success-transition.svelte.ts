@@ -26,12 +26,21 @@ export function useOnSuccessTransition({
 	});
 
 	async function onSuccess() {
-		// Refetch session using the hooks provided by better-auth/svelte
+		// Refetch session using the hooks provided by better-auth/svelte.
+		// `hooks.useSession()` returns a nanostore atom; the session data and
+		// `refetch` live on its *value* (accessed via `.get()`), not on the
+		// atom object itself. Without this refetch, navigating to a page
+		// guarded by `useAuthenticate` (e.g. accept-invitation) after a 2FA
+		// verify bounces back to sign-in — the atom still holds the stale
+		// pre-2FA state (`data: null`) because `verify-otp` isn't in
+		// better-auth's `atomListeners` matcher list.
 		if (hooks?.useSession) {
-			const sessionHook = hooks.useSession();
-			// Check if refetch method exists on the hook (some hooks may not have it)
-			if (sessionHook && 'refetch' in sessionHook && typeof sessionHook.refetch === 'function') {
-				await sessionHook.refetch?.();
+			const sessionAtom = hooks.useSession();
+			const sessionValue =
+				sessionAtom && typeof sessionAtom.get === 'function' ? sessionAtom.get() : null;
+			const refetch = sessionValue?.refetch;
+			if (typeof refetch === 'function') {
+				await refetch();
 			}
 		}
 
