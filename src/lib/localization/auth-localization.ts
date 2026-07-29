@@ -760,6 +760,10 @@ export const authLocalization = {
 	/** @default "This invitation has expired" */
 	INVITATION_EXPIRED: 'This invitation has expired',
 
+	/** @default "This invitation was sent to a different email address. You may need to switch accounts." */
+	INVITATION_RECIPIENT_MISMATCH:
+		'This invitation was sent to a different email address. You may need to switch accounts.',
+
 	/** @default "Delete Organization" */
 	DELETE_ORGANIZATION: 'Delete Organization',
 
