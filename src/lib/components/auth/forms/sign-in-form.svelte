@@ -8,7 +8,13 @@
 	import { useIsHydrated } from '$lib/hooks/use-hydrated.svelte';
 	import { useOnSuccessTransition } from '$lib/hooks/use-success-transition.svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError, isValidEmail, getFieldError } from '$lib/utils/utils.js';
+	import {
+		cn,
+		getLocalizedError,
+		isValidEmail,
+		getFieldError,
+		getSearchParam
+	} from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
 	import PasswordInput from '$lib/components/password-input.svelte';
@@ -42,8 +48,12 @@
 	const {
 		authClient,
 		basePath,
+		baseURL,
 		credentials,
+		emailVerification,
 		localization: contextLocalization,
+		persistClient,
+		redirectTo: contextRedirectTo,
 		viewPaths,
 		navigate,
 		toast,
@@ -68,6 +78,23 @@
 
 	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
+
+	// Resolve the post-verification callback URL. Only used server-side by
+	// `emailVerification.sendOnSignIn`: when sign-in is rejected with
+	// EMAIL_NOT_VERIFIED, better-auth embeds this callbackURL in the
+	// verification email link. Without it the server defaults to "/" (the auth
+	// server root), which goes nowhere — so match the sign-up flow's resolution.
+	function getRedirectTo() {
+		return redirectTo || getSearchParam('redirectTo') || contextRedirectTo;
+	}
+
+	function getCallbackURL() {
+		return `${baseURL || ''}${
+			persistClient
+				? `${basePath}/${viewPaths.CALLBACK}?redirectTo=${encodeURIComponent(getRedirectTo())}`
+				: getRedirectTo()
+		}`;
+	}
 
 	// Form schema
 	const formSchema = $derived(
@@ -112,6 +139,7 @@
 						username: value.email,
 						password: value.password,
 						rememberMe: value.rememberMe,
+						callbackURL: getCallbackURL(),
 						fetchOptions
 					});
 				} else {
@@ -124,6 +152,7 @@
 						email: value.email,
 						password: value.password,
 						rememberMe: value.rememberMe,
+						callbackURL: getCallbackURL(),
 						fetchOptions
 					});
 				}
@@ -151,6 +180,24 @@
 			} catch (error) {
 				form.setFieldValue('password', '');
 				resetCaptcha();
+
+				// If the account exists but its email isn't verified, route the
+				// user to the verify-email view so they can re-request the
+				// verification email, mirroring the sign-up flow.
+				const errorCode =
+					error && typeof error === 'object' && 'error' in error
+						? (error as { error?: { code?: string } }).error?.code
+						: undefined;
+				if (emailVerification && errorCode === 'EMAIL_NOT_VERIFIED') {
+					// Only forward the email when the entered value is actually an
+					// email address — with username sign-in the value may be a
+					// username, which the verify-email view can't use.
+					const emailParam = isValidEmail(value.email)
+						? `?email=${encodeURIComponent(value.email)}`
+						: '';
+					navigate(`${basePath}/${viewPaths.VERIFY_EMAIL}${emailParam}`);
+					return;
+				}
 
 				toast.error(getLocalizedError({ error, localization }));
 				throw error;
