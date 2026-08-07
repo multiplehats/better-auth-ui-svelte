@@ -526,7 +526,7 @@
 				useAuthData<{ user: User }>({
 					queryFn: async () =>
 						asResult<{ user: User }>(
-							await authClient.accountInfo({ query: { accountId: params.providerId } })
+							await authClient.accountInfo({ query: { accountId: params.accountId } })
 						),
 					cacheKey: `accountInfo:${JSON.stringify(params)}`
 				}) as AuthHook<{ user: User }>,

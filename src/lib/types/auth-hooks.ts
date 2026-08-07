@@ -18,7 +18,7 @@ export type AuthHook<T> = {
 export type AuthHooks = {
 	useSession: () => ReturnType<AnyAuthClient['useSession']>;
 	useListAccounts: () => AuthHook<Account[]>;
-	useAccountInfo: (params: { providerId: string }) => AuthHook<{ user: User }>;
+	useAccountInfo: (params: { accountId: string }) => AuthHook<{ user: User }>;
 	useListDeviceSessions: () => AuthHook<AnyAuthClient['$Infer']['Session'][]>;
 	useListSessions: () => AuthHook<AnyAuthSession['session'][]>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

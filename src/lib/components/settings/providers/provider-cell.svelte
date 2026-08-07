@@ -62,12 +62,13 @@
 	};
 
 	const handleUnlink = async () => {
+		if (!account) return;
+
 		isLoading = true;
 
 		try {
 			await unlinkAccount({
-				accountId: account?.accountId,
-				providerId: provider.provider
+				accountId: account.id
 			});
 
 			await refetch?.();
@@ -115,13 +116,13 @@
 	account,
 	classNames
 }: {
-	account: { accountId: string };
+	account: { id: string };
 	classNames?: SettingsCardClassNames;
 })}
 	{@const {
 		hooks: { useAccountInfo }
 	} = getAuthUIConfig()}
-	{@const accountInfoQuery = useAccountInfo({ providerId: account.accountId })}
+	{@const accountInfoQuery = useAccountInfo({ accountId: account.id })}
 
 	{#if accountInfoQuery.isPending}
 		<Skeleton class={cn('my-0.5 h-3 w-28', classNames?.skeleton)} />
