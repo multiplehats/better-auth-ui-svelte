@@ -12,6 +12,7 @@ import LinearIcon from './linear-icon.svelte';
 import LinkedInIcon from './linkedin-icon.svelte';
 import MicrosoftIcon from './microsoft-icon.svelte';
 import NotionIcon from './notion-icon.svelte';
+import PatreonIcon from './patreon-icon.svelte';
 import RedditIcon from './reddit-icon.svelte';
 import RobloxIcon from './roblox-icon.svelte';
 import SlackIcon from './slack-icon.svelte';
@@ -41,6 +42,7 @@ export {
 	LinkedInIcon,
 	MicrosoftIcon,
 	NotionIcon,
+	PatreonIcon,
 	RedditIcon,
 	RobloxIcon,
 	SlackIcon,

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { untrack } from 'svelte';
 	import { setAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { authLocalization } from '$lib/localization/auth-localization.js';
 	import { BASE_ERROR_CODES } from '$lib/localization/base-error-codes.js';
@@ -9,6 +10,7 @@
 	import type {
 		AuthClient,
 		AuthHooks,
+		AuthHook,
 		AuthMutators,
 		AccountOptions,
 		AccountOptionsContext,
@@ -17,7 +19,6 @@
 		AvatarOptions,
 		DeleteUserOptions,
 		SocialOptions,
-		GenericOAuthOptions,
 		CredentialsOptions,
 		SignUpOptions,
 		Link,
@@ -31,6 +32,20 @@
 	import type { AuthViewPaths } from '$lib/utils/view-paths.js';
 	import { authViewPaths, accountViewPaths, organizationViewPaths } from '$lib/utils/view-paths.js';
 	import { useAuthData } from '$lib/stores/use-auth-data.svelte.js';
+	import { authDataCache } from '$lib/utils/auth-data-cache.js';
+	import type { Account, User } from 'better-auth';
+	import type { Member } from 'better-auth/plugins/organization';
+	import type { Invitation, ApiKey } from '$lib/types/index.js';
+	import type { BetterFetchError } from '@better-fetch/fetch';
+
+	type AuthResult<T> = { data: T | null; error: BetterFetchError | null };
+
+	function asResult<T>(result: { data: unknown; error: unknown }): AuthResult<T> {
+		return {
+			data: (result.data ?? null) as T | null,
+			error: (result.error ?? null) as BetterFetchError | null
+		};
+	}
 
 	interface Props {
 		children: Snippet;
@@ -217,10 +232,6 @@
 		 */
 		social?: SocialOptions;
 		/**
-		 * Generic OAuth provider configuration
-		 */
-		genericOAuth?: GenericOAuthOptions;
-		/**
 		 * Enable or disable two-factor authentication support
 		 * @default undefined
 		 */
@@ -245,10 +256,7 @@
 		 * Theme (light/dark)
 		 */
 		theme?: 'light' | 'dark';
-		/**
-		 * All other props
-		 */
-		[key: string]: unknown;
+		captcha?: CaptchaOptions;
 	}
 
 	let {
@@ -264,7 +272,6 @@
 		emailOTP,
 		gravatar,
 		social: socialProp,
-		genericOAuth: genericOAuthProp,
 		magicLink,
 		multiSession,
 		oneTap,
@@ -291,8 +298,7 @@
 		onSessionChange,
 		replace: replaceProp,
 		Link: LinkProp,
-		theme = 'light',
-		...props
+		theme = 'light'
 	}: Props = $props();
 
 	const authClient = $derived(authClientProp);
@@ -382,12 +388,6 @@
 	const social = $derived.by((): SocialOptions | undefined => {
 		if (!socialProp) return undefined;
 		return socialProp;
-	});
-
-	// Process genericOAuth prop
-	const genericOAuth = $derived.by((): GenericOAuthOptions | undefined => {
-		if (!genericOAuthProp) return undefined;
-		return genericOAuthProp;
 	});
 
 	// Process credentials prop
@@ -513,89 +513,213 @@
 	});
 
 	// Default hooks
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	const defaultHooks = $derived.by((): AuthHooks => {
 		return {
 			useSession: authClient.useSession,
 			useListAccounts: () =>
-				useAuthData({
-					queryFn: authClient.listAccounts as any,
+				useAuthData<Account[]>({
+					queryFn: async () => asResult<Account[]>(await authClient.listAccounts()),
 					cacheKey: 'listAccounts'
-				}) as any,
+				}) as AuthHook<Account[]>,
 			useAccountInfo: (params) =>
-				useAuthData({
-					queryFn: (() => authClient.accountInfo({ accountId: params.providerId } as any)) as any,
+				useAuthData<{ user: User }>({
+					queryFn: async () =>
+						asResult<{ user: User }>(
+							await authClient.accountInfo({ query: { accountId: params.accountId } })
+						),
 					cacheKey: `accountInfo:${JSON.stringify(params)}`
-				}) as any,
+				}) as AuthHook<{ user: User }>,
 			useListDeviceSessions: () =>
-				useAuthData({
-					queryFn: authClient.multiSession.listDeviceSessions as any,
+				useAuthData<AuthClient['$Infer']['Session'][]>({
+					queryFn: async () =>
+						asResult<AuthClient['$Infer']['Session'][]>(
+							await authClient.multiSession.listDeviceSessions()
+						),
 					cacheKey: 'listDeviceSessions'
-				}) as any,
+				}) as AuthHook<AuthClient['$Infer']['Session'][]>,
 			useListSessions: () =>
-				useAuthData({
-					queryFn: authClient.listSessions as any,
+				useAuthData<AuthClient['$Infer']['Session']['session'][]>({
+					queryFn: async () =>
+						asResult<AuthClient['$Infer']['Session']['session'][]>(await authClient.listSessions()),
 					cacheKey: 'listSessions'
-				}) as any,
+				}) as AuthHook<AuthClient['$Infer']['Session']['session'][]>,
 			useListPasskeys: authClient.useListPasskeys,
 			useListApiKeys: () =>
-				useAuthData({
-					queryFn: authClient.apiKey.list as any,
+				useAuthData<ApiKey[]>({
+					queryFn: async () => asResult<ApiKey[]>(await authClient.apiKey.list()),
 					cacheKey: 'listApiKeys'
-				}) as any,
+				}) as AuthHook<ApiKey[]>,
 			useActiveOrganization: authClient.useActiveOrganization,
 			useListOrganizations: authClient.useListOrganizations,
 			useHasPermission: (params) =>
-				useAuthData({
-					queryFn: () =>
-						authClient.$fetch('/organization/has-permission', {
-							method: 'POST',
-							body: params
-						}),
+				useAuthData<{ error: null; success: boolean }>({
+					queryFn: async () => {
+						// Skip the permission check when there is no active
+						// organization. This prevents 401s during account
+						// switches: the organization-refetcher clears the
+						// active-org atom (in a $effect.pre) before this
+						// queryFn runs, so we see null and degrade to
+						// "no permission" without making the network call.
+						const activeOrgStore = authClient.useActiveOrganization?.();
+						const activeOrg = activeOrgStore?.get?.();
+						if (!activeOrg?.data) {
+							return { data: { error: null, success: false }, error: null };
+						}
+						return asResult<{ error: null; success: boolean }>(
+							await authClient.$fetch<{ error: null; success: boolean }>(
+								'/organization/has-permission',
+								{
+									method: 'POST',
+									body: params
+								}
+							)
+						);
+					},
 					cacheKey: `hasPermission:${JSON.stringify(params)}`
-				}) as any,
+				}) as AuthHook<{ error: null; success: boolean }>,
 			useInvitation: (params) =>
-				useAuthData({
-					queryFn: (() => authClient.organization.getInvitation({ query: params })) as any,
+				useAuthData<
+					Invitation & {
+						organizationName: string;
+						organizationSlug: string;
+						organizationLogo?: string;
+					}
+				>({
+					queryFn: async () =>
+						asResult<
+							Invitation & {
+								organizationName: string;
+								organizationSlug: string;
+								organizationLogo?: string;
+							}
+						>(await authClient.organization.getInvitation({ query: params })),
 					cacheKey: `invitation:${JSON.stringify(params)}`
-				}) as any,
+				}) as AuthHook<
+					Invitation & {
+						organizationName: string;
+						organizationSlug: string;
+						organizationLogo?: string;
+					}
+				>,
 			useListInvitations: (params) =>
-				useAuthData({
-					queryFn: () =>
-						authClient.$fetch(
-							`/organization/list-invitations?organizationId=${params?.query?.organizationId || ''}`
+				useAuthData<Invitation[]>({
+					queryFn: async () =>
+						asResult<Invitation[]>(
+							await authClient.$fetch<Invitation[]>(
+								`/organization/list-invitations?organizationId=${params?.query?.organizationId || ''}`
+							)
 						),
 					cacheKey: `listInvitations:${JSON.stringify(params)}`
-				}) as any,
+				}) as AuthHook<Invitation[]>,
 			useListUserInvitations: () =>
-				useAuthData({
-					queryFn: () => authClient.$fetch('/organization/list-user-invitations'),
+				useAuthData<Invitation[]>({
+					queryFn: async () =>
+						asResult<Invitation[]>(
+							await authClient.$fetch<Invitation[]>('/organization/list-user-invitations')
+						),
 					cacheKey: `listUserInvitations`
-				}) as any,
+				}) as AuthHook<Invitation[]>,
 			useListMembers: (params) =>
-				useAuthData({
-					queryFn: () =>
-						authClient.$fetch(
-							`/organization/list-members?organizationId=${params?.query?.organizationId || ''}`
+				useAuthData<{
+					members: (Member & { user?: Partial<User> | null })[];
+					total: number;
+				}>({
+					queryFn: async () =>
+						asResult<{
+							members: (Member & { user?: Partial<User> | null })[];
+							total: number;
+						}>(
+							await authClient.$fetch<{
+								members: (Member & { user?: Partial<User> | null })[];
+								total: number;
+							}>(`/organization/list-members?organizationId=${params?.query?.organizationId || ''}`)
 						),
 					cacheKey: `listMembers:${JSON.stringify(params)}`
-				}) as any,
-						useListTeams: (params) =>
-				useAuthData({
-					queryFn: () =>
-						authClient.$fetch(
-							`/organization/list-teams?organizationId=${params?.query?.organizationId || ''}`
+				}) as AuthHook<{
+					members: (Member & { user?: Partial<User> | null })[];
+					total: number;
+				}>,
+			useListTeams: (params) =>
+				useAuthData<
+					{
+						id: string;
+						name: string;
+						organizationId: string;
+						createdAt: Date;
+						updatedAt: Date;
+					}[]
+				>({
+					queryFn: async () =>
+						asResult<
+							{
+								id: string;
+								name: string;
+								organizationId: string;
+								createdAt: Date;
+								updatedAt: Date;
+							}[]
+						>(
+							await authClient.$fetch<
+								{
+									id: string;
+									name: string;
+									organizationId: string;
+									createdAt: Date;
+									updatedAt: Date;
+								}[]
+							>(`/organization/list-teams?organizationId=${params?.query?.organizationId || ''}`)
 						),
 					cacheKey: `listTeams:${JSON.stringify(params)}`
-				}) as any,
+				}) as AuthHook<
+					{
+						id: string;
+						name: string;
+						organizationId: string;
+						createdAt: Date;
+						updatedAt: Date;
+					}[]
+				>,
 			useListTeamMembers: (params) =>
-				useAuthData({
-					queryFn: () =>
-						authClient.$fetch(
-							`/organization/list-team-members?teamId=${params?.query?.teamId || ''}`
+				useAuthData<
+					{
+						id: string;
+						teamId: string;
+						userId: string;
+						createdAt: Date;
+						user?: Partial<User> | null;
+					}[]
+				>({
+					queryFn: async () =>
+						asResult<
+							{
+								id: string;
+								teamId: string;
+								userId: string;
+								createdAt: Date;
+								user?: Partial<User> | null;
+							}[]
+						>(
+							await authClient.$fetch<
+								{
+									id: string;
+									teamId: string;
+									userId: string;
+									createdAt: Date;
+									user?: Partial<User> | null;
+								}[]
+							>(`/organization/list-team-members?teamId=${params?.query?.teamId || ''}`)
 						),
 					cacheKey: `listTeamMembers:${JSON.stringify(params)}`
-				}) as any
+				}) as AuthHook<
+					{
+						id: string;
+						teamId: string;
+						userId: string;
+						createdAt: Date;
+						user?: Partial<User> | null;
+					}[]
+				>
 		};
 	});
 
@@ -644,8 +768,23 @@
 	const baseURL = $derived(baseURLProp.endsWith('/') ? baseURLProp.slice(0, -1) : baseURLProp);
 
 	// Get session data
-	const sessionStore = authClient.useSession();
+	// `useSession` is a hook that should only run once at init; untrack
+	// acknowledges that we only need authClient's initial value here.
+	const sessionStore = untrack(() => authClient.useSession());
 	const sessionData = $derived('data' in $sessionStore ? $sessionStore.data : undefined);
+
+	// Clear all cached auth data when the signed-in user changes. This ensures
+	// that hooks like `useListDeviceSessions` show fresh data even when their
+	// consuming components were unmounted during the transition (e.g. the
+	// sidebar's UserButton is gone while on /auth/sign-in).
+	let providerPrevUserId: string | undefined;
+	$effect(() => {
+		const userId = sessionData?.user?.id;
+		if (providerPrevUserId !== undefined && userId !== providerPrevUserId) {
+			authDataCache.clear();
+		}
+		providerPrevUserId = userId;
+	});
 
 	// Create a reactive context object using getters to preserve reactivity
 	// This ensures child components always access the current derived values
@@ -694,9 +833,6 @@
 		},
 		get freshAge() {
 			return freshAge;
-		},
-		get genericOAuth() {
-			return genericOAuth;
 		},
 		get gravatar() {
 			return gravatar;
@@ -766,8 +902,7 @@
 		},
 		get theme() {
 			return theme;
-		},
-		...props
+		}
 	};
 
 	// Set the context for child components synchronously
@@ -802,7 +937,7 @@
 	<OrganizationRefetcher />
 {/if}
 
-{#if (captcha as CaptchaOptions | undefined)?.provider === 'google-recaptcha-v3'}
+{#if captcha?.provider === 'google-recaptcha-v3'}
 	<RecaptchaV3>
 		{@render children()}
 	</RecaptchaV3>

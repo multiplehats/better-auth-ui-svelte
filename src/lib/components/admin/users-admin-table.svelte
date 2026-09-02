@@ -20,7 +20,6 @@
 	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import {
 		MoreHorizontal,
@@ -48,7 +47,7 @@
 	let {
 		initialPageSize = 10,
 		syncWithUrl = false,
-		onDeleteUser,
+		onDeleteUser
 	}: {
 		initialPageSize?: number;
 		syncWithUrl?: boolean;
@@ -64,14 +63,19 @@
 	let data = $state<UserWithRole[]>([]);
 	let isLoading = $state(false);
 	let pageCount = $state(0);
+	// initialPageSize is a config prop set once by parent; stable per mount.
+	// svelte-ignore state_referenced_locally
 	let pagination = $state<PaginationState>({
 		pageIndex: 0,
 		pageSize: initialPageSize
 	});
 
 	// URL sync - read initial values from URL if enabled
+	// syncWithUrl/initialPageSize are config props set once by parent; stable per mount, evaluated only at init time.
+	// svelte-ignore state_referenced_locally
 	if (syncWithUrl && typeof window !== 'undefined') {
 		const urlPage = Number($page.url.searchParams.get('page') ?? '1');
+		// initialPageSize is a config prop set once by parent; stable per mount.
 		const urlLimit = Number($page.url.searchParams.get('limit') ?? String(initialPageSize));
 		pagination = {
 			pageIndex: urlPage - 1,
@@ -109,18 +113,18 @@
 			}
 
 			if (response) {
-				data = (response.users as Record<string, unknown>[]).map((user) => ({
-					id: user.id as string,
-					email: user.email as string,
-					name: user.name as string | null | undefined,
-					emailVerified: user.emailVerified as boolean,
-					image: user.image as string | null | undefined,
-					createdAt: user.createdAt ? new Date(user.createdAt as string) : null,
-					updatedAt: user.updatedAt ? new Date(user.updatedAt as string) : null,
-					role: (user.role as string) ?? 'user',
-					banned: (user.banned as boolean) ?? false,
-					banReason: user.banReason as string | null | undefined,
-					banExpires: user.banExpires ? new Date(user.banExpires as string) : null
+				data = response.users.map((user) => ({
+					id: user.id,
+					email: user.email,
+					name: user.name ?? null,
+					emailVerified: user.emailVerified,
+					image: user.image ?? null,
+					createdAt: user.createdAt ? new Date(user.createdAt) : null,
+					updatedAt: user.updatedAt ? new Date(user.updatedAt) : null,
+					role: user.role ?? 'user',
+					banned: user.banned ?? false,
+					banReason: user.banReason ?? null,
+					banExpires: user.banExpires ? new Date(user.banExpires) : null
 				}));
 
 				const total = response.total ?? data.length;
@@ -150,7 +154,11 @@
 			const params = new SvelteURLSearchParams($page.url.searchParams);
 			params.set('page', String(newPagination.pageIndex + 1));
 			params.set('limit', String(newPagination.pageSize));
-			goto((resolve as (path: string) => string)(`?${params.toString()}`), { replaceState: true, keepFocus: true });
+			// eslint-disable-next-line svelte/no-navigation-without-resolve -- relative query string, resolve() doesn't handle query params
+			goto(`?${params.toString()}`, {
+				replaceState: true,
+				keepFocus: true
+			});
 		}
 	}
 
@@ -217,7 +225,9 @@
 							`<div class="text-muted-foreground">${name ?? '<span class="italic">No name</span>'}</div>`
 					};
 				});
-				return renderSnippet(nameSnippet, { name: row.getValue('name') as string | null | undefined });
+				return renderSnippet(nameSnippet, {
+					name: row.getValue('name') as string | null | undefined
+				});
 			}
 		},
 		{
@@ -289,7 +299,9 @@
 						};
 					}
 				);
-				return renderSnippet(dateSnippet, { dateValue: row.getValue('createdAt') as Date | string | null | undefined });
+				return renderSnippet(dateSnippet, {
+					dateValue: row.getValue('createdAt') as Date | string | null | undefined
+				});
 			}
 		},
 		{

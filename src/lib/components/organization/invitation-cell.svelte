@@ -56,6 +56,8 @@
 	const roles = $derived([...builtInRoles, ...(organizationOptions?.customRoles || [])]);
 	const role = $derived(roles.find((r) => r.role === invitation.role));
 
+	// useListInvitations is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const invitationsHook = useListInvitations({
 		query: { organizationId: organization?.id }
 	});

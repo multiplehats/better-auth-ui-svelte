@@ -2,6 +2,7 @@
 	import Check from '@lucide/svelte/icons/check';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import X from '@lucide/svelte/icons/x';
+	import CircleAlert from '@lucide/svelte/icons/circle-alert';
 	import { getAuthClient, getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn, getLocalizedError, getSearchParam } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
@@ -29,6 +30,8 @@
 	const { redirectTo, replace, toast, organization: organizationOptions } = config;
 
 	// Hook called unconditionally at top level — invitationId is guaranteed by the parent.
+	// useInvitation is an init-only hook accepting plain values; invitationId is stable per mount
+	// svelte-ignore state_referenced_locally
 	const invitationHook = config.hooks.useInvitation({ id: invitationId });
 	const invitation = $derived(invitationHook?.data ?? null);
 	const isPending = $derived(invitationHook?.isPending ?? false);
@@ -47,27 +50,36 @@
 		roles.find((r) => r.role === invitation?.role)?.label || invitation?.role
 	);
 
-	// Validate invitation
-	$effect(() => {
-		if (!browser) return;
+	// Resolve an inline error message for the current invitation state.
+	// We surface errors inline (no redirect) so the user can actually see what
+	// went wrong — e.g. this invitation was sent to a different email than the
+	// one they're signed in as, or the invitation is expired/not found.
+	//
+	// NOTE: better-auth's organization error codes are passed to
+	// `APIError.from` as plain strings (not `{ code, message }`), so the 403
+	// response body serializes without a usable `code`/`message`. The only
+	// reliable differentiator is the HTTP status: 403 = recipient mismatch (or
+	// email-unverified), 400 = not found/expired.
+	const errorStatus = $derived(
+		(invitationHook?.error as { status?: number } | null)?.status ?? null
+	);
 
+	const errorMessage = $derived.by(() => {
 		if (!isPending && !invitation) {
-			toast.error(localization.INVITATION_NOT_FOUND);
-			replace(redirectTo);
-			return;
+			if (errorStatus === 403) {
+				return localization.INVITATION_RECIPIENT_MISMATCH;
+			}
+			return localization.INVITATION_NOT_FOUND;
 		}
-
 		if (
 			invitation &&
 			(invitation.status !== 'pending' || new Date(invitation.expiresAt) < new Date())
 		) {
-			toast.error(
-				new Date(invitation.expiresAt) < new Date()
-					? localization.INVITATION_EXPIRED
-					: localization.INVITATION_NOT_FOUND
-			);
-			replace(redirectTo);
+			return new Date(invitation.expiresAt) < new Date()
+				? localization.INVITATION_EXPIRED
+				: localization.INVITATION_NOT_FOUND;
 		}
+		return null;
 	});
 
 	async function handleReject() {
@@ -102,7 +114,22 @@
 	}
 </script>
 
-{#if !invitation}
+{#if errorMessage}
+	<Card.Root class={cn('w-full max-w-sm', className, classNames?.base)}>
+		<Card.Header class={cn('justify-items-center text-center', classNames?.header)}>
+			<div class="flex items-center justify-center text-muted-foreground">
+				<CircleAlert class="size-8" />
+			</div>
+			<Card.Title class={cn('text-lg md:text-xl', classNames?.title)}>
+				{localization.ACCEPT_INVITATION}
+			</Card.Title>
+		</Card.Header>
+
+		<Card.Content class={cn('flex flex-col gap-2', classNames?.content)}>
+			<p class="text-center text-sm text-muted-foreground">{errorMessage}</p>
+		</Card.Content>
+	</Card.Root>
+{:else if !invitation}
 	<Card.Root class={cn('w-full max-w-sm', className, classNames?.base)}>
 		<Card.Header class={cn('justify-items-center', classNames?.header)}>
 			<Skeleton class={cn('my-1 h-5 w-full max-w-32 md:h-5.5 md:w-40', classNames?.skeleton)} />

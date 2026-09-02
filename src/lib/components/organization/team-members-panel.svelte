@@ -41,6 +41,8 @@
 	const config = getAuthUIConfig();
 	const { hooks } = config;
 
+	// useListTeamMembers is an init-only hook accepting plain values; team is stable per mount
+	// svelte-ignore state_referenced_locally
 	const teamMembersHook = hooks.useListTeamMembers?.({
 		query: { teamId: team.id }
 	});
@@ -57,9 +59,9 @@
 	}
 </script>
 
-<div class={cn('border-t bg-muted/30 p-4 space-y-3')}>
+<div class={cn('space-y-3 border-t bg-muted/30 p-4')}>
 	<div class="flex items-center justify-between">
-		<span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+		<span class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
 			{localization.MEMBERS}
 		</span>
 		{#if canManageMembers}
@@ -77,12 +79,12 @@
 
 	{#if isPending}
 		<div class="space-y-2">
-			{#each Array.from({length: 2}, (_, i) => i) as i (i)}
+			{#each Array.from({ length: 2 }, (_, i) => i) as i (i)}
 				<div class="h-12 animate-pulse rounded-md bg-muted"></div>
 			{/each}
 		</div>
 	{:else if members.length === 0}
-		<p class="text-sm text-muted-foreground py-2 text-center">
+		<p class="py-2 text-center text-sm text-muted-foreground">
 			{localization.NO_TEAM_MEMBERS}
 		</p>
 	{:else}

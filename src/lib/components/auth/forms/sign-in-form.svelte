@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { BetterFetchOption } from '@better-fetch/fetch';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Loader2 } from '@lucide/svelte';
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
@@ -10,12 +11,11 @@
 	import {
 		cn,
 		getLocalizedError,
-		getPasswordSchema,
 		isValidEmail,
-		getFieldError
+		getFieldError,
+		getSearchParam
 	} from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/localization/auth-localization.js';
-	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import Captcha from '$lib/components/captcha/captcha.svelte';
 	import PasswordInput from '$lib/components/password-input.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -31,7 +31,6 @@
 		localization?: Partial<AuthLocalization>;
 		redirectTo?: string;
 		setIsSubmitting?: (isSubmitting: boolean) => void;
-		passwordValidation?: PasswordValidation;
 	}
 
 	let {
@@ -40,8 +39,7 @@
 		isSubmitting: isSubmittingProp,
 		localization: localizationProp,
 		redirectTo,
-		setIsSubmitting,
-		passwordValidation: passwordValidationProp
+		setIsSubmitting
 	}: Props = $props();
 
 	const isHydrated = useIsHydrated();
@@ -50,8 +48,12 @@
 	const {
 		authClient,
 		basePath,
+		baseURL,
 		credentials,
+		emailVerification,
 		localization: contextLocalization,
+		persistClient,
+		redirectTo: contextRedirectTo,
 		viewPaths,
 		navigate,
 		toast,
@@ -60,15 +62,10 @@
 
 	const rememberMeEnabled = credentials?.rememberMe;
 	const usernameEnabled = credentials?.username;
-	const contextPasswordValidation = credentials?.passwordValidation;
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
-	const passwordValidation = $derived({
-		...contextPasswordValidation,
-		...passwordValidationProp
-	});
 
-	const captchaHook = useCaptcha({ localization });
+	const captchaHook = useCaptcha({ localization: () => localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding
@@ -79,8 +76,25 @@
 		captchaHook.captchaRef = captchaRef;
 	});
 
-	const transition = useOnSuccessTransition({ redirectTo });
+	const transition = useOnSuccessTransition({ redirectTo: () => redirectTo });
 	const { onSuccess } = transition;
+
+	// Resolve the post-verification callback URL. Only used server-side by
+	// `emailVerification.sendOnSignIn`: when sign-in is rejected with
+	// EMAIL_NOT_VERIFIED, better-auth embeds this callbackURL in the
+	// verification email link. Without it the server defaults to "/" (the auth
+	// server root), which goes nowhere — so match the sign-up flow's resolution.
+	function getRedirectTo() {
+		return redirectTo || getSearchParam('redirectTo') || contextRedirectTo;
+	}
+
+	function getCallbackURL() {
+		return `${baseURL || ''}${
+			persistClient
+				? `${basePath}/${viewPaths.CALLBACK}?redirectTo=${encodeURIComponent(getRedirectTo())}`
+				: getRedirectTo()
+		}`;
+	}
 
 	// Form schema
 	const formSchema = $derived(
@@ -97,11 +111,8 @@
 						.email({
 							message: `${localization.EMAIL} ${localization.IS_INVALID}`
 						}),
-			password: getPasswordSchema(passwordValidation, {
-				PASSWORD_REQUIRED: localization.PASSWORD_REQUIRED,
-				PASSWORD_TOO_SHORT: localization.PASSWORD_TOO_SHORT,
-				PASSWORD_TOO_LONG: localization.PASSWORD_TOO_LONG,
-				INVALID_PASSWORD: localization.INVALID_PASSWORD
+			password: z.string().min(1, {
+				message: localization.PASSWORD_REQUIRED
 			}),
 			rememberMe: z.boolean().optional()
 		})
@@ -128,6 +139,7 @@
 						username: value.email,
 						password: value.password,
 						rememberMe: value.rememberMe,
+						callbackURL: getCallbackURL(),
 						fetchOptions
 					});
 				} else {
@@ -140,20 +152,52 @@
 						email: value.email,
 						password: value.password,
 						rememberMe: value.rememberMe,
+						callbackURL: getCallbackURL(),
 						fetchOptions
 					});
 				}
 
 				if (response.twoFactorRedirect) {
-					navigate(
-						`${basePath}/${viewPaths.TWO_FACTOR}${typeof window !== 'undefined' ? window.location.search : ''}`
-					);
+					const searchParams =
+						typeof window !== 'undefined'
+							? new SvelteURLSearchParams(window.location.search)
+							: new SvelteURLSearchParams();
+
+					const serverMethods = response.twoFactorMethods;
+					if (
+						Array.isArray(serverMethods) &&
+						serverMethods.length > 0 &&
+						serverMethods.every((m) => m === 'totp' || m === 'otp')
+					) {
+						searchParams.set('methods', serverMethods.join(','));
+					}
+
+					const search = searchParams.toString();
+					navigate(`${basePath}/${viewPaths.TWO_FACTOR}${search ? `?${search}` : ''}`);
 				} else {
 					await onSuccess();
 				}
 			} catch (error) {
 				form.setFieldValue('password', '');
 				resetCaptcha();
+
+				// If the account exists but its email isn't verified, route the
+				// user to the verify-email view so they can re-request the
+				// verification email, mirroring the sign-up flow.
+				const errorCode =
+					error && typeof error === 'object' && 'error' in error
+						? (error as { error?: { code?: string } }).error?.code
+						: undefined;
+				if (emailVerification && errorCode === 'EMAIL_NOT_VERIFIED') {
+					// Only forward the email when the entered value is actually an
+					// email address — with username sign-in the value may be a
+					// username, which the verify-email view can't use.
+					const emailParam = isValidEmail(value.email)
+						? `?email=${encodeURIComponent(value.email)}`
+						: '';
+					navigate(`${basePath}/${viewPaths.VERIFY_EMAIL}${emailParam}`);
+					return;
+				}
 
 				toast.error(getLocalizedError({ error, localization }));
 				throw error;
@@ -162,7 +206,9 @@
 	}));
 
 	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
-	const isSubmitting = $derived(isSubmittingProp || formIsSubmitting.current || transition.isPending);
+	const isSubmitting = $derived(
+		isSubmittingProp || formIsSubmitting.current || transition.isPending
+	);
 
 	// Update parent isSubmitting state
 	$effect(() => {

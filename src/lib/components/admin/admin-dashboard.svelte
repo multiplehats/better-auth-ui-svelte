@@ -173,7 +173,7 @@
 			});
 
 			if (usersResponse.data) {
-				const users = usersResponse.data.users as Record<string, unknown>[];
+				const users = usersResponse.data.users;
 				const total = usersResponse.data.total ?? users.length;
 
 				// Calculate date ranges
@@ -183,20 +183,20 @@
 				const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
 
 				// Count new users in different periods
-				const newUsers30d = users.filter((u: Record<string, unknown>) => {
+				const newUsers30d = users.filter((u) => {
 					if (!u.createdAt) return false;
-					const created = new Date(u.createdAt as string | number);
+					const created = new Date(u.createdAt);
 					return created >= thirtyDaysAgo;
 				}).length;
 
-				const newUsersPrevious30d = users.filter((u: Record<string, unknown>) => {
+				const newUsersPrevious30d = users.filter((u) => {
 					if (!u.createdAt) return false;
-					const created = new Date(u.createdAt as string | number);
+					const created = new Date(u.createdAt);
 					return created >= sixtyDaysAgo && created < thirtyDaysAgo;
 				}).length;
 
 				// Count banned users
-				const bannedCount = users.filter((u: Record<string, unknown>) => u.banned).length;
+				const bannedCount = users.filter((u) => u.banned).length;
 
 				// Calculate growth percentages
 				const newUsersGrowth =
@@ -219,9 +219,9 @@
 				}
 
 				// Count users by creation date
-				users.forEach((user: Record<string, unknown>) => {
+				users.forEach((user) => {
 					if (user.createdAt) {
-						const createdDate = new Date(user.createdAt as string | number);
+						const createdDate = new Date(user.createdAt);
 						if (createdDate >= ninetyDaysAgo) {
 							const dateStr = createdDate.toISOString().split('T')[0];
 							dailyCounts.set(dateStr, (dailyCounts.get(dateStr) ?? 0) + 1);

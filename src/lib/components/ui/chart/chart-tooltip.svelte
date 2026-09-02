@@ -32,7 +32,8 @@
 		labelKey?: string;
 		hideIndicator?: boolean;
 		labelClassName?: string;
-		labelFormatter?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+		labelFormatter?:
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			((value: any, payload: TooltipPayload[]) => string | number | Snippet) | null;
 		formatter?: Snippet<
 			[
@@ -52,9 +53,7 @@
 
 	const payload = $derived(ctx.tooltip.series.filter((s) => s.visible));
 
-	const headerLabel = $derived(
-		ctx.tooltip.data ? ctx.x(ctx.tooltip.data) : undefined
-	);
+	const headerLabel = $derived(ctx.tooltip.data ? ctx.x(ctx.tooltip.data) : undefined);
 
 	const formattedLabel = $derived.by(() => {
 		if (hideLabel || !payload.length) return null;
@@ -91,6 +90,7 @@
 
 <TooltipPrimitive.Root variant="none">
 	<div
+		bind:this={ref}
 		class={cn(
 			'grid min-w-[9rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl',
 			className
@@ -149,9 +149,7 @@
 							</div>
 							{#if item.value !== undefined}
 								<span class="font-mono font-medium text-foreground tabular-nums">
-									{typeof item.value === 'number'
-										? item.value.toLocaleString()
-										: item.value}
+									{typeof item.value === 'number' ? item.value.toLocaleString() : item.value}
 								</span>
 							{/if}
 						</div>

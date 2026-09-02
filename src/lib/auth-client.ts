@@ -1,19 +1,18 @@
 import { createAuthClient } from 'better-auth/svelte';
 import {
 	organizationClient,
-	apiKeyClient,
 	twoFactorClient,
 	usernameClient,
 	magicLinkClient,
 	emailOTPClient,
 	lastLoginMethodClient,
 	oneTapClient,
-	genericOAuthClient,
 	anonymousClient,
 	multiSessionClient,
 	adminClient
 } from 'better-auth/client/plugins';
 import { passkeyClient } from '@better-auth/passkey/client';
+import { apiKeyClient } from '@better-auth/api-key/client';
 
 /**
  * Better Auth Svelte client
@@ -28,7 +27,6 @@ export const authClient = createAuthClient({
 		oneTapClient({
 			clientId: ''
 		}),
-		genericOAuthClient(),
 		anonymousClient(),
 		usernameClient(),
 		magicLinkClient(),

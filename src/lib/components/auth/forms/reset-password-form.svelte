@@ -127,6 +127,30 @@
 	}));
 
 	const formIsSubmitting = form.useStore((s) => s.isSubmitting);
+
+	// Per-field validators
+	const newPasswordValidator = $derived(schema.shape.newPassword);
+	// confirmPassword needs a custom onChange validator that also checks mismatch live
+	const confirmPasswordValidator = $derived.by(() => {
+		if (!confirmPasswordEnabled) return undefined;
+		const baseSchema = schema.shape.confirmPassword as z.ZodString;
+		const mismatchMessage = loc.PASSWORDS_DO_NOT_MATCH;
+		return z
+			.string()
+			.superRefine((value, ctx) => {
+				const result = baseSchema.safeParse(value);
+				if (!result.success) {
+					ctx.addIssue({
+						code: 'custom',
+						message: getFieldError(result.error.issues[0]?.message),
+						path: []
+					});
+				}
+			})
+			.refine((value) => value === form.state.values.newPassword, {
+				message: mismatchMessage
+			});
+	});
 </script>
 
 <form
@@ -136,7 +160,7 @@
 	}}
 	class={cn('grid w-full gap-6', className, classNames?.base)}
 >
-	<form.Field name="newPassword" validators={{ onChange: schema.shape.newPassword }}>
+	<form.Field name="newPassword" validators={{ onChange: newPasswordValidator }}>
 		{#snippet children(field)}
 			<div class="space-y-2">
 				<label for="newPassword" class={cn('text-sm font-medium', classNames?.label)}>
@@ -165,12 +189,8 @@
 		<form.Field
 			name="confirmPassword"
 			validators={{
-				onChange: getPasswordSchema(mergedPasswordValidation, {
-					PASSWORD_REQUIRED: loc.CONFIRM_PASSWORD_REQUIRED,
-					PASSWORD_TOO_SHORT: loc.PASSWORD_TOO_SHORT,
-					PASSWORD_TOO_LONG: loc.PASSWORD_TOO_LONG,
-					INVALID_PASSWORD: loc.INVALID_PASSWORD
-				})
+				onChange: confirmPasswordValidator,
+				onChangeListenTo: ['newPassword']
 			}}
 		>
 			{#snippet children(field)}

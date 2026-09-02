@@ -9,6 +9,7 @@ node_modules
 /.svelte-kit
 /build
 /dist
+*.tgz
 
 # OS
 .DS_Store
@@ -26,3 +27,6 @@ vite.config.ts.timestamp-*
 
 # auth schema generated (manually copy to schema.ts)
 auth-schema.ts
+
+# eslint cache
+.eslintcache

@@ -125,7 +125,7 @@
 
 	const { pathMode, slug: contextSlug, personalPath } = organizationOptions || {};
 
-	const slug = slugProp || contextSlug;
+	const slug = $derived(slugProp || contextSlug);
 
 	const contextLocalization = getLocalization();
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
@@ -151,6 +151,8 @@
 		organizationsResult?.isPending ? Boolean(organizationsResult.isPending) : false
 	);
 
+	// useCurrentOrganization is an init-only hook accepting plain values; slug is stable per mount
+	// svelte-ignore state_referenced_locally
 	const currentOrgResult = useCurrentOrganization({ slug });
 	const activeOrganization = $derived(currentOrgResult.data);
 	const organizationPending = $derived(currentOrgResult.isPending);
@@ -160,7 +162,7 @@
 	// Whether there are any non-active orgs or personal account rendered above additionalOrganizations
 	const hasItemsAboveAdditional = $derived(
 		(!hidePersonal && !!activeOrganization) ||
-		(organizations ?? []).some((o) => o.id !== activeOrganization?.id)
+			(organizations ?? []).some((o) => o.id !== activeOrganization?.id)
 	);
 
 	// Smarter pending logic: Only show loading if we're truly waiting for data
@@ -419,7 +421,14 @@
 						classNames={classNames?.content?.organization}
 						{isPending}
 						{localization}
-						organization={{ id: additionalOrg.id, name: additionalOrg.name, slug: additionalOrg.slug, logo: additionalOrg.logo ?? null, createdAt: new Date(), metadata: null }}
+						organization={{
+							id: additionalOrg.id,
+							name: additionalOrg.name,
+							slug: additionalOrg.slug,
+							logo: additionalOrg.logo ?? null,
+							createdAt: new Date(),
+							metadata: null
+						}}
 					/>
 				</DropdownMenu.Item>
 			{/each}

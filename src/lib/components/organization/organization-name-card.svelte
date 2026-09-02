@@ -33,6 +33,8 @@
 
 	const mergedLocalization = $derived({ ...contextLocalization, ...propLocalization });
 
+	// useCurrentOrganization is an init-only hook accepting plain values; slug/organizationId are stable per mount
+	// svelte-ignore state_referenced_locally
 	const currentOrg = useCurrentOrganization({ slug, organizationId });
 	const organization = $derived(currentOrg.data);
 </script>

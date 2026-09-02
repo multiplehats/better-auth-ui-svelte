@@ -3,7 +3,6 @@
 	import type { Snippet } from 'svelte';
 	import { onMount } from 'svelte';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { socialProviders } from '$lib/lib/social-providers.js';
 	import { cn } from '$lib/utils/ui.js';
 	import { getViewByPath } from '$lib/utils/utils.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -90,7 +89,6 @@
 	const passkey = $derived(config.passkey);
 	const oneTap = $derived(config.oneTap);
 	const social = $derived(config.social);
-	const genericOAuth = $derived(config.genericOAuth);
 
 	// Determine social layout
 	let socialLayout = $derived(
@@ -184,7 +182,7 @@
 				</div>
 			{/if}
 
-			{#if view !== 'RESET_PASSWORD' && (social?.providers?.length || genericOAuth?.providers?.length || (view === 'SIGN_IN' && passkey))}
+			{#if view !== 'RESET_PASSWORD' && (social?.providers?.length || (view === 'SIGN_IN' && passkey))}
 				<!-- Separator -->
 				{#if credentials || magicLink || emailOTP}
 					<div class={cn('flex items-center gap-2', classNames?.continueWith)}>
@@ -198,7 +196,7 @@
 
 				<div class="grid gap-4">
 					<!-- Social providers -->
-					{#if social?.providers?.length || genericOAuth?.providers?.length}
+					{#if social?.providers?.length}
 						<div
 							class={cn(
 								'flex w-full items-center justify-between gap-4',
@@ -207,23 +205,7 @@
 								socialLayout === 'grid' && 'grid grid-cols-2'
 							)}
 						>
-							{#each social?.providers || [] as providerName (providerName)}
-								{@const provider = socialProviders.find((p) => p.provider === providerName)}
-								{#if provider}
-									<ProviderButton
-										{classNames}
-										{callbackURL}
-										{isSubmitting}
-										{localization}
-										{provider}
-										{redirectTo}
-										setIsSubmitting={(value) => (isSubmitting = value)}
-										{socialLayout}
-									/>
-								{/if}
-							{/each}
-
-							{#each genericOAuth?.providers || [] as provider (provider.provider)}
+							{#each social?.providers || [] as provider (provider.provider)}
 								<ProviderButton
 									{classNames}
 									{callbackURL}
@@ -233,7 +215,6 @@
 									{redirectTo}
 									setIsSubmitting={(value) => (isSubmitting = value)}
 									{socialLayout}
-									other
 								/>
 							{/each}
 						</div>

@@ -52,7 +52,7 @@
 
 	const localization = $derived({ ...contextLocalization, ...localizationProp });
 
-	const captchaHook = useCaptcha({ localization });
+	const captchaHook = useCaptcha({ localization: () => localization });
 	const { getCaptchaHeaders, resetCaptcha } = captchaHook;
 
 	// Local state for captcha binding

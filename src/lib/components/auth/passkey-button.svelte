@@ -30,7 +30,7 @@
 	// Merge context and prop localization (prop takes precedence)
 	const loc = $derived({ ...contextLocalization, ...localization });
 
-	const { onSuccess } = useOnSuccessTransition({ redirectTo });
+	const { onSuccess } = useOnSuccessTransition({ redirectTo: () => redirectTo });
 
 	let isPending = $state(false);
 

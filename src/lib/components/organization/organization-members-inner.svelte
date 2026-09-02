@@ -23,15 +23,21 @@
 
 	// Hooks called unconditionally at the top level — organization is guaranteed by the parent.
 	/* eslint-disable @typescript-eslint/no-explicit-any */
+	// useHasPermission is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const hasPermissionInviteHook = hooks.useHasPermission({
 		organizationId: organization.id,
 		permissions: { invitation: ['create'] }
 	} as any);
+	// useHasPermission is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const hasPermissionUpdateMemberHook = hooks.useHasPermission({
 		organizationId: organization.id,
-		permission: { member: ['update'] }
+		permissions: { member: ['update'] }
 	} as any);
 	/* eslint-enable @typescript-eslint/no-explicit-any */
+	// useListMembers is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const membersHook = hooks.useListMembers({ query: { organizationId: organization.id } });
 
 	const hasPermissionInvite = $derived(hasPermissionInviteHook?.data);

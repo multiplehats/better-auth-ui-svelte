@@ -74,9 +74,9 @@ export function useCurrentOrganization({
 	const activeOrg = fromStore(activeOrgStore);
 
 	const currentOrg = $derived.by(() => {
-		let data: Organization | null | undefined = undefined;
-		let isPending = false;
-		let isRefetching = false;
+		let data: Organization | null | undefined;
+		let isPending: boolean;
+		let isRefetching: boolean;
 		let refetch: (() => void) | undefined = undefined;
 
 		if (pathMode === 'slug') {

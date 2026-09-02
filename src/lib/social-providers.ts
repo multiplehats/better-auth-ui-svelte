@@ -1,3 +1,4 @@
+import type { SocialProvider } from 'better-auth/social-providers';
 import {
 	AppleIcon,
 	DiscordIcon,
@@ -13,6 +14,7 @@ import {
 	MicrosoftIcon,
 	NotionIcon,
 	type ProviderIcon,
+	PatreonIcon,
 	RedditIcon,
 	RobloxIcon,
 	SlackIcon,
@@ -25,9 +27,9 @@ import {
 } from '$lib/components/provider-icons/index.js';
 
 export type Provider = {
-	provider: string;
+	provider: SocialProvider;
 	name: string;
-	icon: ProviderIcon;
+	icon?: ProviderIcon;
 };
 
 export const socialProviders: readonly Provider[] = [
@@ -95,6 +97,11 @@ export const socialProviders: readonly Provider[] = [
 		provider: 'notion',
 		name: 'Notion',
 		icon: NotionIcon
+	},
+	{
+		provider: 'patreon',
+		name: 'Patreon',
+		icon: PatreonIcon
 	},
 	{
 		provider: 'reddit',

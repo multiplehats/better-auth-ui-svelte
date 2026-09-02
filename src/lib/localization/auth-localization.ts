@@ -511,6 +511,18 @@ export const authLocalization = {
 	/** @default "Scan the QR Code with your Authenticator" */
 	TWO_FACTOR_TOTP_LABEL: 'Scan the QR Code with your Authenticator',
 
+	/** @default "Or enter this code manually in your authenticator app" */
+	TWO_FACTOR_MANUAL_ENTRY: 'Or enter this code manually in your authenticator app',
+
+	/** @default "Two-Factor Method" */
+	TWO_FACTOR_METHOD: 'Two-Factor Method',
+
+	/** @default "Authenticator app" */
+	TWO_FACTOR_METHOD_TOTP: 'Authenticator app',
+
+	/** @default "Email code" */
+	TWO_FACTOR_METHOD_OTP: 'Email code',
+
 	/** @default "Send verification code" */
 	SEND_VERIFICATION_CODE: 'Send verification code',
 
@@ -748,6 +760,10 @@ export const authLocalization = {
 	/** @default "This invitation has expired" */
 	INVITATION_EXPIRED: 'This invitation has expired',
 
+	/** @default "This invitation was sent to a different email address. You may need to switch accounts." */
+	INVITATION_RECIPIENT_MISMATCH:
+		'This invitation was sent to a different email address. You may need to switch accounts.',
+
 	/** @default "Delete Organization" */
 	DELETE_ORGANIZATION: 'Delete Organization',
 
@@ -770,12 +786,12 @@ export const authLocalization = {
 	/** @default "Unknown" */
 	UNKNOWN: 'Unknown',
 
-
 	/** @default "Add Member" */
 	ADD_TEAM_MEMBER: 'Add Member',
 
 	/** @default "Add a member to this team from your organization, or invite someone new by email." */
-	ADD_TEAM_MEMBER_DESCRIPTION: 'Add a member to this team from your organization, or invite someone new by email.',
+	ADD_TEAM_MEMBER_DESCRIPTION:
+		'Add a member to this team from your organization, or invite someone new by email.',
 
 	/** @default "Member added to team successfully" */
 	ADD_TEAM_MEMBER_SUCCESS: 'Member added to team successfully',

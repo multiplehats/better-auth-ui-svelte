@@ -1,7 +1,3 @@
-<script lang="ts" module>
-	export type { AdminViewProps } from '$lib/types/admin.js';
-</script>
-
 <script lang="ts">
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
 	import { cn, getViewByPath } from '$lib/utils/utils.js';
@@ -42,8 +38,16 @@
 	const basePath = $derived(adminBasePath ?? '/admin');
 
 	const navItems = $derived([
-		{ view: 'DASHBOARD', label: (localization as Record<string, string>).DASHBOARD || 'Dashboard', value: 'dashboard' },
-		{ view: 'USERS', label: (localization as Record<string, string>).USERS || 'Users', value: 'users' },
+		{
+			view: 'DASHBOARD',
+			label: (localization as Record<string, string>).DASHBOARD || 'Dashboard',
+			value: 'dashboard'
+		},
+		{
+			view: 'USERS',
+			label: (localization as Record<string, string>).USERS || 'Users',
+			value: 'users'
+		},
 		{
 			view: 'ORGANIZATIONS',
 			label: localization.ORGANIZATIONS || 'Organizations',
@@ -51,7 +55,9 @@
 		}
 	] as const);
 
-	const currentTabValue = $derived(adminViewPaths[view as keyof typeof adminViewPaths] || 'dashboard');
+	const currentTabValue = $derived(
+		adminViewPaths[view as keyof typeof adminViewPaths] || 'dashboard'
+	);
 </script>
 
 <div class={cn('flex w-full grow flex-col gap-4', className, classNames?.base)}>

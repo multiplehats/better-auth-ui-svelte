@@ -207,8 +207,18 @@
 			</div>
 		{/if}
 
-		<!-- Main Content Area -->
-		{#if view === 'MEMBERS'}
+		<!-- Main Content Area.
+		     Gated on a resolved organization so the sub-components (and their
+		     `useHasPermission` hooks) unmount during an account switch, when the
+		     active org is briefly stale for the new user. Without this, those
+		     hooks refire against the stale org and 401. The redirect effect
+		     above handles the confirmed-no-org case. -->
+		{#if !organization}
+			<div class={cn('flex w-full flex-col gap-4', classNames?.cards)} aria-busy="true">
+				<div class="h-24 animate-pulse rounded-lg bg-muted"></div>
+				<div class="h-24 animate-pulse rounded-lg bg-muted"></div>
+			</div>
+		{:else if view === 'MEMBERS'}
 			<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
 				<OrganizationMembersCard
 					classNames={classNames?.card}
@@ -225,15 +235,15 @@
 				/>
 			</div>
 		{:else if view === 'TEAMS'}
-		<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
-			<OrganizationTeamsCard
-				classNames={classNames?.card}
-				{localization}
-				{slug}
-				{organizationId}
-			/>
-		</div>
-	{:else if view === 'API_KEYS'}
+			<div class={cn('flex w-full flex-col gap-4 md:gap-6', className, classNames?.cards)}>
+				<OrganizationTeamsCard
+					classNames={classNames?.card}
+					{localization}
+					{slug}
+					{organizationId}
+				/>
+			</div>
+		{:else if view === 'API_KEYS'}
 			<!-- TODO: Uncomment when ApiKeysCard is ported -->
 			<div class="text-muted-foreground">API Keys coming soon (ApiKeysCard not yet ported)</div>
 			<!-- <ApiKeysCard
@@ -243,12 +253,7 @@
 				organizationId={organization?.id}
 			/> -->
 		{:else if view === 'SETTINGS'}
-			<OrganizationSettingsCards
-				{classNames}
-				{localization}
-				{slug}
-				{organizationId}
-			/>
+			<OrganizationSettingsCards {classNames} {localization} {slug} {organizationId} />
 		{/if}
 	</div>
 {/if}

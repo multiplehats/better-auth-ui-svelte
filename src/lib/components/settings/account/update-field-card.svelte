@@ -4,7 +4,7 @@
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte';
-	import { cn, getLocalizedError } from '$lib/utils/utils.js';
+	import { cn, getLocalizedError, getFieldError } from '$lib/utils/utils.js';
 	import type { AuthLocalization, FieldType } from '$lib/types/index.js';
 	import { CardContent } from '$lib/components/ui/card/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
@@ -63,7 +63,7 @@
 
 	// Create the appropriate schema based on type (used for validation logic)
 	const fieldSchema = $derived.by(() => {
-		let schema: z.ZodType<unknown> = z.unknown();
+		let schema: z.ZodType<unknown>;
 
 		if (type === 'number') {
 			schema = required
@@ -134,11 +134,12 @@
 
 	const isSubmitting = $derived(form.state.isSubmitting);
 
-	// Update form values when prop value changes
-	// Use untrack to prevent infinite loop from form state updates
+	// Update form values when prop value changes without infinitely looping.
+	// Read `value` outside untrack so this effect re-runs when it updates.
 	$effect(() => {
+		const v = value;
 		untrack(() => {
-			form.setFieldValue(name, value || '');
+			form.setFieldValue(name, v || '');
 		});
 	});
 </script>
@@ -160,7 +161,7 @@
 	>
 		<CardContent class={classNames?.content}>
 			{#if type === 'boolean'}
-				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as any }}>
+				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as never }}>
 					{#snippet children({ state, handleChange })}
 						<div class="flex items-center gap-2">
 							<Checkbox
@@ -180,7 +181,7 @@
 
 							{#if state.meta.errors.length > 0}
 								<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-									{state.meta.errors[0]}
+									{getFieldError(state.meta.errors[0])}
 								</p>
 							{/if}
 						</div>
@@ -189,7 +190,7 @@
 			{:else if isPending}
 				<Skeleton class={cn('h-9 w-full', classNames?.skeleton)} />
 			{:else}
-				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as any }}>
+				<form.Field {name} validators={{ onChange: fieldSchema.shape[name] as never }}>
 					{#snippet children({ state, handleBlur, handleChange })}
 						<div class="grid w-full items-center gap-1.5">
 							{#if type === 'number'}
@@ -225,7 +226,7 @@
 
 							{#if state.meta.errors.length > 0}
 								<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-									{state.meta.errors[0]}
+									{getFieldError(state.meta.errors[0])}
 								</p>
 							{/if}
 						</div>

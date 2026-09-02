@@ -31,9 +31,12 @@
 
 	const localization = $derived({ ...contextLocalization, ...propLocalization });
 
-	const slug = slugProp || organizationOptions?.slug;
-
-	const currentOrg = useCurrentOrganization({ slug, organizationId });
+	// useCurrentOrganization is an init-only hook accepting plain values; slug/organizationId are stable per mount
+	// svelte-ignore state_referenced_locally
+	const currentOrg = useCurrentOrganization({
+		slug: slugProp || organizationOptions?.slug,
+		organizationId
+	});
 	const organization = $derived(currentOrg.data);
 </script>
 
@@ -48,5 +51,7 @@
 		isPending
 	/>
 {:else}
-	<OrganizationMembersInner {className} {classNames} {localization} {organization} />
+	{#key organization.id}
+		<OrganizationMembersInner {className} {classNames} {localization} {organization} />
+	{/key}
 {/if}

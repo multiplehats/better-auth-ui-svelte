@@ -32,10 +32,14 @@
 		replace
 	} = getAuthUIConfig();
 
+	// useCurrentOrganization is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const { refetch: refetchOrganization } = useCurrentOrganization({
 		slug: organization.slug
 	});
 
+	// useHasPermission is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const permissionStore = useHasPermission({
 		organizationId: organization.id,
 		permissions: {
@@ -47,16 +51,18 @@
 	const hasPermission = $derived(hasPermissionData?.success ?? false);
 	const permissionPending = $derived(permissionStore?.isPending ?? false);
 
-	const formSchema = z.object({
-		slug: z
-			.string()
-			.min(1, {
-				message: `${localization.ORGANIZATION_SLUG} ${localization.IS_REQUIRED}`
-			})
-			.regex(/^[a-z0-9-]+$/, {
-				message: `${localization.ORGANIZATION_SLUG} ${localization.IS_INVALID}`
-			})
-	});
+	const formSchema = $derived(
+		z.object({
+			slug: z
+				.string()
+				.min(1, {
+					message: `${localization.ORGANIZATION_SLUG} ${localization.IS_REQUIRED}`
+				})
+				.regex(/^[a-z0-9-]+$/, {
+					message: `${localization.ORGANIZATION_SLUG} ${localization.IS_INVALID}`
+				})
+		})
+	);
 
 	const form = createForm(() => ({
 		defaultValues: {

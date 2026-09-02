@@ -39,7 +39,7 @@ export type OrganizationOptions = {
 	 * @default false
 	 */
 	apiKey?: boolean;
-		/**
+	/**
 	 * Enable or disable teams support for organizations
 	 * @default false
 	 */
@@ -87,7 +87,7 @@ export type OrganizationOptionsContext = {
 	 * @default false
 	 */
 	apiKey?: boolean;
-		/**
+	/**
 	 * Enable or disable teams support for organizations
 	 * @default false
 	 */

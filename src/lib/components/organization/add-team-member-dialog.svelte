@@ -61,8 +61,7 @@
 	const members = $derived(membersHook?.data?.members ?? []);
 	const availableMembers = $derived(
 		members.filter(
-			(m: Member & { user?: Partial<User> | null }) =>
-				!existingTeamMemberIds.includes(m.userId)
+			(m: Member & { user?: Partial<User> | null }) => !existingTeamMemberIds.includes(m.userId)
 		)
 	);
 
@@ -151,7 +150,7 @@
 						{#each availableMembers as member (member.id)}
 							<Card.Root
 								class={cn(
-									'flex-row items-center p-3 cursor-pointer hover:bg-accent transition-colors',
+									'cursor-pointer flex-row items-center p-3 transition-colors hover:bg-accent',
 									classNames?.cell
 								)}
 								onclick={() => addExistingMember(member.userId)}
@@ -166,7 +165,7 @@
 						{/each}
 					</div>
 				{:else}
-					<p class="text-sm text-muted-foreground py-4 text-center">
+					<p class="py-4 text-center text-sm text-muted-foreground">
 						{localization.ALL_MEMBERS_IN_TEAM}
 					</p>
 				{/if}

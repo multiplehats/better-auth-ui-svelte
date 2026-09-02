@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Account } from 'better-auth';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
-	import { socialProviders } from '$lib/social-providers.js';
 	import { cn } from '$lib/utils/ui.js';
 	import type { AuthLocalization, Refetch } from '$lib/types/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -28,14 +27,15 @@
 	const {
 		hooks: { useListAccounts },
 		localization: contextLocalization,
-		social,
-		genericOAuth
+		social
 	} = getAuthUIConfig();
 
 	const mergedLocalization = $derived({ ...contextLocalization, ...localization });
 
 	// Use hook if skipHook is false
 	let listAccountsResult: ReturnType<typeof useListAccounts> | undefined = undefined;
+	// skipHook gates a conditional hook call; reactively re-evaluating would violate rules-of-hooks.
+	// svelte-ignore state_referenced_locally
 	if (!skipHook) {
 		listAccountsResult = useListAccounts();
 	}
@@ -59,25 +59,12 @@
 				<SettingsCellSkeleton {classNames} />
 			{/each}
 		{:else}
-			{#each social?.providers ?? [] as provider (provider)}
-				{@const socialProvider = socialProviders.find((sp) => sp.provider === provider)}
-				{#if socialProvider}
-					<ProviderCell
-						{classNames}
-						account={derivedAccounts?.find((acc) => acc.providerId === provider)}
-						provider={socialProvider}
-						refetch={derivedRefetch}
-					/>
-				{/if}
-			{/each}
-
-			{#each genericOAuth?.providers ?? [] as provider (provider.provider)}
+			{#each social?.providers ?? [] as provider (provider.provider)}
 				<ProviderCell
 					{classNames}
 					account={derivedAccounts?.find((acc) => acc.providerId === provider.provider)}
-					provider={provider as import('$lib/social-providers.js').Provider}
+					{provider}
 					refetch={derivedRefetch}
-					other
 				/>
 			{/each}
 		{/if}

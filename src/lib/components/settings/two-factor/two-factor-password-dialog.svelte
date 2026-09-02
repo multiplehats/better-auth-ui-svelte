@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Loader2 from '@lucide/svelte/icons/loader-2';
+	import QrCodeIcon from '@lucide/svelte/icons/qr-code';
+	import MailIcon from '@lucide/svelte/icons/mail';
 	import { z } from 'zod';
 	import { createForm } from '@tanstack/svelte-form';
 	import {
@@ -12,6 +14,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group/index.js';
 	import type { SettingsCardClassNames } from '../shared/settings-card.svelte';
 	import BackupCodesDialog from './backup-codes-dialog.svelte';
 
@@ -37,6 +40,12 @@
 	let showBackupCodesDialog = $state(false);
 	let backupCodes = $state<string[]>([]);
 	let totpURI = $state<string | null>(null);
+	let selectedMethod = $state<'totp' | 'otp'>('totp');
+
+	const showMethodSelector = $derived(
+		!isTwoFactorEnabled && !!(twoFactor?.includes('otp') && twoFactor?.includes('totp'))
+	);
+	const enableMethod = $derived(showMethodSelector ? selectedMethod : (twoFactor?.[0] ?? 'totp'));
 
 	// Form validation schema
 	const formSchema = $derived(
@@ -50,19 +59,24 @@
 		try {
 			const response = await authClient.twoFactor.enable({
 				password,
+				method: enableMethod,
 				fetchOptions: { throw: true }
 			});
 
 			handleOpenChange(false);
-			backupCodes = response.backupCodes;
 
-			if (twoFactor?.includes('totp')) {
-				totpURI = response.totpURI;
+			if (response && response.method === 'totp') {
+				backupCodes = response.backupCodes;
+				if (twoFactor?.includes('totp')) {
+					totpURI = response.totpURI;
+				}
+
+				setTimeout(() => {
+					showBackupCodesDialog = true;
+				}, 250);
+			} else {
+				toast.success(localization.TWO_FACTOR_ENABLED);
 			}
-
-			setTimeout(() => {
-				showBackupCodesDialog = true;
-			}, 250);
 		} catch (error) {
 			toast.error(getLocalizedError({ error, localization }));
 		}
@@ -140,6 +154,31 @@
 			}}
 			class="grid gap-4"
 		>
+			{#if showMethodSelector}
+				<div class="grid w-full items-center gap-1.5">
+					<Label class={classNames?.label}>
+						{localization.TWO_FACTOR_METHOD}
+					</Label>
+
+					<RadioGroup bind:value={selectedMethod} class="grid gap-2">
+						<div class="flex items-center gap-3">
+							<RadioGroupItem value="totp" id="method-totp" />
+							<Label for="method-totp" class="flex cursor-pointer items-center gap-2 font-normal">
+								<QrCodeIcon class="size-4" />
+								{localization.TWO_FACTOR_METHOD_TOTP}
+							</Label>
+						</div>
+						<div class="flex items-center gap-3">
+							<RadioGroupItem value="otp" id="method-otp" />
+							<Label for="method-otp" class="flex cursor-pointer items-center gap-2 font-normal">
+								<MailIcon class="size-4" />
+								{localization.TWO_FACTOR_METHOD_OTP}
+							</Label>
+						</div>
+					</RadioGroup>
+				</div>
+			{/if}
+
 			<form.Field name="password" validators={{ onChange: formSchema.shape.password }}>
 				{#snippet children(field)}
 					<div class="grid w-full items-center gap-1.5">

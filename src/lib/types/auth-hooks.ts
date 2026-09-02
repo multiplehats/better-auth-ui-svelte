@@ -8,7 +8,7 @@ import type { Refetch } from './refetch.js';
 
 type AnyAuthSession = AnyAuthClient['$Infer']['Session'];
 
-type AuthHook<T> = {
+export type AuthHook<T> = {
 	isPending: boolean;
 	data?: T | null;
 	error?: BetterFetchError | null;
@@ -18,7 +18,7 @@ type AuthHook<T> = {
 export type AuthHooks = {
 	useSession: () => ReturnType<AnyAuthClient['useSession']>;
 	useListAccounts: () => AuthHook<Account[]>;
-	useAccountInfo: (params: { providerId: string }) => AuthHook<{ user: User }>;
+	useAccountInfo: (params: { accountId: string }) => AuthHook<{ user: User }>;
 	useListDeviceSessions: () => AuthHook<AnyAuthClient['$Infer']['Session'][]>;
 	useListSessions: () => AuthHook<AnyAuthSession['session'][]>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,7 +28,10 @@ export type AuthHooks = {
 	useActiveOrganization: () => any;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	useListOrganizations: () => any;
-	useHasPermission: (params: { permission: string }) => AuthHook<{
+	useHasPermission: (params: {
+		permissions: Record<string, string[]>;
+		organizationId?: string;
+	}) => AuthHook<{
 		error: null;
 		success: boolean;
 	}>;
@@ -45,19 +48,23 @@ export type AuthHooks = {
 		members: (Member & { user?: Partial<User> | null })[];
 		total: number;
 	}>;
-	useListTeams?: (params: { query?: { organizationId?: string } }) => AuthHook<{
-		id: string;
-		name: string;
-		organizationId: string;
-		createdAt: Date;
-		updatedAt: Date;
-	}[]>;
-	useListTeamMembers?: (params: { query?: { teamId?: string } }) => AuthHook<{
-		id: string;
-		teamId: string;
-		userId: string;
-		createdAt: Date;
-		user?: Partial<User> | null;
-	}[]>;
+	useListTeams?: (params: { query?: { organizationId?: string } }) => AuthHook<
+		{
+			id: string;
+			name: string;
+			organizationId: string;
+			createdAt: Date;
+			updatedAt: Date;
+		}[]
+	>;
+	useListTeamMembers?: (params: { query?: { teamId?: string } }) => AuthHook<
+		{
+			id: string;
+			teamId: string;
+			userId: string;
+			createdAt: Date;
+			user?: Partial<User> | null;
+		}[]
+	>;
 	useIsRestoring?: () => boolean;
 };

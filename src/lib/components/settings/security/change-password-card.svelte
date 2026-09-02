@@ -2,7 +2,7 @@
 	import { createForm } from '@tanstack/svelte-form';
 	import * as z from 'zod';
 	import { getAuthUIConfig } from '$lib/context/auth-ui-config.svelte.js';
-	import { cn, getLocalizedError, getPasswordSchema } from '$lib/utils/utils.js';
+	import { cn, getFieldError, getLocalizedError, getPasswordSchema } from '$lib/utils/utils.js';
 	import type { AuthLocalization } from '$lib/types/index.js';
 	import type { PasswordValidation } from '$lib/types/password-validation.js';
 	import PasswordInput from '$lib/components/password-input.svelte';
@@ -59,6 +59,8 @@
 
 	// Use hook if skipHook is false
 	let listAccountsResult: ReturnType<typeof useListAccounts> | undefined = undefined;
+	// skipHook gates a conditional hook call; reactively re-evaluating would violate rules-of-hooks.
+	// svelte-ignore state_referenced_locally
 	if (!skipHook) {
 		listAccountsResult = useListAccounts();
 	}
@@ -72,14 +74,16 @@
 		derivedAccounts?.some((acc) => acc.providerId === 'credential')
 	);
 
-	// Build form schema dynamically in form initialization
-	const buildFormSchema = () => {
+	// Build form schema reactively so localization/validation changes propagate to validators
+	const formSchema = $derived.by(() => {
 		const localization = mergedLocalization;
 		const passwordValidation = mergedPasswordValidation;
 
 		return z
 			.object({
-				currentPassword: getPasswordSchema(passwordValidation, localization),
+				currentPassword: z.string().min(1, {
+					message: localization.PASSWORD_REQUIRED
+				}),
 				newPassword: getPasswordSchema(passwordValidation, {
 					PASSWORD_REQUIRED: localization.NEW_PASSWORD_REQUIRED,
 					PASSWORD_TOO_SHORT: localization.PASSWORD_TOO_SHORT,
@@ -99,7 +103,33 @@
 				message: localization.PASSWORDS_DO_NOT_MATCH,
 				path: ['confirmPassword']
 			});
-	};
+	});
+
+	// Per-field validators for live onChange validation
+	const currentPasswordValidator = $derived(formSchema.shape.currentPassword);
+	const newPasswordValidator = $derived(formSchema.shape.newPassword);
+
+	// confirmPassword needs a custom onChange validator that also checks mismatch live
+	const confirmPasswordValidator = $derived.by(() => {
+		if (!confirmPasswordEnabled) return undefined;
+		const baseSchema = formSchema.shape.confirmPassword;
+		const mismatchMessage = mergedLocalization.PASSWORDS_DO_NOT_MATCH;
+		return z
+			.string()
+			.superRefine((value, ctx) => {
+				const result = baseSchema.safeParse(value);
+				if (!result.success) {
+					ctx.addIssue({
+						code: 'custom',
+						message: getFieldError(result.error.issues[0]?.message),
+						path: []
+					});
+				}
+			})
+			.refine((value) => value === form.state.values.newPassword, {
+				message: mismatchMessage
+			});
+	});
 
 	// Main form for changing password
 	const form = createForm(() => ({
@@ -110,7 +140,6 @@
 		},
 		onSubmit: async ({ value: values }) => {
 			// Validate with zod schema
-			const formSchema = buildFormSchema();
 			const validation = formSchema.safeParse(values);
 			if (!validation.success) {
 				const zodError = validation.error as z.ZodError;
@@ -208,7 +237,7 @@
 						<InputFieldSkeleton {classNames} />
 					{/if}
 				{:else}
-					<form.Field name="currentPassword">
+					<form.Field name="currentPassword" validators={{ onChange: currentPasswordValidator }}>
 						{#snippet children({ state, handleBlur, handleChange })}
 							<div class="grid w-full items-center gap-1.5">
 								<Label for="currentPassword" class={classNames?.label}>
@@ -229,14 +258,14 @@
 
 								{#if state.meta.errors.length > 0}
 									<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-										{state.meta.errors[0]}
+										{getFieldError(state.meta.errors[0])}
 									</p>
 								{/if}
 							</div>
 						{/snippet}
 					</form.Field>
 
-					<form.Field name="newPassword">
+					<form.Field name="newPassword" validators={{ onChange: newPasswordValidator }}>
 						{#snippet children({ state, handleBlur, handleChange })}
 							<div class="grid w-full items-center gap-1.5">
 								<Label for="newPassword" class={classNames?.label}>
@@ -258,7 +287,7 @@
 
 								{#if state.meta.errors.length > 0}
 									<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-										{state.meta.errors[0]}
+										{getFieldError(state.meta.errors[0])}
 									</p>
 								{/if}
 							</div>
@@ -266,7 +295,13 @@
 					</form.Field>
 
 					{#if confirmPasswordEnabled}
-						<form.Field name="confirmPassword">
+						<form.Field
+							name="confirmPassword"
+							validators={{
+								onChange: confirmPasswordValidator,
+								onChangeListenTo: ['newPassword']
+							}}
+						>
 							{#snippet children({ state, handleBlur, handleChange })}
 								<div class="grid w-full items-center gap-1.5">
 									<Label for="confirmPassword" class={classNames?.label}>
@@ -288,7 +323,7 @@
 
 									{#if state.meta.errors.length > 0}
 										<p class={cn('text-sm font-medium text-destructive', classNames?.error)}>
-											{state.meta.errors[0]}
+											{getFieldError(state.meta.errors[0])}
 										</p>
 									{/if}
 								</div>

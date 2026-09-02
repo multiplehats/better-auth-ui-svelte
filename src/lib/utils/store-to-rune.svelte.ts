@@ -1,5 +1,10 @@
 import type { ReadableAtom, WritableAtom } from 'nanostores';
 
+type StoreLike<T> = {
+	get?: () => T;
+	listen?: (callback: (value: T) => void) => () => void;
+};
+
 /**
  * Converts a nanostore (atom) to a Svelte 5 reactive value using runes.
  * This helper bridges the gap between nanostores and Svelte 5's rune-based reactivity.
@@ -22,12 +27,7 @@ import type { ReadableAtom, WritableAtom } from 'nanostores';
  * console.log(count.value);
  * ```
  */
-export function fromStore<T>(
-	store: Partial<ReadableAtom<T> | WritableAtom<T>> & {
-		get?: () => T;
-		listen?: (callback: (value: T) => void) => () => void;
-	}
-) {
+export function fromStore<T>(store: StoreLike<T> & Partial<ReadableAtom<T> | WritableAtom<T>>) {
 	// Handle partially initialized stores
 	let value = $state(store.get?.() as T);
 

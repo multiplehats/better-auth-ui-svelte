@@ -59,8 +59,8 @@
 		}
 	};
 
-	const parser = UAParser(session.userAgent as string);
-	const isMobile = parser.device.type === 'mobile';
+	const parser = $derived(UAParser(session.userAgent as string));
+	const isMobile = $derived(parser.device.type === 'mobile');
 </script>
 
 <Card class={cn('flex-row items-center gap-3 px-4 py-3', className, classNames?.cell)}>

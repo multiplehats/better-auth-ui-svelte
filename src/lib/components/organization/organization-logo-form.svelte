@@ -33,10 +33,14 @@
 		toast
 	} = getAuthUIConfig();
 
+	// useCurrentOrganization is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const { refetch: refetchOrganization } = useCurrentOrganization({
 		slug: organization.slug
 	});
 
+	// useHasPermission is an init-only hook accepting plain values; organization is stable per mount
+	// svelte-ignore state_referenced_locally
 	const permissionStore = useHasPermission({
 		organizationId: organization.id,
 		permissions: {
